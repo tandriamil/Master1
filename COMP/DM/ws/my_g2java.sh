@@ -30,3 +30,6 @@ fi
 
 export CLASSPATH=../bin/antlr-3.5.jar:.:$CLASSPATH
 java org.antlr.Tool $1
+
+# Move the tokens file
+mv *.tokens ../src
