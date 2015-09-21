@@ -1,0 +1,4 @@
+Installation:
+	- Récupération des différents éléments
+	- Création de fichiers my_*.sh pour faire tourner sur ma machine (path du .jar d'antlr)
+	- Besoin de créer un fichier de test et de le mettre en entrée à l'exécution car problème avec le <EOF>
