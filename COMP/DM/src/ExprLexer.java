@@ -1,4 +1,4 @@
-// $ANTLR 3.5 Expr.g 2015-09-21 16:14:55
+// $ANTLR 3.5 ../src/Expr.g 2015-09-22 18:40:36
 
 import org.antlr.runtime.*;
 import java.util.Stack;
@@ -34,15 +34,15 @@ public class ExprLexer extends Lexer {
 	public ExprLexer(CharStream input, RecognizerSharedState state) {
 		super(input,state);
 	}
-	@Override public String getGrammarFileName() { return "Expr.g"; }
+	@Override public String getGrammarFileName() { return "../src/Expr.g"; }
 
 	// $ANTLR start "T__8"
 	public final void mT__8() throws RecognitionException {
 		try {
 			int _type = T__8;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Expr.g:2:6: ( '(' )
-			// Expr.g:2:8: '('
+			// ../src/Expr.g:2:6: ( '(' )
+			// ../src/Expr.g:2:8: '('
 			{
 			match('('); 
 			}
@@ -61,8 +61,8 @@ public class ExprLexer extends Lexer {
 		try {
 			int _type = T__9;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Expr.g:3:6: ( ')' )
-			// Expr.g:3:8: ')'
+			// ../src/Expr.g:3:6: ( ')' )
+			// ../src/Expr.g:3:8: ')'
 			{
 			match(')'); 
 			}
@@ -81,8 +81,8 @@ public class ExprLexer extends Lexer {
 		try {
 			int _type = T__10;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Expr.g:4:7: ( '*' )
-			// Expr.g:4:9: '*'
+			// ../src/Expr.g:4:7: ( '*' )
+			// ../src/Expr.g:4:9: '*'
 			{
 			match('*'); 
 			}
@@ -101,8 +101,8 @@ public class ExprLexer extends Lexer {
 		try {
 			int _type = T__11;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Expr.g:5:7: ( '+' )
-			// Expr.g:5:9: '+'
+			// ../src/Expr.g:5:7: ( '+' )
+			// ../src/Expr.g:5:9: '+'
 			{
 			match('+'); 
 			}
@@ -121,8 +121,8 @@ public class ExprLexer extends Lexer {
 		try {
 			int _type = T__12;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Expr.g:6:7: ( '-' )
-			// Expr.g:6:9: '-'
+			// ../src/Expr.g:6:7: ( '-' )
+			// ../src/Expr.g:6:9: '-'
 			{
 			match('-'); 
 			}
@@ -141,8 +141,8 @@ public class ExprLexer extends Lexer {
 		try {
 			int _type = T__13;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Expr.g:7:7: ( '/' )
-			// Expr.g:7:9: '/'
+			// ../src/Expr.g:7:7: ( '/' )
+			// ../src/Expr.g:7:9: '/'
 			{
 			match('/'); 
 			}
@@ -161,8 +161,8 @@ public class ExprLexer extends Lexer {
 		try {
 			int _type = T__14;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Expr.g:8:7: ( '=' )
-			// Expr.g:8:9: '='
+			// ../src/Expr.g:8:7: ( '=' )
+			// ../src/Expr.g:8:9: '='
 			{
 			match('='); 
 			}
@@ -181,8 +181,8 @@ public class ExprLexer extends Lexer {
 		try {
 			int _type = T__15;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Expr.g:9:7: ( '^' )
-			// Expr.g:9:9: '^'
+			// ../src/Expr.g:9:7: ( '^' )
+			// ../src/Expr.g:9:9: '^'
 			{
 			match('^'); 
 			}
@@ -201,10 +201,10 @@ public class ExprLexer extends Lexer {
 		try {
 			int _type = ID;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Expr.g:54:5: ( ( 'a' .. 'z' | 'A' .. 'Z' )+ )
-			// Expr.g:54:9: ( 'a' .. 'z' | 'A' .. 'Z' )+
+			// ../src/Expr.g:54:5: ( ( 'a' .. 'z' | 'A' .. 'Z' )+ )
+			// ../src/Expr.g:54:9: ( 'a' .. 'z' | 'A' .. 'Z' )+
 			{
-			// Expr.g:54:9: ( 'a' .. 'z' | 'A' .. 'Z' )+
+			// ../src/Expr.g:54:9: ( 'a' .. 'z' | 'A' .. 'Z' )+
 			int cnt1=0;
 			loop1:
 			while (true) {
@@ -216,7 +216,7 @@ public class ExprLexer extends Lexer {
 
 				switch (alt1) {
 				case 1 :
-					// Expr.g:
+					// ../src/Expr.g:
 					{
 					if ( (input.LA(1) >= 'A' && input.LA(1) <= 'Z')||(input.LA(1) >= 'a' && input.LA(1) <= 'z') ) {
 						input.consume();
@@ -253,10 +253,10 @@ public class ExprLexer extends Lexer {
 		try {
 			int _type = INT;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Expr.g:55:5: ( ( '0' .. '9' )+ )
-			// Expr.g:55:9: ( '0' .. '9' )+
+			// ../src/Expr.g:55:5: ( ( '0' .. '9' )+ )
+			// ../src/Expr.g:55:9: ( '0' .. '9' )+
 			{
-			// Expr.g:55:9: ( '0' .. '9' )+
+			// ../src/Expr.g:55:9: ( '0' .. '9' )+
 			int cnt2=0;
 			loop2:
 			while (true) {
@@ -268,7 +268,7 @@ public class ExprLexer extends Lexer {
 
 				switch (alt2) {
 				case 1 :
-					// Expr.g:
+					// ../src/Expr.g:
 					{
 					if ( (input.LA(1) >= '0' && input.LA(1) <= '9') ) {
 						input.consume();
@@ -305,10 +305,10 @@ public class ExprLexer extends Lexer {
 		try {
 			int _type = NEWLINE;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Expr.g:56:8: ( ( '\\r' )? '\\n' )
-			// Expr.g:56:9: ( '\\r' )? '\\n'
+			// ../src/Expr.g:56:8: ( ( '\\r' )? '\\n' )
+			// ../src/Expr.g:56:9: ( '\\r' )? '\\n'
 			{
-			// Expr.g:56:9: ( '\\r' )?
+			// ../src/Expr.g:56:9: ( '\\r' )?
 			int alt3=2;
 			int LA3_0 = input.LA(1);
 			if ( (LA3_0=='\r') ) {
@@ -316,7 +316,7 @@ public class ExprLexer extends Lexer {
 			}
 			switch (alt3) {
 				case 1 :
-					// Expr.g:56:9: '\\r'
+					// ../src/Expr.g:56:9: '\\r'
 					{
 					match('\r'); 
 					}
@@ -341,10 +341,10 @@ public class ExprLexer extends Lexer {
 		try {
 			int _type = WS;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Expr.g:57:5: ( ( ' ' | '\\t' )+ )
-			// Expr.g:57:9: ( ' ' | '\\t' )+
+			// ../src/Expr.g:57:5: ( ( ' ' | '\\t' )+ )
+			// ../src/Expr.g:57:9: ( ' ' | '\\t' )+
 			{
-			// Expr.g:57:9: ( ' ' | '\\t' )+
+			// ../src/Expr.g:57:9: ( ' ' | '\\t' )+
 			int cnt4=0;
 			loop4:
 			while (true) {
@@ -356,7 +356,7 @@ public class ExprLexer extends Lexer {
 
 				switch (alt4) {
 				case 1 :
-					// Expr.g:
+					// ../src/Expr.g:
 					{
 					if ( input.LA(1)=='\t'||input.LA(1)==' ' ) {
 						input.consume();
@@ -391,7 +391,7 @@ public class ExprLexer extends Lexer {
 
 	@Override
 	public void mTokens() throws RecognitionException {
-		// Expr.g:1:8: ( T__8 | T__9 | T__10 | T__11 | T__12 | T__13 | T__14 | T__15 | ID | INT | NEWLINE | WS )
+		// ../src/Expr.g:1:8: ( T__8 | T__9 | T__10 | T__11 | T__12 | T__13 | T__14 | T__15 | ID | INT | NEWLINE | WS )
 		int alt5=12;
 		switch ( input.LA(1) ) {
 		case '(':
@@ -523,84 +523,84 @@ public class ExprLexer extends Lexer {
 		}
 		switch (alt5) {
 			case 1 :
-				// Expr.g:1:10: T__8
+				// ../src/Expr.g:1:10: T__8
 				{
 				mT__8(); 
 
 				}
 				break;
 			case 2 :
-				// Expr.g:1:15: T__9
+				// ../src/Expr.g:1:15: T__9
 				{
 				mT__9(); 
 
 				}
 				break;
 			case 3 :
-				// Expr.g:1:20: T__10
+				// ../src/Expr.g:1:20: T__10
 				{
 				mT__10(); 
 
 				}
 				break;
 			case 4 :
-				// Expr.g:1:26: T__11
+				// ../src/Expr.g:1:26: T__11
 				{
 				mT__11(); 
 
 				}
 				break;
 			case 5 :
-				// Expr.g:1:32: T__12
+				// ../src/Expr.g:1:32: T__12
 				{
 				mT__12(); 
 
 				}
 				break;
 			case 6 :
-				// Expr.g:1:38: T__13
+				// ../src/Expr.g:1:38: T__13
 				{
 				mT__13(); 
 
 				}
 				break;
 			case 7 :
-				// Expr.g:1:44: T__14
+				// ../src/Expr.g:1:44: T__14
 				{
 				mT__14(); 
 
 				}
 				break;
 			case 8 :
-				// Expr.g:1:50: T__15
+				// ../src/Expr.g:1:50: T__15
 				{
 				mT__15(); 
 
 				}
 				break;
 			case 9 :
-				// Expr.g:1:56: ID
+				// ../src/Expr.g:1:56: ID
 				{
 				mID(); 
 
 				}
 				break;
 			case 10 :
-				// Expr.g:1:59: INT
+				// ../src/Expr.g:1:59: INT
 				{
 				mINT(); 
 
 				}
 				break;
 			case 11 :
-				// Expr.g:1:63: NEWLINE
+				// ../src/Expr.g:1:63: NEWLINE
 				{
 				mNEWLINE(); 
 
 				}
 				break;
 			case 12 :
-				// Expr.g:1:71: WS
+				// ../src/Expr.g:1:71: WS
 				{
 				mWS(); 
 

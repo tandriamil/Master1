@@ -33,11 +33,11 @@ multExpr returns [int value]
     ; 
 
 puissance returns [int value]
-    :   e=atom {$value = $e.value;} e=puissance_prime {$value = $e.value;}
+    :   e=atom d=puissance_prime {$value = $e.value + $d.value;}
     ;
 
 puissance_prime returns [int value]
-    :   (  '^' e=puissance {double d = new Double(Math.pow((double)$value, (double)$e.value)); $value = d.intValue(); }  )?
+    :   (  '^' e=puissance {$value = (int)Math.pow((double)$value, (double)$e.value);}  )?
     ;
 
 atom returns [int value]
