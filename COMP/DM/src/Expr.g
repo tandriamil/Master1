@@ -28,7 +28,11 @@ expr returns [int value]
 multExpr returns [int value]
     :   e=puissance {$value = $e.value;}
         (   '*' e=puissance {$value *= $e.value;}
-        |   '/' e=puissance {$value = (int)($value / $e.value);}
+        |   '/' e=puissance 
+            {
+            if ($e.value > 0) $value = (int)($value / $e.value);
+            else { System.err.println("Can't divide by 0"); System.exit(1); }
+            }
         )*
     ; 
 

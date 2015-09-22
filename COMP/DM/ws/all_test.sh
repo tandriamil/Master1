@@ -3,4 +3,5 @@
 ./my_javac.sh
 ./my_run.sh Test < simple_test
 ./my_run.sh Test < test_division
+./my_run.sh Test < test_division_by_zero
 ./my_run.sh Test < test_puissance
