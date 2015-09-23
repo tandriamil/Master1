@@ -11,3 +11,6 @@
 7) L'adresse e-mail, la personne n'a pas besoin de connaître le mot de passe. Donc en comparaison, ici c'est la clé publique dont elle a besoin.
 
 10) Il n'arrive pas à déchiffrer et il n'essaie même pas avec une mauvaise clé. Il doit y avoir un mécanisme de vérification de la clé rentrée.
+
+12) Avec du sha1, on a 160 bits soit 20 octets, qu'importe la taille de l'entré.
+Avec du sha256, on a 32 octets en sortie.
