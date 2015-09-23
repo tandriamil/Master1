@@ -25,25 +25,19 @@ expr returns [int value]
         )*
     ;
 
-multExpr returns [int value]
-    :   e=puissance {$value = $e.value;}
-        (   '*' e=puissance {$value *= $e.value;}
-        |   '/' e=puissance 
-            {
-            if ($e.value > 0) $value = (int)($value / $e.value);
-            else { System.err.println("Can't divide by 0"); System.exit(1); }
-            }
-        )*
+multExpr returns [int value] 
+    :   e=atom1 {$value = $e.value;} ( '*' e=atom1 {$value *= $e.value;} |  '/' e=atom1 { 
+        if(!($e.value<=0)) $value /= $e.value;else System.out.println("erreur") ;})* 
+    ;
+
+atom1 returns [int value] 
+    :   e=atom  c=atom2 {$value = (int)Math.pow($e.value, $c.value);} 
     ; 
 
-puissance returns [int value]
-    :   e=atom d=puissance_prime {$value = (int)Math.pow($e.value, $d.value);}
-    ;
-
-puissance_prime returns [int value]
-    :   '^' e=puissance {$value = $e.value;} | {$value = 1;}
-    ;
-
+atom2 returns [int value] 
+     :  ('^' e=atom ) c=atom2    {$value = (int) Math.pow($e.value,$c.value);} |  {$value = 1 ;}  
+     ; 
+  
 atom returns [int value]
     :   INT {$value = Integer.parseInt($INT.text);}
     |   ID

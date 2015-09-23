@@ -1,4 +1,4 @@
-// $ANTLR 3.5 ../src/Expr.g 2015-09-22 19:08:21
+// $ANTLR 3.5 ../src/Expr.g 2015-09-23 12:43:01
 
 import java.util.HashMap;
 import java.lang.Math;
@@ -373,7 +373,7 @@ public class ExprParser extends Parser {
 			d=puissance_prime();
 			state._fsp--;
 
-			value = e + d;
+			value = (int)Math.pow(e, d);
 			}
 
 		}
@@ -391,7 +391,7 @@ public class ExprParser extends Parser {
 
 
 	// $ANTLR start "puissance_prime"
-	// ../src/Expr.g:43:1: puissance_prime returns [int value] : ( '^' e= puissance )? ;
+	// ../src/Expr.g:43:1: puissance_prime returns [int value] : ( '^' e= puissance |);
 	public final int puissance_prime() throws RecognitionException {
 		int value = 0;
 
@@ -399,32 +399,42 @@ public class ExprParser extends Parser {
 		int e =0;
 
 		try {
-			// ../src/Expr.g:44:5: ( ( '^' e= puissance )? )
-			// ../src/Expr.g:44:9: ( '^' e= puissance )?
-			{
-			// ../src/Expr.g:44:9: ( '^' e= puissance )?
+			// ../src/Expr.g:44:5: ( '^' e= puissance |)
 			int alt5=2;
 			int LA5_0 = input.LA(1);
 			if ( (LA5_0==15) ) {
 				alt5=1;
 			}
+			else if ( (LA5_0==NEWLINE||(LA5_0 >= 9 && LA5_0 <= 13)) ) {
+				alt5=2;
+			}
+
+			else {
+				NoViableAltException nvae =
+					new NoViableAltException("", 5, 0, input);
+				throw nvae;
+			}
+
 			switch (alt5) {
 				case 1 :
-					// ../src/Expr.g:44:12: '^' e= puissance
+					// ../src/Expr.g:44:9: '^' e= puissance
 					{
-					match(input,15,FOLLOW_15_in_puissance_prime317); 
-					pushFollow(FOLLOW_puissance_in_puissance_prime321);
+					match(input,15,FOLLOW_15_in_puissance_prime314); 
+					pushFollow(FOLLOW_puissance_in_puissance_prime318);
 					e=puissance();
 					state._fsp--;
 
-					value = (int)Math.pow((double)value, (double)e);
+					value = e;
+					}
+					break;
+				case 2 :
+					// ../src/Expr.g:44:48: 
+					{
+					value = 1;
 					}
 					break;
 
 			}
-
-			}
-
 		}
 		catch (RecognitionException re) {
 			reportError(re);
@@ -477,14 +487,14 @@ public class ExprParser extends Parser {
 				case 1 :
 					// ../src/Expr.g:48:9: INT
 					{
-					INT4=(Token)match(input,INT,FOLLOW_INT_in_atom350); 
+					INT4=(Token)match(input,INT,FOLLOW_INT_in_atom347); 
 					value = Integer.parseInt((INT4!=null?INT4.getText():null));
 					}
 					break;
 				case 2 :
 					// ../src/Expr.g:49:9: ID
 					{
-					ID5=(Token)match(input,ID,FOLLOW_ID_in_atom362); 
+					ID5=(Token)match(input,ID,FOLLOW_ID_in_atom359); 
 
 					        Integer v = (Integer)memory.get((ID5!=null?ID5.getText():null));
 					        if ( v!=null ) value = v.intValue();
@@ -495,12 +505,12 @@ public class ExprParser extends Parser {
 				case 3 :
 					// ../src/Expr.g:55:9: '(' expr ')'
 					{
-					match(input,8,FOLLOW_8_in_atom382); 
-					pushFollow(FOLLOW_expr_in_atom384);
+					match(input,8,FOLLOW_8_in_atom379); 
+					pushFollow(FOLLOW_expr_in_atom381);
 					expr6=expr();
 					state._fsp--;
 
-					match(input,9,FOLLOW_9_in_atom386); 
+					match(input,9,FOLLOW_9_in_atom383); 
 					value = expr6;
 					}
 					break;
@@ -542,11 +552,11 @@ public class ExprParser extends Parser {
 	public static final BitSet FOLLOW_puissance_in_multExpr233 = new BitSet(new long[]{0x0000000000002402L});
 	public static final BitSet FOLLOW_atom_in_puissance285 = new BitSet(new long[]{0x0000000000008000L});
 	public static final BitSet FOLLOW_puissance_prime_in_puissance289 = new BitSet(new long[]{0x0000000000000002L});
-	public static final BitSet FOLLOW_15_in_puissance_prime317 = new BitSet(new long[]{0x0000000000000130L});
-	public static final BitSet FOLLOW_puissance_in_puissance_prime321 = new BitSet(new long[]{0x0000000000000002L});
-	public static final BitSet FOLLOW_INT_in_atom350 = new BitSet(new long[]{0x0000000000000002L});
-	public static final BitSet FOLLOW_ID_in_atom362 = new BitSet(new long[]{0x0000000000000002L});
-	public static final BitSet FOLLOW_8_in_atom382 = new BitSet(new long[]{0x0000000000000130L});
-	public static final BitSet FOLLOW_expr_in_atom384 = new BitSet(new long[]{0x0000000000000200L});
-	public static final BitSet FOLLOW_9_in_atom386 = new BitSet(new long[]{0x0000000000000002L});
+	public static final BitSet FOLLOW_15_in_puissance_prime314 = new BitSet(new long[]{0x0000000000000130L});
+	public static final BitSet FOLLOW_puissance_in_puissance_prime318 = new BitSet(new long[]{0x0000000000000002L});
+	public static final BitSet FOLLOW_INT_in_atom347 = new BitSet(new long[]{0x0000000000000002L});
+	public static final BitSet FOLLOW_ID_in_atom359 = new BitSet(new long[]{0x0000000000000002L});
+	public static final BitSet FOLLOW_8_in_atom379 = new BitSet(new long[]{0x0000000000000130L});
+	public static final BitSet FOLLOW_expr_in_atom381 = new BitSet(new long[]{0x0000000000000200L});
+	public static final BitSet FOLLOW_9_in_atom383 = new BitSet(new long[]{0x0000000000000002L});
 }
