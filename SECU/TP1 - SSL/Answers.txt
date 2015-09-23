@@ -1,0 +1,13 @@
+2) Non le fichier n'est pas chiffré.
+
+3) 512 bits (15 * 4 + 5) * 8
+
+4) Plus c'est petit, plus ça laisse de facteurs plus élevés et plus c'est lent à chiffré/déchiffré. C'est un compromis calculé entre la rapidité et la sécurité.
+
+5) Comme on chiffre le fichier, on ne veut pas garder l'original.
+
+6) Le fichier contenant la clé publique est plus courte, et commence par "BEGIN PUBLIC KEY" tandis que celui de la clé privé est bien plus longue, et commence par "BEGIN RSA PRIVATE KEY" en précisant un peu plus loin qu'il est chiffré avec DES3.
+
+7) L'adresse e-mail, la personne n'a pas besoin de connaître le mot de passe. Donc en comparaison, ici c'est la clé publique dont elle a besoin.
+
+10) Il n'arrive pas à déchiffrer et il n'essaie même pas avec une mauvaise clé. Il doit y avoir un mécanisme de vérification de la clé rentrée.
