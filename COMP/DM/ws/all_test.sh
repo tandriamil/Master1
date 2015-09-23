@@ -5,3 +5,4 @@
 ./my_run.sh Test < test_division
 ./my_run.sh Test < test_division_by_zero
 ./my_run.sh Test < test_puissance
+./my_run.sh Test < test_puissance_bis

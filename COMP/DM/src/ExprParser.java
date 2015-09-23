@@ -1,4 +1,4 @@
-// $ANTLR 3.5 ../src/Expr.g 2015-09-23 12:43:01
+// $ANTLR 3.5 ../src/Expr.g 2015-09-23 20:25:12
 
 import java.util.HashMap;
 import java.lang.Math;
@@ -164,7 +164,7 @@ public class ExprParser extends Parser {
 					state._fsp--;
 
 					match(input,NEWLINE,FOLLOW_NEWLINE_in_stat52); 
-					System.out.println(expr1);
+					 if (expr1 < 2147483647) System.out.println(expr1); else System.out.println("Out of boundaries (> 2147483647)"); 
 					}
 					break;
 				case 2 :

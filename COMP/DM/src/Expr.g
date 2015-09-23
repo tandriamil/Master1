@@ -12,7 +12,7 @@ HashMap memory = new HashMap();
 
 prog:   stat+ ;
                 
-stat:   expr NEWLINE {System.out.println($expr.value);}
+stat:   expr NEWLINE { if ($expr.value < 2147483647) System.out.println($expr.value); else System.out.println("Out of boundaries (> 2147483647)"); }
     |   ID '=' expr NEWLINE
         {memory.put($ID.text, new Integer($expr.value));}
     |   NEWLINE
