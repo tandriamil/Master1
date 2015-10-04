@@ -2,29 +2,26 @@ grammar Expr;
 
 
 
-doc:   bloc+ ;
+doc: bloc+ ;
 
 
-bloc: '<' ID '>' predicat '.'
-    { $predicat.subject = $ID.text; }
+bloc: '<' ID '>' predicat[$ID.text] '.' ;
+
+
+predicat[String subject]: '<' i1=ID '>' objet[$subject, $i1.text] ( ';' '<' i2=ID '>' objet[$subject, $i2.text] )*
 ;
 
 
-predicat: '<' i2=ID '>' objet  { $objet.subject = $predicat.subject; $objet.pred = i1.text; } ( ';' '<' i1=ID '>' objet  { $objet.subject = $predicat.subject; $objet.pred = i2.text; }  )*
-;
+objet[String subject, String pred]: entite[$subject, $pred]  ( ',' entite[$subject, $pred]  )* ;
 
 
-objet: entite { $entite.subject = $objet.subject; $entite.pred = $objet.pred; }  (',' entite  { $entite.subject = $objet.subject; $entite.pred = $objet.pred; } )* ;
-
-
-entite:
-    '<' ID '>'  { System.out.println($entite.subject + " " + $entite.pred + " " + $ID.text); }
-    | '"' TEXT '"'  { System.out.println($entite.subject + " " + $entite.pred + " " + $TEXT.text); }
+entite[String subject, String pred]:
+    '<' ID '>'  { System.out.println($subject + " " + $pred + " " + $ID.text); }
+    | '"' TEXT '"'  { System.out.println($subject + " " + $pred + " " + $TEXT.text); }
 ;
 
 
 
 ID  :   ('a'..'z'|'A'..'Z'|'0'..'9'|'-')+ ;
 TEXT  :   ('a'..'z'|'A'..'Z'|'0'..'9'|'-'|' '|'&')+ ;
-NEWLINE:'\r'? '\n' ;
-WS  :   (' '|'\t')+ {skip();} ;
+WS  :   (' '|'\t'|'\n'|'\r')+ { skip(); } ;
