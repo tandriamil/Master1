@@ -13,7 +13,7 @@ then
 fi
 
 # Tests if the ANTLR file is readable
-ANTLR_JAR=../bin/antlr-3.5.jar
+ANTLR_JAR=$HOME/Librairies/antlr-3.5.jar
 if [ ! -r $ANTLR_JAR ]
 then
   echo "error: could not read ANTLR Jar file: $ANTLR_JAR"
@@ -28,7 +28,7 @@ then
   exit 2
 fi
 
-export CLASSPATH=../bin/antlr-3.5.jar:.:$CLASSPATH
+export CLASSPATH=$ANTLR_JAR:.:$CLASSPATH
 java org.antlr.Tool $1
 
 # Move the tokens file

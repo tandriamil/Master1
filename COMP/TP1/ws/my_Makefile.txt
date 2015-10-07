@@ -7,7 +7,7 @@
 # arguments.
 # example : make run ARGS=tests/test1.ttl
 
-ANTLR_JAR=antlr-3.5.jar
+ANTLR_JAR=$HOME/Librairies/antlr-3.5.jar
 
 
 # My variables
@@ -27,22 +27,22 @@ parser: $(BIN_DIR)$(G)Lexer.class $(BIN_DIR)$(G)Parser.class
 # This is the rule to run the compiled parser. 
 # It depends on the file with the main function (TP1.java) and on the parser.
 run: parser $(BIN_DIR)$(G).class
-	java -cp $(BIN_DIR)$(ANTLR_JAR):../bin $(G) $(ARGS)
+	java -cp $(ANTLR_JAR):../bin $(G) $(ARGS)
 
 # This "special" rule compiles each .java file into a .class file.
 # Whenever a .java file is modified, this rule recompiles it.
 %.class: %.java
-	javac -cp $(BIN_DIR)$(ANTLR_JAR):. $<
+	javac -cp $(ANTLR_JAR):. $<
 
 # This rule updates the ANTLR-generated parser whenever the parser or the
 # lexer grammars are modified.
 $(G)Parser.java: $(G)Parser.g $(G)Lexer.g
-	java -cp $(BIN_DIR)$(ANTLR_JAR):. org.antlr.Tool $(SRC_DIR)$(G)Parser.g
+	java -cp $(ANTLR_JAR):. org.antlr.Tool $(SRC_DIR)$(G)Parser.g
 
 # This rule updates the ANTLR-generated lexer whenever the lexer grammar
 # is modified.
 $(G)Lexer.java: $(G)Lexer.g
-	java -cp $(BIN_DIR)$(ANTLR_JAR):. org.antlr.Tool $(SRC_DIR)$(G)Lexer.g
+	java -cp $(ANTLR_JAR):. org.antlr.Tool $(SRC_DIR)$(G)Lexer.g
 
 # This rule removes intermediary files produced during compilation.
 # WARNING: if any generated file (e.g. TP1Parser.java) has been manually
