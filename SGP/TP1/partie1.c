@@ -32,8 +32,10 @@ int main() {
 
 		// Wait the son to terminate
 		int status;
-		pid_t result_wait;
-		while ((result_wait = wait(&status)) > 0) { }
+		wait(&status);
+		
+		// Bad implementation, just wait() is enough
+		//while ((result_wait = wait(&status)) > 0) { }
 
 		// If an error occured
 		fprintf(stdout, "%s%d.\n", "The son exited with code ", status);

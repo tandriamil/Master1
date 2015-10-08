@@ -51,14 +51,20 @@ int main() {
 		// Display the message received
 		fprintf(stdout, "%s", buffer);
 
-	} while(result_read > 0);
-
-	// End of process, close the fd
-	close(named_pipe);
+	} while(strcmp(buffer, "\n") != 0);
 
 	// Display if an error occurred
 	if (result_read == -1) {
 		fprintf(stderr, "%s\n", "Error during the reading in the pipe.");
+		return -1;
+	}
+
+	// End of process, close the fd
+	close(named_pipe);
+
+	// Remove the created file
+	if (remove("prod-cons") != 0) {
+		fprintf(stderr, "%s\n", "Error during the delete of the file created.");
 		return -1;
 	}
 

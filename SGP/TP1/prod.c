@@ -27,7 +27,7 @@
 int main() {
 
 	// Create a pipe here
-	if (mknod("prod-cons-bis", S_IFIFO | 0666, 0) == -1) {
+	if (mknod("prod-cons", S_IFIFO | 0666, 0) == -1) {
 		fprintf(stderr, "%s\n", "Error during the creation of the named pipe.");
 		return -1;
 	}

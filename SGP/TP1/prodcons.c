@@ -95,7 +95,7 @@ int main() {
 			// Send the message to the pipe
 			result_write = write(fd[1], buffer, MAX_SIZE);
 
-		} while(result_write > 0);
+		} while(strcmp(buffer, "\n") != 0);
 
 		// End of process, close the fd
 		close(fd[1]);
