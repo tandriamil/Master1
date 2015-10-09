@@ -1,26 +1,47 @@
+// Fichier grammaire du binôme
+// ANDRIAMILANTO Tompoariniaina
+// IHSINE Azzeddine
+
+
+
+// Name of our grammer
 grammar Expr;
 
 
-doc: bloc+ ;
+
+// Some options to produce the AST
+options {
+    output=AST;
+    ASTLabelType=CommonTree;
+}
 
 
-bloc: ID  predicat[$ID.text] '.' ;
 
+// Analyse syntaxique
+doc:
+	( bloc { System.out.println($bloc.tree.toStringTree()); } )+
+;
 
-predicat[String subject]:  i1=ID  objet[$subject, $i1.text] ( ';' i2=ID  objet[$subject, $i2.text] )*
+bloc:
+	ID predicat '.'    -> ^(ID predicat)
+;
+
+predicat:
+	ID objet  ( ';' ID objet    -> ^(ID objet) )*    -> ^(ID objet)
+;
+
+objet:
+	entite  ( ',' entite     -> ^(entite) )*    -> ^(entite)
+;
+
+entite:
+    ID    -> ID
+    |  TEXT    -> TEXT
 ;
 
 
-objet[String subject, String pred]: entite[$subject, $pred]  ( ',' entite[$subject, $pred]  )* ;
 
-
-entite[String subject, String pred]:
-    ID  { System.out.println($subject + " " + $pred + " " + $ID.text); }
-    |  TEXT  { System.out.println($subject + " " + $pred + " " + $TEXT.text); }
-;
-
-
-
+// Analyse lexicale
 WS  :   (' '|'\t'|'\n'|'\r')+ { skip(); } ;
-ID  :  '<' ('a'..'z'|'A'..'Z'|'0'..'9'|'-')+ '>' ;
+ID  :  '<' ('a'..'z'|'A'..'Z'|'0'..'9'|'-'|' '|'&')+ '>' ;
 TEXT  :  '"' ('a'..'z'|'A'..'Z'|'0'..'9'|'-'|' '|'&')* '"' ;
