@@ -1,11 +1,11 @@
-// Fichier grammaire du binôme
+// Fichier grammaire 2 du binôme
 // ANDRIAMILANTO Tompoariniaina
 // IHSINE Azzeddine
 
 
 
 // Name of our grammer
-grammar Expr;
+grammar Partie2;
 
 
 
@@ -17,7 +17,7 @@ options {
 
 
 
-// Analyse syntaxique
+// Syntaxic analysis
 doc:
 	( bloc { System.out.println($bloc.tree.toStringTree()); } )+
 ;
@@ -27,11 +27,17 @@ bloc:
 ;
 
 predicat:
-	ID objet  ( ';' ID objet    -> ^(ID objet) )*    -> ^(ID objet)
+	ID objet predicat_prime    -> ^(ID objet)
+;
+
+predicat_prime:
+	';' predicat    -> ^(predicat)
+	|
 ;
 
 objet:
-	entite  ( ',' entite     -> ^(entite) )*    -> ^(entite)
+	entite    -> ^(entite)
+	| entite ',' objet    -> ^(entite) ^(objet)
 ;
 
 entite:
@@ -41,7 +47,7 @@ entite:
 
 
 
-// Analyse lexicale
+// Lexical analysys
 WS  :   (' '|'\t'|'\n'|'\r')+ { skip(); } ;
 ID  :  '<' ('a'..'z'|'A'..'Z'|'0'..'9'|'-'|' '|'&')+ '>' ;
 TEXT  :  '"' ('a'..'z'|'A'..'Z'|'0'..'9'|'-'|' '|'&')* '"' ;

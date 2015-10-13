@@ -1,11 +1,11 @@
 import org.antlr.runtime.*;
  
-public class Test {
+public class Test2 {
     public static void main(String[] args) throws Exception {
         ANTLRInputStream input = new ANTLRInputStream(System.in);
-        ExprLexer lexer = new ExprLexer(input);
+        Partie2Lexer lexer = new Partie2Lexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
-        ExprParser parser = new ExprParser(tokens);
+        Partie2Parser parser = new Partie2Parser(tokens);
         parser.doc();
     }
 }
