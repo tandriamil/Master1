@@ -20,7 +20,7 @@
  * The function to be thrown when the divby0 IT is got
  */
 void div_by_zero() {
-	fprintf(stderr, "%s\n", "SIGFPE catched! You tried to divide by 0!");
+	fprintf(stdout, "%s\n", "SIGFPE catched! You tried to divide by 0!");
 	exit(-1);
 }
 
@@ -34,11 +34,10 @@ void div_by_zero() {
 int main() {
 
 	// Put the function to run when the signal of divby0 is got
-	if (signal(SIGFPE, div_by_zero) == SIG_ERR) {
-		fprintf(stderr, "%s\n", "The signal treatment setting failed.");
-	} else {
-		fprintf(stderr, "%s\n", "The signal treatment setting is correctly done.");
-	}
+	if (signal(SIGFPE, div_by_zero) == SIG_ERR)
+			fprintf(stderr, "%s\n", "FAIL: Signal treatment setting");
+		else
+			fprintf(stderr, "%s\n", "SUCCESS: Signal treatment setting");
 
 	// Some variables
 	int i = 0;

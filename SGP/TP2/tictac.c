@@ -42,14 +42,13 @@ int main() {
 	alarm(1);
 
 	// Put the function to run when the alarm is got
-	if (signal(SIGALRM, alarm_received) == SIG_ERR) {
-		fprintf(stderr, "%s\n", "The signal treatment setting failed.");
-	} else {
-		fprintf(stderr, "%s\n", "The signal treatment setting is correctly done.");
-	}
+	if (signal(SIGALRM, alarm_received) == SIG_ERR)
+		fprintf(stderr, "%s\n", "FAIL: Signal treatment setting");
+	else
+		fprintf(stderr, "%s\n", "SUCCESS: Signal treatment setting");
 
 	// Infinite
-	while (i <= 42);
+	while (1);
 	
 	// End
 	return 0;
