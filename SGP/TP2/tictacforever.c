@@ -72,15 +72,22 @@ int main() {
 
 	// Deblock the ctrl_c_received blocked signal
 	if (set_jmp_counter > 0) {
-		if (sigprocmask(SIG_BLOCK, (int)(SIGINT), NULL) == 0) fprintf(stderr, "%s\n", "Maskage success.");
-		else fprintf(stderr, "%s\n", "Maskage failed.");
+		
+		// Add the SIGINT to the sigset to deblock
+		sigset_t sigtomask;
+		if (sigaddset(&sigtomask, SIGINT) == 0) fprintf(stderr, "%s\n", "Success: Creating the sigset");
+		else fprintf(stderr, "%s\n", "Fail: Creating the sigset");
+
+		// Mask the signal SIGINT
+		if (sigprocmask(SIG_UNBLOCK, &sigtomask, NULL) == 0) fprintf(stderr, "%s\n", "Success: Masking the signal SIGINT");
+		else fprintf(stderr, "%s\n", "Fail: Masking the signal SIGINT");
 	}
 
 	// Set i to 0
 	i = 0;
 
 	// Infinite
-	while (1);
+	while (i<15);
 	
 	// End
 	return 0;

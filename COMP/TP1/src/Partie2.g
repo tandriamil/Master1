@@ -23,26 +23,26 @@ doc:
 ;
 
 bloc:
-	ID predicat '.'    -> ^(ID predicat)
+	ID predicat '.'  -> ^(ID predicat)
 ;
 
 predicat:
-	ID objet predicat_prime    -> ^(ID objet)
+	ID objet predicat_prime  -> ^(ID objet predicat_prime)
 ;
 
 predicat_prime:
-	';' predicat    -> ^(predicat)
+	';' predicat  -> predicat
 	|
 ;
 
 objet:
-	entite    -> ^(entite)
-	| entite ',' objet    -> ^(entite) ^(objet)
+	entite    -> entite
+	| entite ',' objet  -> entite objet
 ;
 
 entite:
-    ID    -> ID
-    |  TEXT    -> TEXT
+    ID  -> ID
+    |  TEXT  -> TEXT
 ;
 
 
