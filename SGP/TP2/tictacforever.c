@@ -54,16 +54,16 @@ int main() {
 
 	// Put the function to run when the alarm is got
 	if (signal(SIGALRM, alarm_received) == SIG_ERR) {
-		fprintf(stderr, "%s\n", "The signal treatment setting for alarm failed.");
+		fprintf(stderr, "%s\n", "FAIL: The signal treatment setting for alarm");
 	} else {
-		fprintf(stderr, "%s\n", "The signal treatment setting for alarm is correctly done.");
+		fprintf(stderr, "%s\n", "SUCCESS: The signal treatment setting for alarm is correctly done");
 	}
 
 	// Put the function to run when the signal of CTRL + C is got
 	if (signal(SIGINT, ctrl_c_received) == SIG_ERR) {
-		fprintf(stderr, "%s\n", "The signal treatment setting for CTRL C failed.");
+		fprintf(stderr, "%s\n", "FAIL: The signal treatment setting for CTRL C");
 	} else {
-		fprintf(stderr, "%s\n", "The signal treatment setting for CTRL C is correctly done.");
+		fprintf(stderr, "%s\n", "SUCCESS: The signal treatment setting for CTRL C");
 	}
 
 	// Set the jmp point
@@ -87,7 +87,7 @@ int main() {
 	i = 0;
 
 	// Infinite
-	while (i<15);
+	while (1);
 	
 	// End
 	return 0;
