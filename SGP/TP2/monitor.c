@@ -15,7 +15,7 @@
 
 
 // Constants
-#define MAX_SIZE 1024  // Max input size
+#define MAX_I_VALUE 42  // Max i value
 
 
 /**
@@ -48,7 +48,7 @@ int main() {
 		i = 0;
 
 		// Infinite
-		while (1) {
+		while (i <= MAX_I_VALUE) {
 			alarm(1);
 			++i;
 			sleep(1);
@@ -59,34 +59,28 @@ int main() {
 	else {
 
 		// Put the function to run when the alarm is got
-		if (signal(SIGALRM, alarm_received) == SIG_ERR)
-			fprintf(stderr, "%s\n", "FAIL: Signal treatment setting for alarm");
-		else
-			fprintf(stderr, "%s\n", "SUCCESS: Signal treatment setting for alarm");
+		if (signal(SIGALRM, alarm_received) == SIG_ERR) fprintf(stderr, "%s\n", "FAIL: Signal treatment setting for alarm");
+		else fprintf(stderr, "%s\n", "SUCCESS: Signal treatment setting for alarm");
 
 		// Put the alarm
 		alarm(2);
 
-		while (1) {
+		while (i <= MAX_I_VALUE) {
 
 			// Wait the son to terminate
 			wait(NULL);
 
 			// The son just terminated, we'll just watch the current state
 			int result_ptrace = (int)ptrace(PTRACE_PEEKDATA, result_fork, &i, NULL);
-			if (result_ptrace == -1)
-				fprintf(stderr, "%s\n", "FAIL: Status reading on the son");
-			else
-				fprintf(stderr, "%s\n", "SUCCESS: Status reading on the son");
+			if (result_ptrace == -1) fprintf(stderr, "%s\n", "FAIL: Status reading on the son");
+			else fprintf(stderr, "%s\n", "SUCCESS: Status reading on the son");
 
 			// Display the value of i
 			fprintf(stdout, "%s%d.\n", "The value of i read by the father is ", result_ptrace);
 
 			// And in the end, tell the son that he can continue
-			if (ptrace(PTRACE_CONT, result_fork, NULL, NULL) == -1)
-				fprintf(stderr, "%s\n", "FAIL: Letting the son continue");
-			else
-				fprintf(stderr, "%s\n", "SUCCESS: Letting the son continue");
+			if (ptrace(PTRACE_CONT, result_fork, NULL, NULL) == -1) fprintf(stderr, "%s\n", "FAIL: Letting the son continue");
+			else fprintf(stderr, "%s\n", "SUCCESS: Letting the son continue");
 		}
 
 	}

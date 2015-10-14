@@ -12,10 +12,6 @@
 #include <signal.h>
 
 
-// Constants
-#define MAX_SIZE 1024  // Max input size
-
-
 /**
  * The function to be thrown when the divby0 IT is got
  */
@@ -34,10 +30,8 @@ void div_by_zero() {
 int main() {
 
 	// Put the function to run when the signal of divby0 is got
-	if (signal(SIGFPE, div_by_zero) == SIG_ERR)
-			fprintf(stderr, "%s\n", "FAIL: Signal treatment setting");
-		else
-			fprintf(stderr, "%s\n", "SUCCESS: Signal treatment setting");
+	if (signal(SIGFPE, div_by_zero) == SIG_ERR) fprintf(stderr, "%s\n", "FAIL: Signal treatment setting");
+	else fprintf(stderr, "%s\n", "SUCCESS: Signal treatment setting");
 
 	// Some variables
 	int i = 0;
@@ -47,28 +41,31 @@ int main() {
 	do {
 
 		if (i == 0) {
+
+			// New division
+			fprintf(stdout, "\n%s\n", "New division,");
+
 			// If first operand
-			fprintf(stdout, "%s\n", "Please enter first number:");
+			fprintf(stdout, "%s\n", "Please enter the dividend (a negative one quit the program):");
 
 			// Get input
 			scanf("%d", &first);
 			++i;
 		} else {
 			// If second operand
-			fprintf(stdout, "%s\n", "Please enter second number:");
+			fprintf(stdout, "%s\n", "Please enter the divisor:");
 
 			// Get input
 			scanf("%d", &second);
 
 			// Display the result
-			fprintf(stdout, "%s%d.\n", "The result is ", (first / second));
+			fprintf(stdout, "%s%d.\n", "The result of the division is ", (first / second));
 			--i;
 		}
 
 	} while(first > 0);
 	
 	// End
-	fprintf(stderr, "%s\n", "End of the process.");
 	return 0;
 
 }

@@ -13,7 +13,7 @@
 
 
 // Constants
-#define MAX_SIZE 1024  // Max input size
+#define MAX_I_VALUE 42  // Max i value
 
 
 // Global var for i
@@ -24,7 +24,7 @@ int i = 0;
  * The function to be thrown when the alarm is received
  */
 void alarm_received() {
-	fprintf(stderr, "%s%d.\n", "The current value of i is ", i);
+	fprintf(stderr, "%s%d.\n", "INFO: The current value of i is ", i);
 	++i;
 	alarm(1);
 }
@@ -42,14 +42,13 @@ int main() {
 	alarm(1);
 
 	// Put the function to run when the alarm is got
-	if (signal(SIGALRM, alarm_received) == SIG_ERR)
-		fprintf(stderr, "%s\n", "FAIL: Signal treatment setting");
-	else
-		fprintf(stderr, "%s\n", "SUCCESS: Signal treatment setting");
+	if (signal(SIGALRM, alarm_received) == SIG_ERR) fprintf(stderr, "%s\n", "FAIL: Signal treatment setting");
+	else fprintf(stderr, "%s\n", "SUCCESS: Signal treatment setting");
 
 	// Infinite
-	while (1);
-	
+	fprintf(stdout, "%s\n", "The program will automatically stop when i reach 42.");
+	while (i <= MAX_I_VALUE);
+
 	// End
 	return 0;
 

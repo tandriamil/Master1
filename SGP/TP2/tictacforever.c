@@ -14,7 +14,7 @@
 
 
 // Constants
-#define MAX_SIZE 1024  // Max input size
+#define MAX_I_VALUE 42  // Max i value
 
 
 // Global vars
@@ -26,7 +26,7 @@ jmp_buf env;
  * The function to be thrown when the alarm is received
  */
 void alarm_received() {
-	fprintf(stderr, "%s%d.\n", "The current value of i is ", i);
+	fprintf(stderr, "%s%d.\n", "INFO: The current value of i is ", i);
 	++i;
 	alarm(1);
 }
@@ -53,40 +53,36 @@ int main() {
 	alarm(1);
 
 	// Put the function to run when the alarm is got
-	if (signal(SIGALRM, alarm_received) == SIG_ERR)
-			fprintf(stderr, "%s\n", "FAIL: Signal treatment setting for alarm");
-		else
-			fprintf(stderr, "%s\n", "SUCCESS: Signal treatment setting for alarm");
+	if (signal(SIGALRM, alarm_received) == SIG_ERR) fprintf(stderr, "%s\n", "FAIL: Signal treatment setting for alarm");
+	else fprintf(stderr, "%s\n", "SUCCESS: Signal treatment setting for alarm");
 
 	// Put the function to run when the signal of CTRL + C is got
-	if (signal(SIGINT, ctrl_c_received) == SIG_ERR) {
-		fprintf(stderr, "%s\n", "FAIL: The signal treatment setting for CTRL C");
-	} else {
-		fprintf(stderr, "%s\n", "SUCCESS: The signal treatment setting for CTRL C");
-	}
+	if (signal(SIGINT, ctrl_c_received) == SIG_ERR) fprintf(stderr, "%s\n", "FAIL: The signal treatment setting for CTRL-C");
+	else fprintf(stderr, "%s\n", "SUCCESS: The signal treatment setting for CTRL-C");
 
 	// Set the jmp point
 	set_jmp_counter = setjmp(env);
-	fprintf(stderr, "%s%d.\n", "The value of setjmp is ", set_jmp_counter);
+	fprintf(stderr, "%s%d.\n", "INFO: The value of setjmp is ", set_jmp_counter);
 
 	// Deblock the ctrl_c_received blocked signal
 	if (set_jmp_counter > 0) {
 		
 		// Add the SIGINT to the sigset to deblock
 		sigset_t sigtomask;
-		if (sigaddset(&sigtomask, SIGINT) == 0) fprintf(stderr, "%s\n", "Success: Creating the sigset");
-		else fprintf(stderr, "%s\n", "Fail: Creating the sigset");
+		if (sigaddset(&sigtomask, SIGINT) == 0) fprintf(stderr, "%s\n", "SUCCESS: Creating the sigset");
+		else fprintf(stderr, "%s\n", "FAIL: Creating the sigset");
 
 		// Mask the signal SIGINT
-		if (sigprocmask(SIG_UNBLOCK, &sigtomask, NULL) == 0) fprintf(stderr, "%s\n", "Success: Masking the signal SIGINT");
-		else fprintf(stderr, "%s\n", "Fail: Masking the signal SIGINT");
+		if (sigprocmask(SIG_UNBLOCK, &sigtomask, NULL) == 0) fprintf(stderr, "%s\n", "SUCCESS: Masking the signal SIGINT");
+		else fprintf(stderr, "%s\n", "FAIL: Masking the signal SIGINT");
 	}
 
 	// Set i to 0
 	i = 0;
 
 	// Infinite
-	while (1);
+	fprintf(stdout, "%s\n", "The program will automatically stop when i reach 42.");
+	while (i <= MAX_I_VALUE);
 	
 	// End
 	return 0;
