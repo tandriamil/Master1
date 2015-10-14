@@ -17,21 +17,12 @@
 // Constants
 #define MAX_SIZE 1024  // Max input size
 
-int pid_son;
 
 /**
  * The function to be thrown when the alarm is received
  */
 void alarm_received() {
-	if (kill(SIGCHLD, pid_son) == -1)
-		fprintf(stderr, "%s\n", "FAIL545: Signal treatment setting for alarm");
-	else
-		fprintf(stderr, "%s\n", "SUCCESS545: Signal treatment setting for alarm");
-}
-
-
-void user() {
-	ptrace(PTRACE_TRACEME, NULL, NULL, NULL);
+	alarm(2);
 }
 
 
@@ -51,18 +42,14 @@ int main() {
 
 	// If the SON
 	if (result_fork == 0) {
-
-		// Put the function to run when the alarm is got
-		if (signal(SIGCHLD, user) == SIG_ERR)
-			fprintf(stderr, "%s\n", "FAIL: Signal treatment setting for alarm");
-		else
-			fprintf(stderr, "%s\n", "SUCCESS: Signal treatment setting for alarm");
+		ptrace(PTRACE_TRACEME, NULL, NULL, NULL);
 
 		// Set i to 0
 		i = 0;
 
 		// Infinite
 		while (1) {
+			alarm(1);
 			++i;
 			sleep(1);
 		}
@@ -86,7 +73,7 @@ int main() {
 			wait(NULL);
 
 			// The son just terminated, we'll just watch the current state
-			int result_ptrace = (int)ptrace(PTRACE_PEEKTEXT/PTRACE_PEEKDATA, result_fork, &i, NULL);
+			int result_ptrace = (int)ptrace(PTRACE_PEEKDATA, result_fork, &i, NULL);
 			if (result_ptrace == -1)
 				fprintf(stderr, "%s\n", "FAIL: Status reading on the son");
 			else
@@ -100,9 +87,6 @@ int main() {
 				fprintf(stderr, "%s\n", "FAIL: Letting the son continue");
 			else
 				fprintf(stderr, "%s\n", "SUCCESS: Letting the son continue");
-
-			// Put alarm back
-			alarm(2);
 		}
 
 	}
