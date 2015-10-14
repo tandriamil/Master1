@@ -53,11 +53,10 @@ int main() {
 	alarm(1);
 
 	// Put the function to run when the alarm is got
-	if (signal(SIGALRM, alarm_received) == SIG_ERR) {
-		fprintf(stderr, "%s\n", "FAIL: The signal treatment setting for alarm");
-	} else {
-		fprintf(stderr, "%s\n", "SUCCESS: The signal treatment setting for alarm is correctly done");
-	}
+	if (signal(SIGALRM, alarm_received) == SIG_ERR)
+			fprintf(stderr, "%s\n", "FAIL: Signal treatment setting for alarm");
+		else
+			fprintf(stderr, "%s\n", "SUCCESS: Signal treatment setting for alarm");
 
 	// Put the function to run when the signal of CTRL + C is got
 	if (signal(SIGINT, ctrl_c_received) == SIG_ERR) {
