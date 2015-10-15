@@ -19,20 +19,25 @@ options {
 
 // Syntaxic analysis
 doc:
-	( bloc { System.out.println($bloc.tree.toStringTree()); } )+
+	bloc { System.out.println($bloc.tree.toStringTree()); }
 ;
 
 bloc:
-	ID predicat '.'  -> ^(ID predicat)
+	ID predicat '.' bloc_prime   -> ^(ID predicat)
+;
+
+bloc_prime:
+	bloc   -> bloc
+	|  // Empty word
 ;
 
 predicat:
-	ID objet predicat_prime  -> ^(ID objet predicat_prime)
+	ID objet predicat_prime  -> ^(ID objet)
 ;
 
 predicat_prime:
 	';' predicat  -> predicat
-	|
+	|  // Empty word
 ;
 
 objet:

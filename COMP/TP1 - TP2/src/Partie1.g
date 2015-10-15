@@ -10,10 +10,16 @@ grammar Partie1;
 
 
 // Syntaxic analysis
-doc: bloc+ ;
+doc: bloc;
 
 
-bloc: ID  predicat[$ID.text] '.' ;
+bloc: ID predicat[$ID.text] '.' bloc_prime;
+
+
+bloc_prime:
+	bloc
+	|  // Empty word
+;
 
 
 predicat[String subject]:
