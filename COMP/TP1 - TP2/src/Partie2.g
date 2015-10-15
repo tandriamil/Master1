@@ -23,7 +23,7 @@ doc:
 ;
 
 bloc:
-	ID predicat '.' bloc_prime   -> ^(ID predicat)
+	ID predicat '.' bloc_prime   -> ^(ID predicat) bloc_prime?
 ;
 
 bloc_prime:
@@ -32,7 +32,7 @@ bloc_prime:
 ;
 
 predicat:
-	ID objet predicat_prime  -> ^(ID objet)
+	ID objet predicat_prime  -> ^(ID objet) predicat_prime?
 ;
 
 predicat_prime:
@@ -41,13 +41,13 @@ predicat_prime:
 ;
 
 objet:
-	entite    -> entite
-	| entite ',' objet  -> entite objet
+	ID objet_prime   -> ID objet_prime?
+	| TEXT objet_prime   -> TEXT objet_prime?
 ;
 
-entite:
-    ID  -> ID
-    |  TEXT  -> TEXT
+objet_prime:
+	',' objet   -> objet
+	|  // Empty word
 ;
 
 
