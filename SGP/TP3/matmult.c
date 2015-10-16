@@ -14,6 +14,7 @@
 
 // Constants
 #define MAT_SIZE 64
+#define NB_ROWS_PER_THREAD 8
 #define NB_SON_THREADS 8
 #define RAND_MIN_VALUE 0
 #define RAND_MAX_VALUE 100
@@ -27,7 +28,7 @@ void display_matrice(double m[MAT_SIZE][MAT_SIZE]) {
 	int x, y;
 	for (x = 0; x < MAT_SIZE; ++x) {
 		for (y = 0; y < MAT_SIZE; ++y) {
-			fprintf(stderr, "[%f] ", m1[x][y]);
+			fprintf(stderr, "[%f] ", m[x][y]);
 		}
 		fprintf(stderr, "\n");
 	}
@@ -35,7 +36,7 @@ void display_matrice(double m[MAT_SIZE][MAT_SIZE]) {
 
 
 double double_random() {
-	return (rand()/(double)RAND_MAX) * (RAND_MAX_VALUE-RAND_MIN_VALUE) + RAND_MIN_VALUE;
+	return ((rand()/(double)RAND_MAX) * (RAND_MAX_VALUE-RAND_MIN_VALUE) + RAND_MIN_VALUE);
 }
 
 
@@ -43,13 +44,18 @@ void * matmult(void * arg) {
 
 	// Get the thread number
 	int thread_number = *((int *)arg);
+	//fprintf(stderr, "INFO: Thread n° %d\n", thread_number);
 
-	// Do the maths
+	// Vars to do the maths
 	int row, j, res_col;
-	for (j = 0; j < NB_SON_THREADS; ++j) {
-		row = thread_number * NB_SON_THREADS + j;
 
+	// For a given row
+	for (j = 0; j < NB_ROWS_PER_THREAD; ++j) {
+		row = thread_number * NB_ROWS_PER_THREAD + j;
+
+		// For each cols
 		for (res_col = 0; res_col < MAT_SIZE; ++res_col) {
+			//fprintf(stderr, "INFO: Thread n° %d and [row, col]=[%d, %d]\n", thread_number, row, res_col);
 			result[row][res_col] += m1[res_col][row] * m2[row][res_col];
 		}
 	}
@@ -84,15 +90,15 @@ void * populate_threads(void * arg) {
  */
 int main() {
 
-	// Initialize the srand value
-	srand(time(NULL));
+	// Initialize the seed
+	srand(time(0));
 
 	// Initialize the two matrices
 	int i, j;
 	for (i = 0; i < MAT_SIZE; ++i) {
 		for (j = 0; j < MAT_SIZE ; ++j) {
-			m1[i][j] = double_random();
 			m2[i][j] = double_random();
+			m1[i][j] = double_random();
 		}
 	}
 
