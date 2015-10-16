@@ -3,7 +3,7 @@
 # IHSINE Azzeddine
 
 # Global vars
-CFLAGS = -g -Wall -lpthread
+CFLAGS = -g -Wall -lpthread -pthread
 
 
 # Compilations

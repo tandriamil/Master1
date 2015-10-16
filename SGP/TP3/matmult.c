@@ -14,6 +14,7 @@
 
 // Constants
 #define MAT_SIZE 64
+#define NB_SON_THREADS 8
 #define RAND_MIN_VALUE 0
 #define RAND_MAX_VALUE 100
 
@@ -21,7 +22,7 @@
 double m1[MAT_SIZE][MAT_SIZE], m2[MAT_SIZE][MAT_SIZE], result[MAT_SIZE][MAT_SIZE];
 
 
-void display_matrice(double * m) {
+void display_matrice(double m[MAT_SIZE][MAT_SIZE]) {
 
 	int x, y;
 	for (x = 0; x < MAT_SIZE; ++x) {
@@ -30,7 +31,6 @@ void display_matrice(double * m) {
 		}
 		fprintf(stderr, "\n");
 	}
-
 }
 
 
@@ -44,18 +44,18 @@ void * matmult(void * arg) {
 	// Get the thread number
 	int thread_number = *((int *)arg);
 
-	// Do the calculs
+	// Do the maths
 	int row, j, res_col;
-	for (j = 0; j < 8; ++j) {
-		row = thread_number * 8 + j;
+	for (j = 0; j < NB_SON_THREADS; ++j) {
+		row = thread_number * NB_SON_THREADS + j;
 
-		for (res_col = 0; res_col < 64; ++res_col) {
+		for (res_col = 0; res_col < MAT_SIZE; ++res_col) {
 			result[row][res_col] += m1[res_col][row] * m2[row][res_col];
 		}
 	}
 
-	// Return empty value
-	return NULL;
+	// End
+	pthread_exit(0);
 }
 
 
@@ -66,13 +66,13 @@ void * populate_threads(void * arg) {
 
 	// Create the eight processes, eight times
 	int i;
-	for (i = 0; i < 8; ++i) {
+	for (i = 0; i < NB_SON_THREADS; ++i) {
 		if (pthread_create((pthread_t *)(slaves + i * sizeof(pthread_t)), NULL, &matmult, &i) == 0) fprintf(stderr, "SUCCESS: Creation of thread number %d at i=%d \n", (int)*(slaves + i * sizeof(pthread_t)), i);
 		else fprintf(stderr, "FAIL: Creation of thread number %d at i=%d\n", (int)*(slaves + i * sizeof(pthread_t)), i);
 	}
 
 	// End
-	return NULL;
+	pthread_exit(0);
 }
 
 
@@ -103,7 +103,7 @@ int main() {
 	display_matrice(m2);
 
 	// Create the main thread
-	pthread_t slaves[8];
+	pthread_t slaves[NB_SON_THREADS];
 	pthread_t main_thread;
 	if (pthread_create(&main_thread, NULL, &populate_threads, &slaves) == 0) fprintf(stderr, "%s\n", "SUCCESS: Creation of the main thread");
 	else fprintf(stderr, "%s\n", "FAIL: Creation of the main thread");
@@ -113,10 +113,14 @@ int main() {
 	else fprintf(stderr, "%s\n", "FAIL: Wait the end of the main thread");
 
 	// Wait the sons to terminate
-	for (i = 0; i < 8; ++i) {
-		if (pthread_join(slaves[i], NULL) == 0) fprintf(stderr, "%s%d\n", "SUCCESS: Wait the end of the thread n°", i);
+	for (i = 0; i < NB_SON_THREADS; ++i) {
+		if (pthread_join(*(slaves + i * sizeof(pthread_t)), NULL) == 0) fprintf(stderr, "%s%d\n", "SUCCESS: Wait the end of the thread n°", i);
 		else fprintf(stderr, "%s%d\n", "FAIL: Wait the end of the thread n°", i);
 	}
+
+	// Then display the result
+	fprintf(stderr, "\n%s\n", "The result:");
+	display_matrice(result);
 
 	// End
 	return 0;
