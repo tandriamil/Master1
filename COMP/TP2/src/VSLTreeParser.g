@@ -18,9 +18,37 @@ expression [SymbolTable symTab] returns [ExpAttribute expAtt]
       Code3a cod = Code3aGenerator.genBinOp(Inst3a.TAC.ADD, temp, e1, e2);
       expAtt = new ExpAttribute(ty, cod, temp);
     }
+  | ^(MINUS e1=expression[symTab] e2=expression[symTab]) 
+    { 
+      Type ty = TypeCheck.checkBinOp(e1.type, e2.type);
+      VarSymbol temp = SymbDistrib.newTemp();
+      Code3a cod = Code3aGenerator.genBinOp(Inst3a.TAC.SUB, temp, e1, e2);
+      expAtt = new ExpAttribute(ty, cod, temp);
+    }  
+  | pe=factor[symTab] 
+    { expAtt = pe; }
+  ;
+
+
+ factor [SymbolTable symTab] returns [ExpAttribute expAtt]
+  : ^(MUL p1=factor[symTab] p2=factor[symTab])
+    { 
+      Type ty = TypeCheck.checkBinOp(p1.type, p2.type);
+      VarSymbol temp = SymbDistrib.newTemp();
+      Code3a cod = Code3aGenerator.genBinOp(Inst3a.TAC.MUL, temp, p1, p2);
+      expAtt = new ExpAttribute(ty, cod, temp);
+    }
+  |^(DIV p1=factor[symTab] p2=factor[symTab])
+    { 
+      Type ty = TypeCheck.checkBinOp(p1.type, p2.type);
+      VarSymbol temp = SymbDistrib.newTemp();
+      Code3a cod = Code3aGenerator.genBinOp(Inst3a.TAC.DIV, temp, p1, p2);
+      expAtt = new ExpAttribute(ty, cod, temp);
+    }  
   | pe=primary_exp[symTab] 
     { expAtt = pe; }
   ;
+ 
 
 primary_exp [SymbolTable symTab] returns [ExpAttribute expAtt]
   : INTEGER
