@@ -23,6 +23,10 @@
 double m1[MAT_SIZE][MAT_SIZE], m2[MAT_SIZE][MAT_SIZE], result[MAT_SIZE][MAT_SIZE];
 
 
+/**
+ * Display the matrice
+ * Param: - Double table of double
+ */
 void display_matrice(double m[MAT_SIZE][MAT_SIZE]) {
 
 	int x, y;
@@ -35,11 +39,19 @@ void display_matrice(double m[MAT_SIZE][MAT_SIZE]) {
 }
 
 
+/**
+ * Generate a random double
+ * Return: A random double
+ */
 double double_random() {
 	return ((rand()/(double)RAND_MAX) * (RAND_MAX_VALUE-RAND_MIN_VALUE) + RAND_MIN_VALUE);
 }
 
 
+/**
+ * Function to calculate the rows for each son
+ * Param: - A pointer to the id of the son
+ */
 void * matmult(void * arg) {
 
 	// Get the thread number
@@ -69,6 +81,9 @@ void * matmult(void * arg) {
 }
 
 
+/**
+ * Function for the main thread to generate the sons
+ */
 void * populate_threads() {
 
 	// The sons
@@ -106,14 +121,8 @@ int main() {
 	// Initialize the seed
 	srand(time(0));
 
-	// Initialize the two matrices
+	// Some vars needed for initialization
 	int i, j;
-	for (i = 0; i < MAT_SIZE; ++i) {
-		for (j = 0; j < MAT_SIZE ; ++j) {
-			m2[i][j] = double_random();
-			m1[i][j] = double_random();
-		}
-	}
 
 	// Initializes the result matrice
 	for (i = 0; i < MAT_SIZE; ++i) {
@@ -122,17 +131,42 @@ int main() {
 		}
 	}
 
-	/* #################### Test of the correct result of the multiplication 
+	// Initialize the two matrices
+	for (i = 0; i < MAT_SIZE; ++i) {
+		for (j = 0; j < MAT_SIZE ; ++j) {
+			m2[i][j] = double_random();
+			m1[i][j] = double_random();
+		}
+	}
 
-	m2[0][0] = 3;
-	m2[0][1] = 1;
-	m2[1][0] = 2;
-	m2[1][1] = 1;
+	/* #################### Test of the correct result of the multiplication with a matrice of length equals to 2
 
-	m1[0][0] = 1;
-	m1[0][1] = 0;
-	m1[1][0] = -1;
-	m1[1][1] = 3; */
+		// Put the constants with those values
+		// MAT_SIZE = 2
+		// NB_ROWS_PER_THREAD = 1
+		// NB_SON_THREADS = 1
+
+		// Initializes the valus of the matrices
+		m2[0][0] = 3;
+		m2[0][1] = 1;
+		m2[1][0] = 2;
+		m2[1][1] = 1;
+
+		// m2 = (3 1)
+		//      (2 1)
+
+		m1[0][0] = 1;
+		m1[0][1] = 0;
+		m1[1][0] = -1;
+		m1[1][1] = 3;
+
+		// m1 = (1  0)
+		//      (-1 3)
+
+		// The result should be
+		// result = (3 1)
+		//          (3 2)
+	*/
 
 	// Display the state of the matrices
 	fprintf(stderr, "\n%s\n", "First matrice:");
@@ -148,25 +182,6 @@ int main() {
 	// Wait the main thread
 	if (pthread_join(main_thread, NULL) == 0) fprintf(stderr, "%s\n", "SUCCESS: Wait the end of the main thread");
 	else fprintf(stderr, "%s\n", "FAIL: Wait the end of the main thread");
-
-
-
-	/* #################### This was just a test without using threads, no segfault ####################
-
-	// Vars needed
-	int row, res_col;
-
-	// For a given row
-	for (row = 0; row < MAT_SIZE; ++row) {
-
-		// For each cols
-		for (res_col = 0; res_col < MAT_SIZE; ++res_col) {
-			//fprintf(stderr, "INFO: Thread n° %d and [row, col]=[%d, %d]\n", thread_number, row, res_col);
-			result[row][res_col] += m1[res_col][row] * m2[row][res_col];
-		}
-	} */
-
-
 
 	// Then display the result
 	fprintf(stderr, "\n%s\n", "The result:");
