@@ -1,0 +1,20 @@
+Appels systèmes:
+	- Les fichiers impliqués dans les appels systèmes sont les fichiers
+		- kernel/sys.s  => Gère le code assembleur qui se charge de passer l'identifiant du code d'appel et appel
+		- kernel/syscall.h  => Défini les constantes et les codes des appels systèmes
+
+	- Utilisateur (hello.c)
+		- n_printf  >>  va_strat + vsnprintf + va_end  >>  Write  >>  sys.s::Write
+
+
+Gestion de threads et processus:
+	1) Les registres minimum (PC et ) doivent être enregistrés. Ensuite, nous devons aussi enregistrer les registres utilisés dans le programme
+	2) La variable pour retenir la liste des threads est Thread::threadContextT (cf thread.h). Le thread élu est dans la variable process (même fichier) et n'appartient pas à cette liste.
+	3) g_alive contient la liste des threads existants et actifs. Le champ readyList quand à lui est la liste des threads prêts mais non actifs.
+	4) Non elles ne se chargent pas d'allouer ou désallouer la mémoire car (CF scheduler.cc ligne 121) lors du changement de contexte, l'on est toujours dans l'ancienne liste.
+	5) ???
+	6) 
+
+
+Environnement de développement:
+	1) 
