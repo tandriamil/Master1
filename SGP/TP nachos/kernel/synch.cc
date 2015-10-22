@@ -74,11 +74,37 @@ Semaphore::~Semaphore()
 //	when it is called.
 */
 //----------------------------------------------------------------------
+#ifndef ETUDIANTS_TP
 void
 Semaphore::P() {
   printf("**** Warning: method Semaphore::P is not implemented yet\n");
   exit(-1);
 }
+#endif
+
+#ifdef ETUDIANTS_TP
+void Semaphore::P() {
+
+  // Disable interrupts and save the previous state
+  IntStatus previous_int_status = g_machine->interrupt->SetStatus(INTERRUPTS_OFF);
+
+  // Decrement value
+  --value;
+
+  // If no more tickets
+  if (value < 0) {
+
+    // Add this thread to the waiting ones
+    queue->Append(g_current_thread);
+
+    // And put it in sleep mode
+    g_current_thread->Sleep();
+  }
+
+  // Put back the previous state of interrupts
+  g_machine->interrupt->SetStatus(previous_int_status);
+}
+#endif
 
 //----------------------------------------------------------------------
 // Semaphore::V
@@ -88,11 +114,37 @@ Semaphore::P() {
 //	are disabled when it is called.
 */
 //----------------------------------------------------------------------
+#ifndef ETUDIANTS_TP
 void
 Semaphore::V() {
    printf("**** Warning: method Semaphore::V is not implemented yet\n");
     exit(-1);
 }
+#endif
+
+#ifdef ETUDIANTS_TP
+void Semaphore::V() {
+
+  // Disable interrupts and save the previous state
+  IntStatus previous_int_status = g_machine->interrupt->SetStatus(INTERRUPTS_OFF);
+
+  // Decrement value
+  ++value;
+
+  // If there are waiting threads
+  if (!queue->IsEmpty()) {
+
+    // Get the more ancient thread and put him in the ready list
+    Thead *waiting_thread = queue->Remove();
+
+    // And put it in ready threads list
+    g_scheduler->ReadyToRun(waiting_thread);
+  }
+
+  // Put back the previous state of interrupts
+  g_machine->interrupt->SetStatus(previous_int_status);
+}
+#endif
 
 //----------------------------------------------------------------------
 // Lock::Lock
