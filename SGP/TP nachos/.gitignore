@@ -1,1 +1,12 @@
+**.a
+**.o
+**.d
+
+test/halt
+test/hello
+test/matmult
+test/shell
+test/sort
+
+nachos
 html

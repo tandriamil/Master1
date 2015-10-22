@@ -135,7 +135,7 @@ void Semaphore::V() {
   if (!queue->IsEmpty()) {
 
     // Get the more ancient thread and put him in the ready list
-    Thead *waiting_thread = queue->Remove();
+    Thread *waiting_thread = (Thread *)queue->Remove();
 
     // And put it in ready threads list
     g_scheduler->ReadyToRun(waiting_thread);
