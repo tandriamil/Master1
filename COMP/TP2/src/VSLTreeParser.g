@@ -23,10 +23,9 @@ expression [SymbolTable symTab] returns [ExpAttribute expAtt]
 
       // Get a new temporary var for the 3ad code
       VarSymbol temp = SymbDistrib.newTemp();
-      Code3a cod = Code3aGenerator.genBinOp(Inst3a.TAC.ADD, temp, e1, e2);
 
       // Return the Expression attribute
-      expAtt = new ExpAttribute(ty, cod, temp);
+      expAtt = new ExpAttribute(ty, Code3aGenerator.genBinOp(Inst3a.TAC.ADD, temp, e1, e2), temp);
     }
   | ^(MINUS e1=expression[symTab] e2=expression[symTab]) 
     { 
@@ -39,10 +38,9 @@ expression [SymbolTable symTab] returns [ExpAttribute expAtt]
 
       // Get a new temporary var for the 3ad code
       VarSymbol temp = SymbDistrib.newTemp();
-      Code3a cod = Code3aGenerator.genBinOp(Inst3a.TAC.SUB, temp, e1, e2);
 
       // Return the Expression attribute
-      expAtt = new ExpAttribute(ty, cod, temp);
+      expAtt = new ExpAttribute(ty, Code3aGenerator.genBinOp(Inst3a.TAC.SUB, temp, e1, e2), temp);
     }  
   | pe=factor[symTab] 
     { expAtt = pe; }
@@ -62,10 +60,9 @@ factor [SymbolTable symTab] returns [ExpAttribute expAtt]
 
       // Get a new temporary var for the 3ad code
       VarSymbol temp = SymbDistrib.newTemp();
-      Code3a cod = Code3aGenerator.genBinOp(Inst3a.TAC.MUL, temp, p1, p2);
      
       // Return the Expression attribute
-      expAtt = new ExpAttribute(ty, cod, temp);
+      expAtt = new ExpAttribute(ty, Code3aGenerator.genBinOp(Inst3a.TAC.MUL, temp, p1, p2), temp);
     }
   |^(DIV p1=factor[symTab] p2=factor[symTab])
     { 
@@ -76,10 +73,9 @@ factor [SymbolTable symTab] returns [ExpAttribute expAtt]
 
       // Get a new temporary var for the 3ad code
       VarSymbol temp = SymbDistrib.newTemp();
-      Code3a cod = Code3aGenerator.genBinOp(Inst3a.TAC.DIV, temp, p1, p2);
 
       // Return the Expression attribute
-      expAtt = new ExpAttribute(ty, cod, temp);
+      expAtt = new ExpAttribute(ty, Code3aGenerator.genBinOp(Inst3a.TAC.DIV, temp, p1, p2), temp);
     }  
   | pe=primary_exp[symTab] 
     { expAtt = pe; }
@@ -106,8 +102,13 @@ primary_exp [SymbolTable symTab] returns [ExpAttribute expAtt]
       // Return the ExpAttribute corresponding to it
       expAtt = new ExpAttribute(id.type, new Code3a(), id);
     }
-  | ^(NEGAT primary_exp[symTab])
+  | ^(NEGAT pe=primary_exp[symTab])
     {
-      
+
+      // Get a new temporary var for the 3ad code
+      VarSymbol temp = SymbDistrib.newTemp();
+
+      // Return the ExpAttribute corresponding to it
+      expAtt = new ExpAttribute(pe.type, Code3aGenerator.genBinOp(Inst3a.TAC.NEG, temp, pe, null), temp);
     }
   ;
