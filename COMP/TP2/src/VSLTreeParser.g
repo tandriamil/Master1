@@ -10,6 +10,34 @@ s [SymbolTable symTab] returns [Code3a code]
   : e=expression[symTab] { code = e.code; }
   ;
 
+
+statement [SymbolTable symTab]
+    : ^(ASSIGN_KW IDENT expression) {
+
+      // Get the ident from the symtab
+      Operand3a id = symTab.lookup($IDENT.text);
+
+      // If the ident wasn't found
+      if (id == null) Errors.unknownIdentifier($ASSIGN_KW, $IDENT.text, null);
+
+      // Check expression and IDENT type
+      Type ty = TypeCheck.checkBinOp(id.type, expression.type);
+
+      // If wrong type
+      if (ty == Type.ERROR) {
+        Errors.incompatibleTypes($ASSIGN_KW, id.type, ty, null);
+      }
+
+      // And here, affect (with 3@ code)
+      
+    }
+    | ^(PRINT_KW print_list)
+    | ^(READ_KW read_list)
+    | ^(IF_KW expression THEN_KW! statement (ELSE_KW! statement)? FI_KW!)
+    | ^(WHILE_KW expression DO_KW! statement OD_KW!)
+    ;
+
+
 expression [SymbolTable symTab] returns [ExpAttribute expAtt]
   : ^(PLUS e1=expression[symTab] e2=expression[symTab]) 
     {
