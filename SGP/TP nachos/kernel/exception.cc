@@ -629,6 +629,92 @@ void ExceptionHandler(ExceptionType exceptiontype, int vaddr)
 	  break;
 	}
 
+
+#ifdef ETUDIANTS_TP
+
+		// ############### Semaphores ###############
+		// Call to a P on a semaphore
+		case SC_P:
+			DEBUG('e', (char*)"P syscall called\n");
+			break;
+
+		// Call to a V on a semaphore
+		case SC_V:
+			break;
+
+		// Create a semaphore
+		case SC_SEM_CREATE:
+			DEBUG('e', (char*)"SEM_CREATE syscall called\n");
+
+			// The int to store the values got from the registers
+			int debug_name, count;
+
+			// Get the values from registers
+			debug_name = g_machine->ReadIntRegister(4);  // Int representation of the pointer
+			count = g_machine->ReadIntRegister(5);
+
+			// Build the name of the semaphore using utilities methods
+			int name_size = GetLengthParam(name_addr);
+			char name[name_size];
+			GetStringParam(debug_name, name, name_size);
+
+			// Then create the semaphore
+			Semaphore *sema = new Semaphore(name, count);
+
+			// Add its id to the object_ids of the system
+			int32_t tid = g_object_ids->AddObject(sema);
+
+			// Put the return value into reg2
+			g_machine->WriteIntRegister(2, tid);
+			g_syscall_error->SetMsg((char*)"", NoError);
+			break;
+
+		// Create a semaphore
+		case SC_SEM_DESTROY:
+			break;
+
+
+		// ############### Locks ###############
+		// Create a lock
+		case SC_LOCK_CREATE:
+			break;
+
+		// Destroy a lock
+		case SC_LOCK_DESTROY:
+			break;
+
+		// Acquire a lock
+		case SC_LOCK_ACQUIRE:
+			break;
+
+		// Release a lock
+		case SC_LOCK_RELEASE:
+			break;
+
+
+		// ############### Conditions ###############
+		// Create a condition
+		case SC_COND_CREATE:
+			break;
+
+		// Destroy a condition
+		case SC_COND_DESTROY:
+			break;
+
+		// Wait on a condition
+		case SC_COND_WAIT:
+			break;
+
+		// Signal on a condition (wake the first waiting)
+		case SC_COND_SIGNAL:
+			break;
+
+		// Broadcast on a condition (wake all those waiting)
+		case SC_COND_BROADCAST:
+			break;
+#endif
+
+
        default:
          printf("Invalid system call number : %d\n", type);
          exit(-1);
