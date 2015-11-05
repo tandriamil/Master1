@@ -1,0 +1,5 @@
+Débuggage Nachos:
+DEBUG et ASSERT sont utilisés à pleins d'endroits et servent pour débugger!
+
+GDB non utilisable pour les deux niveaux.
+Uniquement pour Nachos et pas pour les programmes utilisateurs.
