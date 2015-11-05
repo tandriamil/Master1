@@ -3,7 +3,7 @@
 # Vérifiez bien les valeurs suivantes avant de procéder.
 # -----------------------------------------------------------------------------
 
-ANTLR_JAR=/share/m1info/COMP/antlr/antlr-3.5.jar
+ANTLR_JAR=$(HOME)/Librairies/antlr-3.5.jar
 SRC_DIR=./src
 
 
