@@ -3,7 +3,11 @@
 # Vérifiez bien les valeurs suivantes avant de procéder.
 # -----------------------------------------------------------------------------
 
-ANTLR_JAR=/share/m1info/COMP/antlr/antlr-3.5.jar
+ifdef LOCAL_WORKSPACE
+	ANTLR_JAR=$(HOME)/Librairies/antlr-3.5.jar
+else
+	ANTLR_JAR=/share/m1info/COMP/antlr/antlr-3.5.jar
+endif
 SRC_DIR=./src
 
 
