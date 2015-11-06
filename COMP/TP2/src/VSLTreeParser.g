@@ -9,12 +9,16 @@ options {
 
 
 s [SymbolTable symTab]
-	: e=expression[symTab] { $e.expAtt.code.print(); }
+	: expression[symTab]
+		{
+			// Display the code
+			$expression.expAtt.code.print();
+		}
 ;
 
 
 statement [SymbolTable symTab] returns [Code3a code]
-	: ^(ASSIGN_KW IDENT exp=expression[symTab])
+	: ^(ASSIGN_KW IDENT expression[symTab])
 		{
 			// Get the ident from the symtab
 			Operand3a id = symTab.lookup($IDENT.text);
@@ -23,66 +27,78 @@ statement [SymbolTable symTab] returns [Code3a code]
 			if (id == null) Errors.unknownIdentifier($ASSIGN_KW, $IDENT.text, null);
 
 			// Check expression and IDENT type
-			Type ty = TypeCheck.checkBinOp(id.type, $exp.expAtt.type);
+			Type ty = TypeCheck.checkBinOp(id.type, $expression.expAtt.type);
 
 			// If wrong type
 			if (ty == Type.ERROR) Errors.incompatibleTypes($ASSIGN_KW, id.type, ty, null);
 
 			// And here, affect (with 3@ code)
 			// code.append(Code3aGenerator.genAff(id, exp));
-			$code = Code3aGenerator.genAff(id, $exp.expAtt);
+			$code = Code3aGenerator.genAff(id, $expression.expAtt);
 		}
 
-	| ^(IF_KW exp=expression[symTab] THEN_KW! st1=statement[symTab] (ELSE_KW! st2=statement[symTab])? FI_KW!)
+	| ^(IF_KW expression[symTab] THEN_KW! st1=statement[symTab] (ELSE_KW! st2=statement[symTab])? FI_KW!)
 		{
 			// If there's a second statement
 			// if (st2 != null) code.append(Code3aGenerator.genIF(exp, st1));
-			if (st2 != null) $code = Code3aGenerator.genIF($exp.expAtt, $st1.code);
+			if (st2 != null) $code = Code3aGenerator.genIF($expression.expAtt, $st1.code);
 
 			// If no second statement
 			// else code.append(Code3aGenerator.genIF(exp, st1, st2));
-			else $code = Code3aGenerator.genIFELSE($exp.expAtt, $st1.code, $st2.code);
+			else $code = Code3aGenerator.genIFELSE($expression.expAtt, $st1.code, $st2.code);
 		}
 
-	| ^(WHILE_KW exp=expression[symTab] DO_KW! st=statement[symTab] OD_KW!)
+	| ^(WHILE_KW expression[symTab] DO_KW! st=statement[symTab] OD_KW!)
 		{
 			// Generate the while code
 			//code.append(Code3aGenerator.genWHILE(exp, st));
-			$code = Code3aGenerator.genWHILE($exp.expAtt, $st.code);
+			$code = Code3aGenerator.genWHILE($expression.expAtt, $st.code);
 	 	}
 
-	| ^(BLOCK declaration inst_list)
+	| block[symTab]
 		{
-
-		}
-
-	| ^(BLOCK inst_list)
-		{
-
+			$code = $block.code;
 		}
 ;
 
 
-inst_list
-	: ^(INST statement+)
+block [SymbolTable symTab] returns [Code3a code]
+	: ^(BLOCK  inst_list[symTab])
 		{
 
+		}
+
+	| ^(BLOCK (declaration[symTab]) inst_list[symTab])
+		{
+			$code = $inst_list.code;
 		}
 ;
 
 
-declaration
-	: ^(DECL decl_list+)
+inst_list [SymbolTable symTab] returns [Code3a code]
+	: ^(INST statement[symTab]+)
 		{
-
+			$code = $statement.code;
 		}
+
+	| ^(DECL decl_item[symTab]+)
 ;
 
 
-decl_list
+decl_item [SymbolTable symTab]
 	: ^(ARDECL IDENT INTEGER)
 		{
-			
+			// Get the ident from the symtab
+			Operand3a id = symTab.lookup($IDENT.text);
+
+			// If the ident is already defined
+			if (id != null) Errors.redefinedIdentifier($ARDECL, $IDENT.text, null);
+
+			// If ok, define it
+			id = new Operand3a(Type.INT);
+
+			// And add it to symTab
+			$symTab.insert($IDENT.text, id);
 		}
 ;
 
@@ -118,8 +134,8 @@ expression [SymbolTable symTab] returns [ExpAttribute expAtt]
 			$expAtt = new ExpAttribute(ty, Code3aGenerator.genBinOp(Inst3a.TAC.SUB, temp, $e1.expAtt, $e2.expAtt), temp);
 		}
 
-	| pe=factor[symTab]
-		{ $expAtt = $pe.expAtt; }
+	| factor[symTab]
+		{ $expAtt = $factor.expAtt; }
 ;
 
 
