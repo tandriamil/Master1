@@ -35,7 +35,7 @@ public class Code3aGenerator {
 	}
 
 	/** 
-	* Generate code for if .....then 
+	* Generate code for affectation
 	**/
 
 	public static Code3a genAff(Operand3a var, ExpAttribute exp) {
