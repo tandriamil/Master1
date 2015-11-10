@@ -90,4 +90,27 @@ public class Code3aGenerator {
 		return code;
 	}
 
+	/** 
+	* Generate code for PrintSting
+	**/
+
+	public static Code3a genPrintString(String msg) {
+		Code3a code = new Code3a();
+		Data3a data = new Data3a(msg)
+		code.append(new Inst3a(Inst3a.TAC.LABEL, data.getLabel, null, null));
+		code.append(new Inst3a(Inst3a.TAC.CALL, null, SymbDistrib.builtinPrintS, null));
+		return code;
+	}
+
+	/** 
+	* Generate code for PrintInteger
+	**/
+
+	public static Code3a genPrintInteger(ExpAttribute exp) {
+		Code3a code = new Code3a();
+		code.append(new Inst3a(Inst3a.TAC.ARG, exp.place, null, null));
+		code.append(new Inst3a(Inst3a.TAC.CALL, null, SymbDistrib.builtinPrintN, null));
+		return code;
+	}
+
 } // Code3aGenerator ***

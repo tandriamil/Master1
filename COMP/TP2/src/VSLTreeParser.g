@@ -61,6 +61,20 @@ statement [SymbolTable symTab] returns [Code3a code]
 		}
 ;
 
+print_list [SymbolTable symTab] returns [Code3a code]
+    : (p = print_item[symTab] {$code = $p;})+
+    ;
+
+print_item [SymbolTable symTab] returns [Code3a code]
+    : TEXT
+	    {
+           $code = Code3aGenerator.genPrintString($TEXT.text);
+	    }
+    | exp = expression[symTab]
+	    {
+           $code = Code3aGenerator.genPrintInteger(exp);;  
+	    }
+    ;
 
 block [SymbolTable symTab] returns [Code3a code]
 	: ^(BLOCK  inst_list[symTab])
