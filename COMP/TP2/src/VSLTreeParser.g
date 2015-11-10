@@ -72,9 +72,27 @@ print_item [SymbolTable symTab] returns [Code3a code]
 	    }
     | exp = expression[symTab]
 	    {
-           $code = Code3aGenerator.genPrintInteger(exp);;  
+           $code = Code3aGenerator.genPrintInteger(exp);
 	    }
     ;
+
+read_list [SymbolTable symTab] returns [Code3a code]
+    : (r = read_item[symTab] {$code = $r})+
+    ;
+
+read_item [SymbolTable symTab] returns [Code3a code]
+    : IDENT
+	    {
+	        // Get the ident from the symtab && If the ident wasn't found
+			if (symTab.lookup($IDENT.text) == null) System.err.println("La variable n'est pas déclarée dans la table des symbole");
+
+			// And here, read (with 3@ code)
+			$code = Code3aGenerator.genReadInteger((VarSymbol)symTab.lookup($IDENT.text));
+
+
+	    }
+    | array_elem
+    ;    
 
 block [SymbolTable symTab] returns [Code3a code]
 	: ^(BLOCK  inst_list[symTab])

@@ -113,4 +113,14 @@ public class Code3aGenerator {
 		return code;
 	}
 
+	/** 
+	* Generate code for Read Integer
+	**/
+
+	public static Code3a genReadInteger(VarSymbol var) {
+		Code3a code = new Code3a();
+		code.append(new Inst3a(Inst3a.TAC.CALL, var, SymbDistrib.builtinRead, null));
+		return code;
+	}
+
 } // Code3aGenerator ***
