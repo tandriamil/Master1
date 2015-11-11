@@ -22,13 +22,23 @@ else
 fi
 
 # Generate java files from grammars
-echo "Generating java files from grammars"
-java -cp $bin_dir:$antlr_jar org.antlr.Tool $src_dir/VSLTreeParser.g
-java -cp $bin_dir:$antlr_jar org.antlr.Tool $src_dir/VSLParser.g
+#echo "Generating java files from grammars"
+#java -cp $bin_dir:$antlr_jar org.antlr.Tool $src_dir/VSLTreeParser.g
+#java -cp $bin_dir:$antlr_jar org.antlr.Tool $src_dir/VSLParser.g
+#echo " [DONE]"
 
 # Compile sources
-echo "\nCompile sources"
-javac -cp $bin_dir:$antlr_jar -d $bin_dir $src_dir/*.java
+#echo "\nCompile sources"
+#javac -cp $bin_dir:$antlr_jar -d $bin_dir $src_dir/*.java
+#echo " [DONE]"
 
 # Run tests
-echo "\nHere we should run tests"
+echo "\nRunning tests\n"
+echo "\nCode result for hello_world.vsl:"
+java -cp $bin_dir:$antlr_jar VslComp $test_dir/testlevel1/hello_world.vsl
+
+echo "\nCode result for level1block.vsl:"
+java -cp $bin_dir:$antlr_jar VslComp $test_dir/testlevel1/level1block.vsl
+
+echo "\nCode result for level1expr.vsl:"
+java -cp $bin_dir:$antlr_jar VslComp $test_dir/testlevel1/level1expr.vsl

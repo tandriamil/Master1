@@ -25,7 +25,7 @@ public class Code3aGenerator {
 	 * Generate code for a binary operation
 	 * 
 	 * @param op
-	 *            must be a code op: Inst3a.TAC.XXX
+	 *			must be a code op: Inst3a.TAC.XXX
 	 */
 	public static Code3a genBinOp(Inst3a.TAC op, Operand3a temp, ExpAttribute exp1, ExpAttribute exp2) {
 		Code3a cod = exp1.code;
@@ -47,6 +47,19 @@ public class Code3aGenerator {
 
 
 	/** 
+	* Generate code for return
+	**/
+	public static Code3a genReturn(ExpAttribute exp) {
+		Code3a code = new Code3a();
+
+		// Do the return
+		code.append(new Inst3a(Inst3a.TAC.RETURN, exp.place, null, null));
+
+		return code;
+	}
+
+
+	/** 
 	* Generate code for IF ..... THEN
 	**/
 	public static Code3a genIF(ExpAttribute exp, Code3a code1) {
@@ -54,7 +67,7 @@ public class Code3aGenerator {
 		Code3a code = new Code3a();
 		code.append(new Inst3a(Inst3a.TAC.IFZ, exp.place, end, null));
 		code.append(code1);
-        code.append(new Inst3a(Inst3a.TAC.LABEL, end, null, null));
+		code.append(new Inst3a(Inst3a.TAC.LABEL, end, null, null));
 		return code;
 	}
 
@@ -68,10 +81,10 @@ public class Code3aGenerator {
 		Code3a code = new Code3a();
 		code.append(new Inst3a(Inst3a.TAC.IFZ, exp.place, elSe, null));
 		code.append(code1);
-        code.append(new Inst3a(Inst3a.TAC.GOTO, end, null, null));
-        code.append(new Inst3a(Inst3a.TAC.LABEL, elSe, null, null));
-        code.append(code2);
-        code.append(new Inst3a(Inst3a.TAC.LABEL, end, null, null));
+		code.append(new Inst3a(Inst3a.TAC.GOTO, end, null, null));
+		code.append(new Inst3a(Inst3a.TAC.LABEL, elSe, null, null));
+		code.append(code2);
+		code.append(new Inst3a(Inst3a.TAC.LABEL, end, null, null));
 		return code;
 	}
 
@@ -86,8 +99,8 @@ public class Code3aGenerator {
 		code.append(new Inst3a(Inst3a.TAC.LABEL, repeat, null, null));
 		code.append(new Inst3a(Inst3a.TAC.IFZ, exp.place, end, null));
 		code.append(code1);
-        code.append(new Inst3a(Inst3a.TAC.GOTO, repeat, null, null));
-        code.append(new Inst3a(Inst3a.TAC.LABEL, end, null, null));
+		code.append(new Inst3a(Inst3a.TAC.GOTO, repeat, null, null));
+		code.append(new Inst3a(Inst3a.TAC.LABEL, end, null, null));
 		return code;
 	}
 

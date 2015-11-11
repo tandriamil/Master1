@@ -20,6 +20,7 @@ s [SymbolTable symTab] returns [Code3a code]
 program [SymbolTable symTab] returns [Code3a code]
 	: ^(PROG unit[symTab]+)
 		{
+			// Just transfer the code
 			$code = $unit.code;
 		}
 ;
@@ -28,11 +29,13 @@ program [SymbolTable symTab] returns [Code3a code]
 unit [SymbolTable symTab] returns [Code3a code]
 	: function[symTab]
 		{
+			// Just transfer the code
 			$code = $function.code;
 		}
 
 	| proto[symTab]
 		{
+			// Just transfer the code
 			$code = $proto.code;
 		}
 ;
@@ -129,6 +132,24 @@ statement [SymbolTable symTab] returns [Code3a code]
 			$code = Code3aGenerator.genAff(id, $expression.expAtt);
 		}
 
+	| RETURN_KW^ expression[symTab]
+		{
+			// Put the return of the function
+			$code = Code3aGenerator.genReturn($expression.expAtt);
+		}
+
+	| PRINT_KW^ print_list[symTab]
+		{
+			// Put the returned code
+			$code = $print_list.code;
+		}
+
+	| READ_KW^ read_list[symTab]
+		{
+			// Put the returned code
+			$code = $read_list.code;
+		}
+
 	| ^(IF_KW expression[symTab] THEN_KW! st1=statement[symTab] (ELSE_KW! st2=statement[symTab])? FI_KW!)
 		{
 			// If there's a second statement
@@ -158,12 +179,18 @@ statement [SymbolTable symTab] returns [Code3a code]
 block [SymbolTable symTab] returns [Code3a code]
 	: ^(BLOCK declaration[symTab] inst_list[symTab])
 		{
+			// Enter the block scope
+			$symTab.enterScope();
+
 			// Just return the code appended to the actual one
 			$code = Code3aGenerator.concatenateCodes($declaration.code, $inst_list.code);
 		}
 
 	| ^(BLOCK inst_list[symTab])
 		{
+			// Enter the block scope
+			$symTab.enterScope();
+
 			// Just return the code of the instruction's list
 			$code = $inst_list.code;
 		}
