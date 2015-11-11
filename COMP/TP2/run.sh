@@ -14,9 +14,9 @@ then
 fi
 
 # Some local definitions
-if [ -n $LOCAL_WORKSPACE ]
+if [ -n $LOCAL_ANTLR ]
 then
-	antlr_jar=$HOME/Librairies/antlr-3.5.jar
+	antlr_jar=$LOCAL_ANTLR
 else
 	antlr_jar=/share/m1info/COMP/antlr/antlr-3.5.jar
 fi

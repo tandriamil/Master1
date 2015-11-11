@@ -9,8 +9,8 @@
 public class Code3aGenerator {
 
 	// Constructor not needed
-	private Code3aGenerator() {
-	}
+	private Code3aGenerator() { }
+
 
 	/**
 	 * Generates the 3a statement: VAR t
@@ -19,6 +19,7 @@ public class Code3aGenerator {
 		Inst3a i = new Inst3a(Inst3a.TAC.VAR, t, null, null);
 		return new Code3a(i);
 	}
+
 
 	/**
 	 * Generate code for a binary operation
@@ -34,20 +35,20 @@ public class Code3aGenerator {
 		return cod;
 	}
 
+
 	/** 
 	* Generate code for affectation
 	**/
-
 	public static Code3a genAff(Operand3a var, ExpAttribute exp) {
 		Code3a cod = exp.code;
 		cod.append(new Inst3a(Inst3a.TAC.COPY, var, exp.place, null));
 		return cod;
 	}
-	
+
+
 	/** 
 	* Generate code for IF ..... THEN
 	**/
-
 	public static Code3a genIF(ExpAttribute exp, Code3a code1) {
 		LabelSymbol end = SymbDistrib.newLabel();
 		Code3a code = new Code3a();
@@ -57,10 +58,10 @@ public class Code3aGenerator {
 		return code;
 	}
 
+
 	/** 
 	* Generate code for IF ..... THEN ...... ELSE
 	**/
-
 	public static Code3a genIFELSE(ExpAttribute exp, Code3a code1, Code3a code2) {
 		LabelSymbol elSe = SymbDistrib.newLabel();
 		LabelSymbol end = SymbDistrib.newLabel();
@@ -74,10 +75,10 @@ public class Code3aGenerator {
 		return code;
 	}
 
+
 	/** 
 	* Generate code for WHILE ..... DO ...... DONE
 	**/
-
 	public static Code3a genWHILE(ExpAttribute exp, Code3a code1) {
 		LabelSymbol repeat = SymbDistrib.newLabel();
 		LabelSymbol end = SymbDistrib.newLabel();
@@ -90,22 +91,23 @@ public class Code3aGenerator {
 		return code;
 	}
 
+
 	/** 
 	* Generate code for PrintSting
 	**/
-
 	public static Code3a genPrintString(String msg) {
 		Code3a code = new Code3a();
-		Data3a data = new Data3a(msg)
-		code.append(new Inst3a(Inst3a.TAC.LABEL, data.getLabel, null, null));
+		Data3a data = new Data3a(msg);
+		code.appendData(data);
+		code.append(new Inst3a(Inst3a.TAC.ARG, data.getLabel(), null, null));
 		code.append(new Inst3a(Inst3a.TAC.CALL, null, SymbDistrib.builtinPrintS, null));
 		return code;
 	}
 
+
 	/** 
 	* Generate code for PrintInteger
 	**/
-
 	public static Code3a genPrintInteger(ExpAttribute exp) {
 		Code3a code = new Code3a();
 		code.append(new Inst3a(Inst3a.TAC.ARG, exp.place, null, null));
@@ -113,13 +115,23 @@ public class Code3aGenerator {
 		return code;
 	}
 
+
 	/** 
 	* Generate code for Read Integer
 	**/
-
 	public static Code3a genReadInteger(VarSymbol var) {
 		Code3a code = new Code3a();
 		code.append(new Inst3a(Inst3a.TAC.CALL, var, SymbDistrib.builtinRead, null));
+		return code;
+	}
+
+
+	/** 
+	* Generate code for a variable declaration
+	**/
+	public static Code3a genVarDeclaration(VarSymbol var) {
+		Code3a code = new Code3a();
+		code.append(new Inst3a(Inst3a.TAC.VAR, var, null, null));
 		return code;
 	}
 

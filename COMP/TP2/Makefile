@@ -3,8 +3,8 @@
 # Vérifiez bien les valeurs suivantes avant de procéder.
 # -----------------------------------------------------------------------------
 
-ifdef LOCAL_WORKSPACE
-	ANTLR_JAR=$(HOME)/Librairies/antlr-3.5.jar
+ifdef LOCAL_ANTLR
+	ANTLR_JAR=$(LOCAL_ANTLR)
 else
 	ANTLR_JAR=/share/m1info/COMP/antlr/antlr-3.5.jar
 endif
