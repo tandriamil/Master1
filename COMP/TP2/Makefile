@@ -3,10 +3,11 @@
 # Vérifiez bien les valeurs suivantes avant de procéder.
 # -----------------------------------------------------------------------------
 
+BIN_DIR=./bin
 ifdef LOCAL_ANTLR
-	ANTLR_JAR=$(LOCAL_ANTLR)
+	ANTLR_JAR=$(BIN_DIR):$(LOCAL_ANTLR)
 else
-	ANTLR_JAR=/share/m1info/COMP/antlr/antlr-3.5.jar
+	ANTLR_JAR=$(BIN_DIR):/share/m1info/COMP/antlr/antlr-3.5.jar
 endif
 SRC_DIR=./src
 

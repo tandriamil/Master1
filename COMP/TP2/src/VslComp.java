@@ -76,9 +76,8 @@ public class VslComp {
 				// <<< NOTE: this line must be changed during development, if
 				// one wishes to parse just a fragment of the language (e.g.
 				// begin with an expression). >>>
-				tparser.s(new SymbolTable());
-				//Code3a c = tparser.s(new SymbolTable());
-				//c.print();
+				Code3a c = tparser.s(new SymbolTable()).code;
+				c.print();
 
 				// We prepare the MIPS code generator, which will compile
 				// the three-address code into MIPS assembly.

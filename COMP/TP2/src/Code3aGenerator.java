@@ -135,4 +135,38 @@ public class Code3aGenerator {
 		return code;
 	}
 
+
+	/** 
+	* Generate code for a function declaration
+	**/
+	public static Code3a genFunction(FunctionSymbol functionSymbol, Code3a statementCode) {
+		Code3a code = new Code3a();
+
+		// Generate the label (label [functionName])
+		code.append(new Inst3a(Inst3a.TAC.LABEL, functionSymbol, null, null));
+
+		// Generate the beginfunc instruction (beginfunc)
+		code.append(new Inst3a(Inst3a.TAC.BEGINFUNC, null, null, null));
+
+		// Put the statement codes then
+		code.append(statementCode);
+
+		// And in the end, the end of funtion code
+		code.append(new Inst3a(Inst3a.TAC.ENDFUNC, null, null, null));
+
+		// And return the code generated
+		return code;
+	}
+
+
+	/** 
+	* Generate code for everytime we have to append two codes
+	**/
+	public static Code3a concatenateCodes(Code3a c1, Code3a c2) {
+		Code3a code = new Code3a();
+		code.append(c1);
+		code.append(c2);  // Null verification already done into append()
+		return code;
+	}
+
 } // Code3aGenerator ***

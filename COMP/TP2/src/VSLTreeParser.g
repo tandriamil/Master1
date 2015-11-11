@@ -8,11 +8,11 @@ options {
 }
 
 
-s [SymbolTable symTab]
+s [SymbolTable symTab] returns [Code3a code]
 	: program[symTab]
 		{
-			// Display the code
-			$program.code.print();
+			// Return the code (displayed into VclComp)
+			$code = $program.code;
 		}
 ;
 
@@ -41,9 +41,24 @@ unit [SymbolTable symTab] returns [Code3a code]
 function [SymbolTable symTab] returns [Code3a code]
 	: ^(FUNC_KW type IDENT param_list[symTab] ^(BODY statement[symTab]))
 		{
-			// TODO: Here we should add the function to symTab
+			// Get the ident from the symtab
+			Operand3a id = $symTab.lookup($IDENT.text);
 
-			$code = $statement.code;
+			// If the ident is already defined
+			if (id != null) Errors.redefinedIdentifier($IDENT, $IDENT.text, null);
+
+			// The function type
+			FunctionType functionType = new FunctionType($type.type);
+
+			// Create the function symbol
+			LabelSymbol functionLabel = new LabelSymbol($IDENT.text);
+			FunctionSymbol functionSymbol = new FunctionSymbol(functionLabel, functionType);
+
+			// Add it to tabSymb
+			$symTab.insert($IDENT.text, functionSymbol);
+
+			// Generate its code
+			$code = Code3aGenerator.genFunction(functionSymbol, $statement.code);
 		}
 ;
 
@@ -144,10 +159,7 @@ block [SymbolTable symTab] returns [Code3a code]
 	: ^(BLOCK declaration[symTab] inst_list[symTab])
 		{
 			// Just return the code appended to the actual one
-			Code3a generatedCode = new Code3a();
-			generatedCode.append($declaration.code);
-			generatedCode.append($inst_list.code);
-			$code = generatedCode;
+			$code = Code3aGenerator.concatenateCodes($declaration.code, $inst_list.code);
 		}
 
 	| ^(BLOCK inst_list[symTab])
@@ -290,10 +302,7 @@ argument_list [SymbolTable symTab] returns [Code3a code]
 	: e1=expression[symTab] (COM! e2=expression[symTab])*
 		{
 			// Get the code of each expression and append them
-			Code3a generatedCode = new Code3a();
-			generatedCode.append($e1.expAtt.code);
-			generatedCode.append($e2.expAtt.code);  // Null verification already done into append()
-			$code = generatedCode;
+			$code = Code3aGenerator.concatenateCodes($e1.expAtt.code, $e2.expAtt.code);
 		}
 ;
 
@@ -302,10 +311,7 @@ print_list [SymbolTable symTab] returns [Code3a code]
 	: p1=print_item[symTab] (COM! p2=print_item[symTab])*
 		{
 			// Get the code of each print item and append them
-			Code3a generatedCode = new Code3a();
-			generatedCode.append($p1.code);
-			generatedCode.append($p2.code);  // Null verification already done into append()
-			$code = generatedCode;
+			$code = Code3aGenerator.concatenateCodes($p1.code, $p2.code);
 		}
 ;
 
@@ -329,10 +335,7 @@ read_list [SymbolTable symTab] returns [Code3a code]
 	: r1=read_item[symTab] (COM! r2=read_item[symTab])*
 		{
 			// Get the code of each read item and append them
-			Code3a generatedCode = new Code3a();
-			generatedCode.append($r1.code);
-			generatedCode.append($r2.code);  // Null verification already done into append()
-			$code = generatedCode;
+			$code = Code3aGenerator.concatenateCodes($r1.code, $r2.code);
 		}
 ;
 
@@ -366,10 +369,7 @@ decl_list [SymbolTable symTab] returns [Code3a code]
 	: d1=decl_item[symTab] (COM! d2=decl_item[symTab])*
 		{
 			// Just append the generated codes
-			Code3a generatedCode = new Code3a();
-			generatedCode.append($d1.code);
-			generatedCode.append($d2.code);
-			$code = generatedCode;
+			$code = Code3aGenerator.concatenateCodes($d1.code, $d2.code);
 		}
 ;
 
