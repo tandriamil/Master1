@@ -14,7 +14,7 @@
 
 - État d'avancement : 
 
-	Quant à l'état d'avancement, nous n'avons pas pu finir le codage des tableaux ainsi que les instructions ayant une relation avec les tableaux. Sinon, le reste des instructions a été programmé.
+	à l'état d'avancement, nous n'avons pas pu finir le codage des tableaux ainsi que les instructions ayant une relation avec les tableaux. Sinon, le reste des instructions a été programmé.
 
 - Test : 
 
