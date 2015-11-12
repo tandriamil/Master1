@@ -633,17 +633,6 @@ void ExceptionHandler(ExceptionType exceptiontype, int vaddr)
 #ifdef ETUDIANTS_TP
 
 		// ############### Semaphores ###############
-		// Call to a P on a semaphore
-		case SC_P: {
-			DEBUG('e', (char*)"P syscall called\n");
-			break;
-		}
-
-		// Call to a V on a semaphore
-		case SC_V: {
-			break;
-		}
-
 		// Create a semaphore
 		case SC_SEM_CREATE: {
 			DEBUG('e', (char*)"SEM_CREATE syscall called\n");
@@ -674,28 +663,222 @@ void ExceptionHandler(ExceptionType exceptiontype, int vaddr)
 
 		// Create a semaphore
 		case SC_SEM_DESTROY: {
+			DEBUG('e', (char*)"SEM_DESTROY syscall called\n");
+
+			// Get the values from registers
+			int sema = g_machine->ReadIntRegister(4);
+			sema = (int32_t)sema;
+
+			// We get the semaphore from system objects
+			Semaphore *sema_pointer = (Semaphore *)g_object_ids->SearchObject(sema);
+
+			// Check if this Semaphore exists and is really a Semaphore
+			if ((sema_pointer == NULL) || (sema_pointer->typeId != SEMAPHORE_TYPE_ID)) {
+
+				// Return ok and an error message
+				g_machine->WriteIntRegister(2, -1);
+				g_syscall_error->SetMsg((char*)"", InvalidSemaphoreId);
+
+			// If everything's ok
+			} else {
+
+				// Remove the Semaphore from the obj lists
+				g_object_ids->RemoveObject(sema);
+
+				// Destroy the semaphore
+				delete sema_pointer;
+
+				// Return ok and no error message
+				g_machine->WriteIntRegister(2, 0);
+				g_syscall_error->SetMsg((char*)"", NoError);
+			}
+			break;
+		}
+
+		// Call to a V on a semaphore
+		case SC_V: {
+			DEBUG('e', (char*)"V syscall called\n");
+
+			// Get the values from registers
+			int sema = g_machine->ReadIntRegister(4);
+			sema = (int32_t)sema;
+
+			// We get the semaphore from system objects
+			Semaphore *sema_pointer = (Semaphore *)g_object_ids->SearchObject(sema);
+
+			// Check if this Semaphore exists and is really a Semaphore
+			if ((sema_pointer == NULL) || (sema_pointer->typeId != SEMAPHORE_TYPE_ID)) {
+
+				// Return ok and an error message
+				g_machine->WriteIntRegister(2, -1);
+				g_syscall_error->SetMsg((char*)"", InvalidSemaphoreId);
+
+			// If everything's ok
+			} else {
+
+				// Call V on this Semaphore
+				sema_pointer->V();
+
+				// Return ok and no error message
+				g_machine->WriteIntRegister(2, 0);
+				g_syscall_error->SetMsg((char*)"", NoError);
+			}
+			break;
+		}
+
+		// Call to a P on a semaphore
+		case SC_P: {
+			DEBUG('e', (char*)"P syscall called\n");
+
+			// Get the values from registers
+			int sema = g_machine->ReadIntRegister(4);
+			sema = (int32_t)sema;
+
+			// We get the semaphore from system objects
+			Semaphore *sema_pointer = (Semaphore *)g_object_ids->SearchObject(sema);
+
+			// Check if this Semaphore exists and is really a Semaphore
+			if ((sema_pointer == NULL) || (sema_pointer->typeId != SEMAPHORE_TYPE_ID)) {
+
+				// Return ok and an error message
+				g_machine->WriteIntRegister(2, -1);
+				g_syscall_error->SetMsg((char*)"", InvalidSemaphoreId);
+
+			// If everything's ok
+			} else {
+
+				// Call P on this Semaphore
+				sema_pointer->P();
+
+				// Return ok and no error message
+				g_machine->WriteIntRegister(2, 0);
+				g_syscall_error->SetMsg((char*)"", NoError);
+			}
 			break;
 		}
 
 
 		// ############### Locks ###############
 		// Create a lock
-		case SC_LOCK_CREATE:{
+		case SC_LOCK_CREATE: {
+			DEBUG('e', (char*)"LOCK_CREATE syscall called\n");
+
+			// The int to store the values got from the registers
+			int debug_name;
+
+			// Get the values from registers
+			debug_name = g_machine->ReadIntRegister(4);  // Int representation of the pointer
+
+			// Build the name of the lock using utilities methods
+			int name_size = GetLengthParam(debug_name);
+			char name[name_size];
+			GetStringParam(debug_name, name, name_size);
+
+			// Then create the lock
+			Lock *lock = new Lock(name);
+
+			// Add its id to the object_ids of the system
+			int32_t tid = g_object_ids->AddObject(lock);
+
+			// Put the return value into reg2
+			g_machine->WriteIntRegister(2, tid);
+			g_syscall_error->SetMsg((char*)"", NoError);
 			break;
 		}
 
 		// Destroy a lock
-		case SC_LOCK_DESTROY:{
+		case SC_LOCK_DESTROY: {
+			DEBUG('e', (char*)"LOCK_DESTROY syscall called\n");
+
+			// Get the values from registers
+			int lock = g_machine->ReadIntRegister(4);
+			lock = (int32_t)lock;
+
+			// We get the Lock from system objects
+			Lock *lock_pointer = (Lock *)g_object_ids->SearchObject(lock);
+
+			// Check if this Lock exists and is really a Lock
+			if ((lock_pointer == NULL) || (lock_pointer->typeId != LOCK_TYPE_ID)) {
+
+				// Return ok and an error message
+				g_machine->WriteIntRegister(2, -1);
+				g_syscall_error->SetMsg((char*)"", InvalidLockId);
+
+			// If everything's ok
+			} else {
+
+				// Remove the Lock from the obj lists
+				g_object_ids->RemoveObject(lock);
+
+				// Destroy the Lock
+				delete lock_pointer;
+
+				// Return ok and no error message
+				g_machine->WriteIntRegister(2, 0);
+				g_syscall_error->SetMsg((char*)"", NoError);
+			}
 			break;
 		}
 
 		// Acquire a lock
-		case SC_LOCK_ACQUIRE:{
+		case SC_LOCK_ACQUIRE: {
+			DEBUG('e', (char*)"LOCK_ACQUIRE syscall called\n");
+
+			// Get the values from registers
+			int lock = g_machine->ReadIntRegister(4);
+			lock = (int32_t)lock;
+
+			// We get the Lock from system objects
+			Lock *lock_pointer = (Lock *)g_object_ids->SearchObject(lock);
+
+			// Check if this Lock exists and is really a Lock
+			if ((lock_pointer == NULL) || (lock_pointer->typeId != LOCK_TYPE_ID)) {
+
+				// Return ok and an error message
+				g_machine->WriteIntRegister(2, -1);
+				g_syscall_error->SetMsg((char*)"", InvalidLockId);
+
+			// If everything's ok
+			} else {
+
+				// Acquire the lock
+				lock_pointer->Acquire();
+
+				// Return ok and no error message
+				g_machine->WriteIntRegister(2, 0);
+				g_syscall_error->SetMsg((char*)"", NoError);
+			}
 			break;
 		}
 
 		// Release a lock
-		case SC_LOCK_RELEASE:{
+		case SC_LOCK_RELEASE: {
+			DEBUG('e', (char*)"LOCK_RELEASE syscall called\n");
+
+			// Get the values from registers
+			int lock = g_machine->ReadIntRegister(4);
+			lock = (int32_t)lock;
+
+			// We get the Lock from system objects
+			Lock *lock_pointer = (Lock *)g_object_ids->SearchObject(lock);
+
+			// Check if this Lock exists and is really a Lock
+			if ((lock_pointer == NULL) || (lock_pointer->typeId != LOCK_TYPE_ID)) {
+
+				// Return ok and an error message
+				g_machine->WriteIntRegister(2, -1);
+				g_syscall_error->SetMsg((char*)"", InvalidLockId);
+
+			// If everything's ok
+			} else {
+
+				// Acquire the lock
+				lock_pointer->Release();
+
+				// Return ok and no error message
+				g_machine->WriteIntRegister(2, 0);
+				g_syscall_error->SetMsg((char*)"", NoError);
+			}
 			break;
 		}
 
@@ -703,26 +886,155 @@ void ExceptionHandler(ExceptionType exceptiontype, int vaddr)
 		// ############### Conditions ###############
 		// Create a condition
 		case SC_COND_CREATE:{
+			DEBUG('e', (char*)"COND_CREATE syscall called\n");
+
+			// The int to store the values got from the registers
+			int debug_name;
+
+			// Get the values from registers
+			debug_name = g_machine->ReadIntRegister(4);  // Int representation of the pointer
+
+			// Build the name of the Condition using utilities methods
+			int name_size = GetLengthParam(debug_name);
+			char name[name_size];
+			GetStringParam(debug_name, name, name_size);
+
+			// Then create the Condition
+			Condition *cond = new Condition(name);
+
+			// Add its id to the object_ids of the system
+			int32_t tid = g_object_ids->AddObject(cond);
+
+			// Put the return value into reg2
+			g_machine->WriteIntRegister(2, tid);
+			g_syscall_error->SetMsg((char*)"", NoError);
 			break;
 		}
 
 		// Destroy a condition
-		case SC_COND_DESTROY:{
+		case SC_COND_DESTROY: {
+			DEBUG('e', (char*)"COND_DESTROY syscall called\n");
+
+			// Get the values from registers
+			int cond = g_machine->ReadIntRegister(4);
+			cond = (int32_t)cond;
+
+			// We get the Condition from system objects
+			Condition *cond_pointer = (Condition *)g_object_ids->SearchObject(cond);
+
+			// Check if this Condition exists and is really a Lock
+			if ((cond_pointer == NULL) || (cond_pointer->typeId != CONDITION_TYPE_ID)) {
+
+				// Return ok and an error message
+				g_machine->WriteIntRegister(2, -1);
+				g_syscall_error->SetMsg((char*)"", InvalidConditionId);
+
+			// If everything's ok
+			} else {
+
+				// Remove the Condition from the obj lists
+				g_object_ids->RemoveObject(cond);
+
+				// Destroy the Condition
+				delete cond_pointer;
+
+				// Return ok and no error message
+				g_machine->WriteIntRegister(2, 0);
+				g_syscall_error->SetMsg((char*)"", NoError);
+			}
 			break;
 		}
 
 		// Wait on a condition
-		case SC_COND_WAIT:{
+		case SC_COND_WAIT: {
+			DEBUG('e', (char*)"COND_WAIT syscall called\n");
+
+			// Get the values from registers
+			int cond = g_machine->ReadIntRegister(4);
+			cond = (int32_t)cond;
+
+			// We get the Condition from system objects
+			Condition *cond_pointer = (Condition *)g_object_ids->SearchObject(cond);
+
+			// Check if this Condition exists and is really a Lock
+			if ((cond_pointer == NULL) || (cond_pointer->typeId != CONDITION_TYPE_ID)) {
+
+				// Return ok and an error message
+				g_machine->WriteIntRegister(2, -1);
+				g_syscall_error->SetMsg((char*)"", InvalidConditionId);
+
+			// If everything's ok
+			} else {
+
+				// Run wait on the condition
+				cond_pointer->Wait();
+
+				// Return ok and no error message
+				g_machine->WriteIntRegister(2, 0);
+				g_syscall_error->SetMsg((char*)"", NoError);
+			}
 			break;
 		}
 
 		// Signal on a condition (wake the first waiting)
-		case SC_COND_SIGNAL:{
+		case SC_COND_SIGNAL: {
+			DEBUG('e', (char*)"COND_SIGNAL syscall called\n");
+
+			// Get the values from registers
+			int cond = g_machine->ReadIntRegister(4);
+			cond = (int32_t)cond;
+
+			// We get the Condition from system objects
+			Condition *cond_pointer = (Condition *)g_object_ids->SearchObject(cond);
+
+			// Check if this Condition exists and is really a Lock
+			if ((cond_pointer == NULL) || (cond_pointer->typeId != CONDITION_TYPE_ID)) {
+
+				// Return ok and an error message
+				g_machine->WriteIntRegister(2, -1);
+				g_syscall_error->SetMsg((char*)"", InvalidConditionId);
+
+			// If everything's ok
+			} else {
+
+				// Run signal on the condition
+				cond_pointer->Signal();
+
+				// Return ok and no error message
+				g_machine->WriteIntRegister(2, 0);
+				g_syscall_error->SetMsg((char*)"", NoError);
+			}
 			break;
 		}
 
 		// Broadcast on a condition (wake all those waiting)
-		case SC_COND_BROADCAST:{
+		case SC_COND_BROADCAST: {
+			DEBUG('e', (char*)"COND_BROADCAST syscall called\n");
+
+			// Get the values from registers
+			int cond = g_machine->ReadIntRegister(4);
+			cond = (int32_t)cond;
+
+			// We get the Condition from system objects
+			Condition *cond_pointer = (Condition *)g_object_ids->SearchObject(cond);
+
+			// Check if this Condition exists and is really a Lock
+			if ((cond_pointer == NULL) || (cond_pointer->typeId != CONDITION_TYPE_ID)) {
+
+				// Return ok and an error message
+				g_machine->WriteIntRegister(2, -1);
+				g_syscall_error->SetMsg((char*)"", InvalidConditionId);
+
+			// If everything's ok
+			} else {
+
+				// Run broadcast on the condition
+				cond_pointer->Broadcast();
+
+				// Return ok and no error message
+				g_machine->WriteIntRegister(2, 0);
+				g_syscall_error->SetMsg((char*)"", NoError);
+			}
 			break;
 		}
 
