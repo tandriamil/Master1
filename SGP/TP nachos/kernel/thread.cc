@@ -349,18 +349,32 @@ Thread::Sleep ()
 /*!	Save the CPU state of a user program on a context switch
 */
 //----------------------------------------------------------------------
+#ifndef ETUDIANTS_TP
 void
 Thread::SaveProcessorState()
 {
   printf("**** Warning: method Thread::SaveProcessorState is not implemented yet\n");
-  exit(-1);
+  exit(-1); 
 }
+#endif
+
+#ifdef ETUDIANTS_TP
+void Thread::SaveProcessorState() {
+
+	// Copy all the registers that we need
+	// We take them from the emulated machine registers
+	memcpy(thread_context.int_registers, g_machine->int_registers, sizeof(thread_context.int_registers));
+	memcpy(thread_context.float_registers, g_machine->float_registers, sizeof(thread_context.float_registers));
+	memcpy(&thread_context.cc, &g_machine->cc, sizeof(thread_context.cc));
+}
+#endif
 
 //----------------------------------------------------------------------
 // Thread::RestoreProcessorState
 /*!	Restore the CPU state of a user program on a context switch.
 */
 //----------------------------------------------------------------------
+#ifndef ETUDIANTS_TP
 
 void
 Thread::RestoreProcessorState()
@@ -368,6 +382,13 @@ Thread::RestoreProcessorState()
   printf("**** Warning: method Thread::RestoreProcessorState is not implemented yet\n");
   exit(-1);
 }
+#endif
+
+#ifdef ETUDIANTS_TP
+void Thread::RestoreProcessorState() {
+
+}
+#endif
 
 //----------------------------------------------------------------------
 // Thread::SaveSimulatorState

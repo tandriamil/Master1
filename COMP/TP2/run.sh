@@ -35,10 +35,10 @@ fi
 # Run tests
 echo "\nRunning tests\n"
 echo "\nCode result for hello_world.vsl:"
-java -cp $bin_dir:$antlr_jar VslComp $test_dir/testlevel1/hello_world.vsl
+java -cp $src_dir:$bin_dir:$antlr_jar VslComp $test_dir/testlevel1/hello_world.vsl
 
 echo "\nCode result for level1block.vsl:"
-java -cp $bin_dir:$antlr_jar VslComp $test_dir/testlevel1/level1block.vsl
+java -cp $src_dir:$bin_dir:$antlr_jar VslComp $test_dir/testlevel1/level1block.vsl
 
 echo "\nCode result for level1expr.vsl:"
-java -cp $bin_dir:$antlr_jar VslComp $test_dir/testlevel1/level1expr.vsl
+java -cp $src_dir:$bin_dir:$antlr_jar VslComp $test_dir/testlevel1/level1expr.vsl
