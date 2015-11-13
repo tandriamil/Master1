@@ -27,6 +27,20 @@ public class Code3aGenerator {
 	 * @param op
 	 *			must be a code op: Inst3a.TAC.XXX
 	 */
+	public static Code3a genUnaryOp(Inst3a.TAC op, Operand3a temp, ExpAttribute exp1) {
+		Code3a cod = exp1.code;
+		cod.append(genVar(temp));
+		cod.append(new Inst3a(op, temp, exp1.place, null));
+		return cod;
+	}
+
+
+	/**
+	 * Generate code for a binary operation
+	 * 
+	 * @param op
+	 *			must be a code op: Inst3a.TAC.XXX
+	 */
 	public static Code3a genBinOp(Inst3a.TAC op, Operand3a temp, ExpAttribute exp1, ExpAttribute exp2) {
 		Code3a cod = exp1.code;
 		cod.append(exp2.code);
@@ -176,8 +190,7 @@ public class Code3aGenerator {
 	* Generate code for everytime we have to append two codes
 	**/
 	public static Code3a concatenateCodes(Code3a c1, Code3a c2) {
-		Code3a code = new Code3a();
-		code.append(c1);
+		Code3a code = c1;
 		code.append(c2);  // Null verification already done into append()
 		return code;
 	}

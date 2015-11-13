@@ -22,23 +22,18 @@ else
 fi
 
 # Generate java files from grammars
-#echo "Generating java files from grammars"
-#java -cp $bin_dir:$antlr_jar org.antlr.Tool $src_dir/VSLTreeParser.g
-#java -cp $bin_dir:$antlr_jar org.antlr.Tool $src_dir/VSLParser.g
-#echo " [DONE]"
+echo "Generating java files from grammars"
+java -cp $bin_dir:$antlr_jar org.antlr.Tool $src_dir/VSLLexer.g
+java -cp $bin_dir:$antlr_jar org.antlr.Tool $src_dir/VSLTreeParser.g
+java -cp $bin_dir:$antlr_jar org.antlr.Tool $src_dir/VSLParser.g
+echo " [DONE]"
+echo ""
 
 # Compile sources
-#echo "\nCompile sources"
-#javac -cp $bin_dir:$antlr_jar -d $bin_dir $src_dir/*.java
-#echo " [DONE]"
+echo "Compile sources"
+javac -cp $bin_dir:$antlr_jar -d $bin_dir $src_dir/*.java
+echo " [DONE]"
+echo ""
 
 # Run tests
-echo "\nRunning tests\n"
-echo "\nCode result for hello_world.vsl:"
-java -cp $src_dir:$bin_dir:$antlr_jar VslComp $test_dir/testlevel1/hello_world.vsl
-
-echo "\nCode result for level1block.vsl:"
-java -cp $src_dir:$bin_dir:$antlr_jar VslComp $test_dir/testlevel1/level1block.vsl
-
-echo "\nCode result for level1expr.vsl:"
-java -cp $src_dir:$bin_dir:$antlr_jar VslComp $test_dir/testlevel1/level1expr.vsl
+./run_test.sh

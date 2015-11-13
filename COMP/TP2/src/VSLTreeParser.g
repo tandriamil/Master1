@@ -320,7 +320,7 @@ primary [SymbolTable symTab] returns [ExpAttribute expAtt]
 			VarSymbol temp = SymbDistrib.newTemp();
 
 			// Return the ExpAttribute corresponding to it
-			$expAtt = new ExpAttribute($p.expAtt.type, Code3aGenerator.genBinOp(Inst3a.TAC.NEG, temp, $p.expAtt, null), temp);
+			$expAtt = new ExpAttribute($p.expAtt.type, Code3aGenerator.genUnaryOp(Inst3a.TAC.NEG, temp, $p.expAtt), temp);
 		}
 ;
 
@@ -395,6 +395,9 @@ declaration [SymbolTable symTab] returns [Code3a code]
 decl_list [SymbolTable symTab] returns [Code3a code]
 	: d1=decl_item[symTab] (COM! d2=decl_item[symTab])*
 		{
+			System.err.println("Code de d1" + $d1.code);
+			System.err.println("Code de d2" + $d2.code);
+
 			// Just append the generated codes
 			$code = Code3aGenerator.concatenateCodes($d1.code, $d2.code);
 		}
@@ -404,6 +407,8 @@ decl_list [SymbolTable symTab] returns [Code3a code]
 decl_item [SymbolTable symTab] returns [Code3a code]
 	: IDENT
 		{
+			//System.err.println("Declarations de " + $IDENT.text);
+
 			// Get the ident from the symtab
 			Operand3a id = $symTab.lookup($IDENT.text);
 

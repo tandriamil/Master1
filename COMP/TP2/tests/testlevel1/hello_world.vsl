@@ -1,3 +1,4 @@
 FUNC INT main() {
+	INT n, i, x
 	PRINT "Hello World"
 }
