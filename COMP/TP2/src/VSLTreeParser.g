@@ -251,6 +251,7 @@ expression [SymbolTable symTab] returns [ExpAttribute expAtt]
 
 	| factor[symTab]
 		{
+			System.err.println("Factor value = " + $factor.expAtt);
 			$expAtt = $factor.expAtt;
 		}
 ;
