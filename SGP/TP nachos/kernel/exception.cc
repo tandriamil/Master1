@@ -885,7 +885,7 @@ void ExceptionHandler(ExceptionType exceptiontype, int vaddr)
 
 		// ############### Conditions ###############
 		// Create a condition
-		case SC_COND_CREATE:{
+		case SC_COND_CREATE: {
 			DEBUG('e', (char*)"COND_CREATE syscall called\n");
 
 			// The int to store the values got from the registers
@@ -1041,11 +1041,11 @@ void ExceptionHandler(ExceptionType exceptiontype, int vaddr)
 #endif
 
 
-       default:
-         printf("Invalid system call number : %d\n", type);
-         exit(-1);
-         break;
-       }
+       	default:
+	         printf("Invalid system call number : %d\n", type);
+	         exit(-1);
+	         break;
+      	}
 
       } 
 

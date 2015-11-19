@@ -220,6 +220,9 @@ void Lock::Acquire() {
 		// It takes the lock then
 		free = false;
 
+		// And so becomes is owner
+		owner = g_current_thread;
+
 	}
 
 	// Put back the previous state of interrupts

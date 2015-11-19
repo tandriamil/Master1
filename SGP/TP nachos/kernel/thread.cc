@@ -112,6 +112,9 @@ int Thread::Start(Process *owner,
 #ifdef ETUDIANTS_TP
 int Thread::Start(Process *owner, int32_t func, int arg) {
 
+	// Check that it has a process owner
+	ASSERT(process == NULL);
+
 	// We put the owner
 	process = owner;
 
@@ -307,7 +310,15 @@ Thread::Finish ()
 #ifdef ETUDIANTS_TP
 void Thread::Finish() {
     g_thread_to_be_destroyed = this;
-    Sleep();
+
+	// Protect from other accesses to the process object
+    IntStatus oldLevel = g_machine-> interrupt->SetStatus(INTERRUPTS_OFF);
+
+    // Put the thread to sleep
+	Sleep();
+
+    // Put back the old level
+    g_machine->interrupt->SetStatus(oldLevel);
 }
 #endif
 
