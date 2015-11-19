@@ -99,6 +99,7 @@ Thread::~Thread()
 // \return NoError on success, an error code on error
 */
 //----------------------------------------------------------------------
+#ifndef ETUDIANTS_TP
 int Thread::Start(Process *owner,
 		  int32_t func, int arg)
 {
@@ -106,6 +107,43 @@ int Thread::Start(Process *owner,
   printf("**** Warning: method Thread::Start is not implemented yet\n");
   exit(-1);
 }
+#endif
+
+#ifdef ETUDIANTS_TP
+int Thread::Start(Process *owner, int32_t func, int arg) {
+
+	// We put the owner
+	process = owner;
+
+	// We allocate a bounded array
+	int8_t *sim_context = AllocBoundedArray(SIMULATORSTACKSIZE);
+
+	// And initialize the simulator context
+	InitSimulatorContext(sim_context, SIMULATORSTACKSIZE);
+
+	// And a new user stack
+	stackPointer = owner->addrspace->StackAllocate();
+
+	// Init the thread context
+	InitThreadContext(func, stackPointer, arg);
+
+	// Protect from other accesses to the process object
+    IntStatus oldLevel = g_machine-> interrupt->SetStatus(INTERRUPTS_OFF);
+
+    // Signals to the process that it has one more thred
+    process->numThreads++;
+
+    // Put back the old level
+    g_machine->interrupt->SetStatus(oldLevel);
+
+    // Add this thread to the running ones
+    g_alive->Append(this);
+    g_scheduler->ReadyToRun(this);  // And to the thread's ready list
+
+    // If everything was ok
+    return NoError;  
+}
+#endif
 
 //----------------------------------------------------------------------
 // Thread::InitThreadContext
@@ -250,6 +288,7 @@ Thread::CheckOverflow()
 //	between setting g_thread_to_be_destroyed and going to sleep.
 */
 //----------------------------------------------------------------------
+#ifndef ETUDIANTS_TP
 void
 Thread::Finish ()
 {
@@ -263,6 +302,15 @@ Thread::Finish ()
   Sleep();  // invokes SWITCH
 
  }
+#endif
+
+#ifdef ETUDIANTS_TP
+void Thread::Finish() {
+    g_thread_to_be_destroyed = this;
+    Sleep();
+}
+#endif
+
 
 //----------------------------------------------------------------------
 // Thread::Yield
@@ -387,6 +435,11 @@ Thread::RestoreProcessorState()
 #ifdef ETUDIANTS_TP
 void Thread::RestoreProcessorState() {
 
+  // Copy all the registers that we need
+  // We take them from the saved states
+  memcpy(g_machine->int_registers, thread_context.int_registers, sizeof(thread_context.int_registers));
+  memcpy(g_machine->float_registers, thread_context.float_registers, sizeof(thread_context.float_registers));
+  memcpy(&g_machine->cc, &thread_context.cc, sizeof(thread_context.cc));
 }
 #endif
 
