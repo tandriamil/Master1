@@ -220,7 +220,7 @@ void Lock::Acquire() {
 		// It takes the lock then
 		free = false;
 
-		// And so becomes is owner
+		// And so becomes his owner
 		owner = g_current_thread;
 
 	}
@@ -268,6 +268,9 @@ void Lock::Release() {
 
 		// And put it in ready threads list
 		g_scheduler->ReadyToRun(waiting_thread);
+
+		// And so, it become the new owner
+		owner = waiting_thread;
 	}
 
 	// Put back the previous state of interrupts

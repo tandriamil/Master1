@@ -2,11 +2,8 @@
 **.o
 **.d
 
-test/halt
-test/hello
-test/matmult
-test/shell
-test/sort
+test/*
+!test/*.c
 
 nachos
 html
