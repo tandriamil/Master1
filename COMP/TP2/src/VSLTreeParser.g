@@ -389,10 +389,10 @@ read_item [SymbolTable symTab] returns [Code3a code]
 
 
 declaration [SymbolTable symTab] returns [Code3a code]
-	: ^(DECL decl_list[symTab]+)
+	: ^(DECL decl_item[symTab]+)
 		{
 			// Get the code and append it
-			$code = $decl_list.code;
+			$code = $decl_item.code;
 		}
 ;
 
