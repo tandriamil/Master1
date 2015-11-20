@@ -54,7 +54,8 @@ public class Code3aGenerator {
 	* Generate code for affectation
 	**/
 	public static Code3a genAff(Operand3a var, ExpAttribute exp) {
-		Code3a cod = exp.code;
+		Code3a cod = new Code3a();
+		cod.append(exp.code);
 		cod.append(new Inst3a(Inst3a.TAC.COPY, var, exp.place, null));
 		return cod;
 	}
@@ -67,6 +68,7 @@ public class Code3aGenerator {
 		Code3a code = new Code3a();
 
 		// Do the return
+		code.append(exp.code);
 		code.append(new Inst3a(Inst3a.TAC.RETURN, exp.place, null, null));
 
 		return code;
@@ -137,6 +139,7 @@ public class Code3aGenerator {
 	**/
 	public static Code3a genPrintInteger(ExpAttribute exp) {
 		Code3a code = new Code3a();
+		code.append(exp.code);
 		code.append(new Inst3a(Inst3a.TAC.ARG, exp.place, null, null));
 		code.append(new Inst3a(Inst3a.TAC.CALL, null, SymbDistrib.builtinPrintN, null));
 		return code;
@@ -190,7 +193,8 @@ public class Code3aGenerator {
 	* Generate code for everytime we have to append two codes
 	**/
 	public static Code3a concatenateCodes(Code3a c1, Code3a c2) {
-		Code3a code = c1;
+		Code3a code = new Code3a();
+		code.append(c1);
 		code.append(c2);  // Null verification already done into append()
 		return code;
 	}

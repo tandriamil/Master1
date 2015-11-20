@@ -77,13 +77,13 @@ proto [SymbolTable symTab] returns [Code3a code]
 
 
 type returns [Type type]
-	: INT_KW^
+	: INT_KW
 		{
 			// Just return the int type
 			$type = Type.INT;
 		}
 
-	| VOID_KW^
+	| VOID_KW
 		{
 			// Just return the void type
 			$type = Type.VOID;
@@ -97,7 +97,7 @@ param_list [SymbolTable symTab] returns [Code3a code]
 			$code = $param.code;
 		}
 
-	| PARAM^
+	| PARAM
 		{
 			// Just an empty code because emtpy word
 			$code = new Code3a();
@@ -114,10 +114,10 @@ param [SymbolTable symTab] returns [Code3a code]
 
 
 statement [SymbolTable symTab] returns [Code3a code]
-	: ^(ASSIGN_KW IDENT expression[symTab])
+	: ^(ASSIGN_KW expression[symTab] IDENT)
 		{
 			// Get the ident from the symtab
-			Operand3a id = symTab.lookup($IDENT.text);
+			Operand3a id = $symTab.lookup($IDENT.text);
 
 			// If the ident wasn't found
 			if (id == null) Errors.unknownIdentifier($ASSIGN_KW, $IDENT.text, null);
@@ -132,25 +132,27 @@ statement [SymbolTable symTab] returns [Code3a code]
 			$code = Code3aGenerator.genAff(id, $expression.expAtt);
 		}
 
-	| RETURN_KW^ expression[symTab]
+	| ^(RETURN_KW expression[symTab])
 		{
+			// TODO : check the var is in symTAb
+			// System.err.println("DEBUG: Return of the function " + $expression.expAtt);
 			// Put the return of the function
 			$code = Code3aGenerator.genReturn($expression.expAtt);
 		}
 
-	| PRINT_KW^ print_list[symTab]
+	| ^(PRINT_KW print_list[symTab])
 		{
 			// Put the returned code
 			$code = $print_list.code;
 		}
 
-	| READ_KW^ read_list[symTab]
+	| ^(READ_KW read_list[symTab])
 		{
 			// Put the returned code
 			$code = $read_list.code;
 		}
 
-	| ^(IF_KW expression[symTab] THEN_KW! st1=statement[symTab] (ELSE_KW! st2=statement[symTab])? FI_KW!)
+	| ^(IF_KW expression[symTab]  st1=statement[symTab] (st2=statement[symTab])? )
 		{
 			// If there's a second statement
 			if (st2 != null) $code = Code3aGenerator.genIFELSE($expression.expAtt, $st1.code, $st2.code);
@@ -159,7 +161,7 @@ statement [SymbolTable symTab] returns [Code3a code]
 			else $code = Code3aGenerator.genIF($expression.expAtt, $st1.code);
 		}
 
-	| ^(WHILE_KW expression[symTab] DO_KW! st=statement[symTab] OD_KW!)
+	| ^(WHILE_KW expression[symTab] st=statement[symTab])
 		{
 			// Generate the while code
 			$code = Code3aGenerator.genWHILE($expression.expAtt, $st.code);
@@ -206,12 +208,12 @@ array_elem [SymbolTable symTab] returns [Code3a code]
 
 
 inst_list [SymbolTable symTab] returns [Code3a code]
-	: ^(INST (statement[symTab])+)
+	: ^(INST statement[symTab]+)
 		{
 			$code = $statement.code;
 		}
 
-	| ^(DECL (decl_item[symTab])+)
+	| ^(DECL decl_item[symTab]+)
 		{
 			$code = $decl_item.code;
 		}
@@ -251,7 +253,7 @@ expression [SymbolTable symTab] returns [ExpAttribute expAtt]
 
 	| factor[symTab]
 		{
-			System.err.println("Factor value = " + $factor.expAtt);
+			// System.err.println("Factor value = " + $factor.expAtt);
 			$expAtt = $factor.expAtt;
 		}
 ;
@@ -301,12 +303,14 @@ primary [SymbolTable symTab] returns [ExpAttribute expAtt]
 			// Create a const symbol 3a code and just put the integer value
 			ConstSymbol cs = new ConstSymbol(Integer.parseInt($INTEGER.text));
 			$expAtt = new ExpAttribute(Type.INT, new Code3a(), cs);
+
+			// System.err.println("ExpAtt of an Integer, value of code is " + $expAtt.code);
 		}
 
 	| IDENT
 		{
 			// Get the ident from the symtab
-			Operand3a id = symTab.lookup($IDENT.text);
+			Operand3a id = $symTab.lookup($IDENT.text);
 
 			// If the ident wasn't found
 			if (id == null) Errors.unknownIdentifier($IDENT, $IDENT.text, null);
@@ -327,7 +331,7 @@ primary [SymbolTable symTab] returns [ExpAttribute expAtt]
 
 
 argument_list [SymbolTable symTab] returns [Code3a code]
-	: e1=expression[symTab] (COM! e2=expression[symTab])*
+	: e1=expression[symTab] (e2=expression[symTab])*
 		{
 			// Get the code of each expression and append them
 			$code = Code3aGenerator.concatenateCodes($e1.expAtt.code, $e2.expAtt.code);
@@ -336,7 +340,7 @@ argument_list [SymbolTable symTab] returns [Code3a code]
 
 
 print_list [SymbolTable symTab] returns [Code3a code]
-	: p1=print_item[symTab] (COM! p2=print_item[symTab])*
+	: p1=print_item[symTab] (p2=print_item[symTab])*
 		{
 			// Get the code of each print item and append them
 			$code = Code3aGenerator.concatenateCodes($p1.code, $p2.code);
@@ -360,7 +364,7 @@ print_item [SymbolTable symTab] returns [Code3a code]
 
 
 read_list [SymbolTable symTab] returns [Code3a code]
-	: r1=read_item[symTab] (COM! r2=read_item[symTab])*
+	: r1=read_item[symTab] (r2=read_item[symTab])*
 		{
 			// Get the code of each read item and append them
 			$code = Code3aGenerator.concatenateCodes($r1.code, $r2.code);
@@ -372,7 +376,7 @@ read_item [SymbolTable symTab] returns [Code3a code]
 	: IDENT
 		{
 			// Get the ident from the symtab && If the ident wasn't found
-			if (symTab.lookup($IDENT.text) == null) System.err.println("La variable n'est pas déclarée dans la table des symbole");
+			if ($symTab.lookup($IDENT.text) == null) System.err.println("La variable n'est pas déclarée dans la table des symbole");
 
 			// And here, read (with 3@ code)
 			$code = Code3aGenerator.genReadInteger((VarSymbol)symTab.lookup($IDENT.text));
@@ -394,11 +398,8 @@ declaration [SymbolTable symTab] returns [Code3a code]
 
 
 decl_list [SymbolTable symTab] returns [Code3a code]
-	: d1=decl_item[symTab] (COM! d2=decl_item[symTab])*
+	: d1=decl_item[symTab] (d2=decl_item[symTab])*
 		{
-			System.err.println("Code de d1" + $d1.code);
-			System.err.println("Code de d2" + $d2.code);
-
 			// Just append the generated codes
 			$code = Code3aGenerator.concatenateCodes($d1.code, $d2.code);
 		}
@@ -408,8 +409,6 @@ decl_list [SymbolTable symTab] returns [Code3a code]
 decl_item [SymbolTable symTab] returns [Code3a code]
 	: IDENT
 		{
-			//System.err.println("Declarations de " + $IDENT.text);
-
 			// Get the ident from the symtab
 			Operand3a id = $symTab.lookup($IDENT.text);
 

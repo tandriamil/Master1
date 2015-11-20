@@ -1,5 +1,4 @@
 {
-	INT x, y
-	x := 5
+	INT x, y, z, a, b, c, d
 	RETURN x
 }
