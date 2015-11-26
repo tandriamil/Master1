@@ -314,6 +314,9 @@ void Thread::Finish() {
 	// Protect from other accesses to the process object
 	IntStatus oldLevel = g_machine-> interrupt->SetStatus(INTERRUPTS_OFF);
 
+	// Remove it from the alive threads
+	g_alive->RemoveItem(this);
+
 	// Put the thread to sleep
 	Sleep();
 
