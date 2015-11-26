@@ -13,6 +13,7 @@
 
 // Nachos system calls
 #include "userlib/syscall.h"
+#include "userlib/libnachos.h"
 
 // Table used here
 #define NUM 30
@@ -56,7 +57,7 @@ void readThread(int c) {
 	
 	int i;
 	for (i = 0; i < NUM; i++) {
-		n_printf("Tab[" + i + "] = " + tab[i] + "\n");
+		n_printf("Tab[%d] = %d\n", i, tab[i]);
 	}
 }
 
@@ -70,8 +71,8 @@ int main() {
 	CondId cond = CondCreate("TableCondition");
 
 	// We create a thread to fill it and one to read it
-	ThreadId thread_fill = newThread("FillThread", fillThread, (int)cond);
-	ThreadId thread_read = newThread("ReadThread", readThread, (int)cond);
+	ThreadId thread_fill = newThread("FillThread", (int)fillThread, (int)cond);
+	ThreadId thread_read = newThread("ReadThread", (int)readThread, (int)cond);
 
 	// Wait the two threads before returning
 	if (Join(thread_fill) < 0)
@@ -85,5 +86,5 @@ int main() {
 		n_printf("Error destroy lock");
 
 	// Exit the program
-	Exi(0);
+	return 0;
 }

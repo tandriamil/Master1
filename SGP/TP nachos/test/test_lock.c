@@ -12,7 +12,8 @@
 
 // Nachos system calls
 #include "userlib/syscall.h"
-#define MAX_THREADS
+#include "userlib/libnachos.h"
+#define MAX_THREADS 10
 ThreadId threads[MAX_THREADS];
 int i = 1;
 
@@ -21,14 +22,14 @@ int i = 1;
 void whoAmI(int l) {
 
 	// Transform the lock
-	(LockId)lock = l;
+	LockId lock = (LockId)l;
 
 	// Take the lock
 	if (LockAcquire(lock) < 0)
 		n_printf("Error acquire lock");
 
 	// Wait and then display who he is
-	n_printf("I am the thread number " + i + "!\n");
+	n_printf("I am the thread number %d!\n", i);
 	i++;
 
 	// Release the lock
@@ -49,19 +50,19 @@ int main() {
 	// Create a lot of threads
 	int j;
 	for(j = 0; j < MAX_THREADS; j++) {
-		threads[j] = newThread("Threads j=" + j, whoAmI, (int)lock);
+		threads[j] = newThread("Thread", (int)whoAmI, (int)lock);
 	}
 
 	// Wait each threads
 	for (j = 0; j < MAX_THREADS; j++) {
 		if (Join(threads[j]) < 0)
-			n_printf("Error joining thread j=" + j);
+			n_printf("Error joining thread j=%d", j);
 	}
 
 	// Destroy the lock
 	if (LockDestroy(lock) < 0)
-		n_printf("Error joining thread j=" + j);
+		n_printf("Error joining thread j=%d", j);
 
 	// Exit the program
-	Exi(0);
+	return 0;
 }
