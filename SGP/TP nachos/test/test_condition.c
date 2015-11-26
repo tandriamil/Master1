@@ -39,9 +39,13 @@ void fillThread(int c) {
 		}
 	}
 
+	n_printf("Table just filled\n");
+
 	// Signal the cond
 	if (CondSignal(cond) < 0)
 		n_printf("Error signal condition");
+
+	Exit(0);
 }
 
 
@@ -59,6 +63,8 @@ void readThread(int c) {
 	for (i = 0; i < NUM; i++) {
 		n_printf("Tab[%d] = %d\n", i, tab[i]);
 	}
+
+	Exit(0);
 }
 
 
@@ -77,9 +83,13 @@ int main() {
 	// Wait the two threads before returning
 	if (Join(thread_fill) < 0)
 		n_printf("Error joining first thread");
+	
+	n_printf("Thread fill just finished");
 
 	if (Join(thread_read) < 0)
 		n_printf("Error joining second thread");
+	
+	n_printf("Thread read just finished");
 
 	// Delete the condition
 	if (CondDestroy(cond) < 0)

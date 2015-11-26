@@ -309,16 +309,16 @@ Thread::Finish ()
 
 #ifdef ETUDIANTS_TP
 void Thread::Finish() {
-    g_thread_to_be_destroyed = this;
+	g_thread_to_be_destroyed = this;
 
 	// Protect from other accesses to the process object
-    IntStatus oldLevel = g_machine-> interrupt->SetStatus(INTERRUPTS_OFF);
+	IntStatus oldLevel = g_machine-> interrupt->SetStatus(INTERRUPTS_OFF);
 
-    // Put the thread to sleep
+	// Put the thread to sleep
 	Sleep();
 
-    // Put back the old level
-    g_machine->interrupt->SetStatus(oldLevel);
+	// Put back the old level
+	g_machine->interrupt->SetStatus(oldLevel);
 }
 #endif
 

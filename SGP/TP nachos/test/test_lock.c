@@ -23,6 +23,7 @@ void whoAmI(int l) {
 
 	// Transform the lock
 	LockId lock = (LockId)l;
+	int x;
 
 	// Take the lock
 	if (LockAcquire(lock) < 0)
@@ -30,11 +31,16 @@ void whoAmI(int l) {
 
 	// Wait and then display who he is
 	n_printf("I am the thread number %d!\n", i);
+	x = i;
 	i++;
 
 	// Release the lock
 	if (LockRelease(lock) < 0)
 		n_printf("Error release lock");
+
+	n_printf("End of thread n°%d\n", x);
+
+	Exit(0);
 
 }
 
@@ -47,11 +53,22 @@ int main() {
 	// Create a lock
 	LockId lock = LockCreate("Lock");
 
+	// Take the lock
+	if (LockAcquire(lock) < 0)
+		n_printf("Error acquire lock");
+
 	// Create a lot of threads
 	int j;
 	for(j = 0; j < MAX_THREADS; j++) {
+		n_printf("Thread n°%d, lock = %d and whoAmI = %d \n", j, (int)lock, (int)whoAmI);
 		threads[j] = newThread("Thread", (int)whoAmI, (int)lock);
 	}
+
+	// Release the lock
+	n_printf("End of threads creating, now we release the lock\n");
+	if (LockRelease(lock) < 0)
+		n_printf("Error release lock");
+	n_printf("The main lock is finally released\n");
 
 	// Wait each threads
 	for (j = 0; j < MAX_THREADS; j++) {
@@ -61,7 +78,7 @@ int main() {
 
 	// Destroy the lock
 	if (LockDestroy(lock) < 0)
-		n_printf("Error joining thread j=%d", j);
+		n_printf("Error destroying the lock");
 
 	// Exit the program
 	return 0;
