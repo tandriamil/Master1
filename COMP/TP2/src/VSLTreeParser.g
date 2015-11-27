@@ -4,7 +4,7 @@ options {
 	language	 = Java;
 	tokenVocab   = VSLParser;
 	ASTLabelType = CommonTree;
-	output	   = AST;
+	output	     = AST;
 }
 
 
@@ -18,11 +18,7 @@ s [SymbolTable symTab] returns [Code3a code]
 
 
 program [SymbolTable symTab] returns [Code3a code]
-	: ^(PROG unit[symTab]+)
-		{
-			// Just transfer the code
-			$code = $unit.code;
-		}
+	: ^(PROG  { Code3a c = new Code3a(); }  (unit[symTab] { c.append($unit.code); } )+  { $code = c; } )
 ;
 
 
@@ -51,7 +47,7 @@ function [SymbolTable symTab] returns [Code3a code]
 			if (id != null) Errors.redefinedIdentifier($IDENT, $IDENT.text, null);
 
 			// The function type
-			FunctionType functionType = new FunctionType($type.type);
+			FunctionType functionType = new FunctionType($type.type, false);
 
 			// Create the function symbol
 			LabelSymbol functionLabel = new LabelSymbol($IDENT.text);
@@ -67,11 +63,26 @@ function [SymbolTable symTab] returns [Code3a code]
 
 
 proto [SymbolTable symTab] returns [Code3a code]
-	: ^(PROTO_KW type IDENT LP! param_list[symTab] RP!)
+	: ^(PROTO_KW type IDENT param_list[symTab])
 		{
-			// TODO: Here we should add the proto to symTab
+			// Get the ident from the symtab
+			Operand3a id = $symTab.lookup($IDENT.text);
 
-			$code = $param_list.code;
+			// If the ident is already defined
+			if (id != null) Errors.redefinedIdentifier($IDENT, $IDENT.text, null);
+
+			// The function type
+			FunctionType functionType = new FunctionType($type.type, true);
+
+			// Create the function symbol
+			LabelSymbol functionLabel = new LabelSymbol($IDENT.text);
+			FunctionSymbol functionSymbol = new FunctionSymbol(functionLabel, functionType);
+
+			// Add it to tabSymb
+			$symTab.insert($IDENT.text, functionSymbol);
+
+			// No code, just a prototype added to the tabSymb
+			$code = new Code3a();
 		}
 ;
 
@@ -92,16 +103,13 @@ type returns [Type type]
 
 
 param_list [SymbolTable symTab] returns [Code3a code]
-	: ^(PARAM param[symTab]*)
-		{
-			$code = $param.code;
-		}
+	: ^(PARAM  { Code3a c = new Code3a(); }  (param[symTab] { c.append($param.code); } )*  { $code = c; } )
 
-	| PARAM
+	/*| PARAM
 		{
 			// Just an empty code because emtpy word
 			$code = new Code3a();
-		}
+		}*/
 ;
 
 
@@ -109,6 +117,14 @@ param [SymbolTable symTab] returns [Code3a code]
 	: ^(ARRAY IDENT)
 		{
 			$code = new Code3a();
+		}
+
+	| IDENT
+		{
+			// Add this param to the symTab of this function or prototype
+
+			// Just generate the code corresponding to an ident param
+			$code = new Code3a(new Inst3a(Inst3a.TAC.VAR, new VarSymbol(Type.INT, $IDENT.text, symTab.getScope()), null, null));
 		}
 ;
 

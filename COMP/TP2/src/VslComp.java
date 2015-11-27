@@ -63,7 +63,7 @@ public class VslComp {
 			// an expression). >>>
 			//VSLParser.expression_return r = parser.expression();
 			//VSLParser.s_return r = parser.s();
-			VSLParser.statement_return r = parser.statement();
+			VSLParser.unit_return r = parser.unit();
 			// The parser produces an AST.
 			CommonTree t = (CommonTree) r.getTree();
 			// If debugging is on, this prints the resulting tree in LISP
@@ -82,8 +82,11 @@ public class VslComp {
 				//c.print();
 				// Code3a c = tparser.expression(new SymbolTable()).expAtt.code;
 				// c.print();
-				Code3a c = tparser.statement(new SymbolTable()).code;
+
+				SymbolTable symTab = new SymbolTable();
+				Code3a c = tparser.unit(symTab).code;
 				c.print();
+				symTab.print();
 
 				// We prepare the MIPS code generator, which will compile
 				// the three-address code into MIPS assembly.
