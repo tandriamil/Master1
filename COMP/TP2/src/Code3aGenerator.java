@@ -169,7 +169,7 @@ public class Code3aGenerator {
 	/** 
 	 * Generate code for a function declaration
 	 */
-	public static Code3a genFunction(FunctionSymbol functionSymbol, Code3a statementCode) {
+	public static Code3a genFunction(FunctionSymbol functionSymbol, Code3a paramsCode, Code3a statementCode) {
 		Code3a code = new Code3a();
 
 		// Generate the label (label [functionName])
@@ -177,6 +177,9 @@ public class Code3aGenerator {
 
 		// Generate the beginfunc instruction (beginfunc)
 		code.append(new Inst3a(Inst3a.TAC.BEGINFUNC, null, null, null));
+
+		// Put the params codes then
+		code.append(paramsCode);
 
 		// Put the statement codes then
 		code.append(statementCode);

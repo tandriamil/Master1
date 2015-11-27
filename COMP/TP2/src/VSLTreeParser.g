@@ -57,7 +57,7 @@ function [SymbolTable symTab] returns [Code3a code]
 			$symTab.insert($IDENT.text, functionSymbol);
 
 			// Generate its code
-			$code = Code3aGenerator.genFunction(functionSymbol, $statement.code);
+			$code = Code3aGenerator.genFunction(functionSymbol, $param_list.code, $statement.code);
 		}
 ;
 
@@ -81,6 +81,13 @@ proto [SymbolTable symTab] returns [Code3a code]
 			// Add it to tabSymb
 			$symTab.insert($IDENT.text, functionSymbol);
 
+			// For each parameters, add it to the list of arguments
+			/*Code3a params = $param_list.code;
+			List<Inst3a> list_insts = params.getCode();
+			for(Inst3a inst : list_insts) {
+				functionType.extend(inst.);
+			}*/
+
 			// No code, just a prototype added to the tabSymb
 			$code = new Code3a();
 		}
@@ -103,13 +110,7 @@ type returns [Type type]
 
 
 param_list [SymbolTable symTab] returns [Code3a code]
-	: ^(PARAM  { Code3a c = new Code3a(); }  (param[symTab] { c.append($param.code); } )*  { $code = c; } )
-
-	/*| PARAM
-		{
-			// Just an empty code because emtpy word
-			$code = new Code3a();
-		}*/
+	: ^(PARAM  { Code3a c = new Code3a(); }  ( param[symTab] { c.append($param.code); } )*  { $code = c; } )
 ;
 
 
@@ -121,7 +122,7 @@ param [SymbolTable symTab] returns [Code3a code]
 
 	| IDENT
 		{
-			// Add this param to the symTab of this function or prototype
+			// TODO: Add this param to the symTab of this function or prototype
 
 			// Just generate the code corresponding to an ident param
 			$code = new Code3a(new Inst3a(Inst3a.TAC.VAR, new VarSymbol(Type.INT, $IDENT.text, symTab.getScope()), null, null));
@@ -150,8 +151,6 @@ statement [SymbolTable symTab] returns [Code3a code]
 
 	| ^(RETURN_KW expression[symTab])
 		{
-			// TODO : check the var is in symTAb
-			// System.err.println("DEBUG: Return of the function " + $expression.expAtt);
 			// Put the return of the function
 			$code = Code3aGenerator.genReturn($expression.expAtt);
 		}
@@ -261,7 +260,6 @@ expression [SymbolTable symTab] returns [ExpAttribute expAtt]
 
 	| factor[symTab]
 		{
-			// System.err.println("Factor value = " + $factor.expAtt);
 			$expAtt = $factor.expAtt;
 		}
 ;
@@ -362,11 +360,7 @@ argument_list [SymbolTable symTab] returns [ExpAttribute expAtt]
 
 
 print_list [SymbolTable symTab] returns [Code3a code]
-	: p1=print_item[symTab] (p2=print_item[symTab])*
-		{
-			// Get the code of each print item and append them
-			$code = Code3aGenerator.concatenateCodes($p1.code, $p2.code);
-		}
+	: { Code3a c = new Code3a(); }  ( print_item[symTab] { c.append($print_item.code); } )+  { $code = c; }
 ;
 
 
@@ -386,11 +380,7 @@ print_item [SymbolTable symTab] returns [Code3a code]
 
 
 read_list [SymbolTable symTab] returns [Code3a code]
-	: r1=read_item[symTab] (r2=read_item[symTab])*
-		{
-			// Get the code of each read item and append them
-			$code = Code3aGenerator.concatenateCodes($r1.code, $r2.code);
-		}
+	: { Code3a c = new Code3a(); }  ( read_item[symTab] { c.append($read_item.code); } )+  { $code = c; }
 ;
 
 
@@ -398,11 +388,12 @@ read_item [SymbolTable symTab] returns [Code3a code]
 	: IDENT
 		{
 			// Get the ident from the symtab && If the ident wasn't found
-			if ($symTab.lookup($IDENT.text) == null) System.err.println("La variable n'est pas déclarée dans la table des symbole");
+			if ($symTab.lookup($IDENT.text) == null) Errors.unknownIdentifier($IDENT, $IDENT.text, "");
 
 			// And here, read (with 3@ code)
 			$code = Code3aGenerator.genReadInteger((VarSymbol)symTab.lookup($IDENT.text));
 		}
+
 	| array_elem[symTab]
 		{
 			// TODO

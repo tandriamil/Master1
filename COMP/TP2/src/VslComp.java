@@ -62,8 +62,8 @@ public class VslComp {
 			// wishes to parse just a fragment of the language (e.g. begin with
 			// an expression). >>>
 			//VSLParser.expression_return r = parser.expression();
-			//VSLParser.s_return r = parser.s();
-			VSLParser.unit_return r = parser.unit();
+			VSLParser.s_return r = parser.s();
+
 			// The parser produces an AST.
 			CommonTree t = (CommonTree) r.getTree();
 			// If debugging is on, this prints the resulting tree in LISP
@@ -78,13 +78,8 @@ public class VslComp {
 				// <<< NOTE: this line must be changed during development, if
 				// one wishes to parse just a fragment of the language (e.g.
 				// begin with an expression). >>>
-				//Code3a c = tparser.s(new SymbolTable()).code;
-				//c.print();
-				// Code3a c = tparser.expression(new SymbolTable()).expAtt.code;
-				// c.print();
-
 				SymbolTable symTab = new SymbolTable();
-				Code3a c = tparser.unit(symTab).code;
+				Code3a c = tparser.s(symTab).code;
 				c.print();
 				symTab.print();
 
