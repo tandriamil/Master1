@@ -161,7 +161,7 @@ public class Code3aGenerator {
 	**/
 	public static Code3a genVarDeclaration(VarSymbol var) {
 		Code3a code = new Code3a();
-		code.append(new Inst3a(Inst3a.TAC.VAR, var, null, null));
+		code.append(new Inst3a(Inst3a.TAC.VAR, (Operand3a)var, null, null));
 		return code;
 	}
 
@@ -196,6 +196,25 @@ public class Code3aGenerator {
 		Code3a code = new Code3a();
 		code.append(c1);
 		code.append(c2);  // Null verification already done into append()
+		return code;
+	}
+
+	/** 
+	* Generate code for Instruction
+	**/
+	public static Code3a genInstruction(Code3a c) {
+		Code3a code = new Code3a();
+		code.append(c);
+		return code;
+	}
+
+	/**
+	 * Generate code for Argument
+	 **/
+
+	public static Code3a genArg(ExpAttribute e){
+		Code3a code = e.code;
+		code.append(new Inst3a(Inst3a.TAC.ARG,e.place ,null ,null));
 		return code;
 	}
 
