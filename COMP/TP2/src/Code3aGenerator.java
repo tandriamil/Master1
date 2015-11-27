@@ -14,7 +14,7 @@ public class Code3aGenerator {
 
 	/**
 	 * Generates the 3a statement: VAR t
-	 **/
+	 */
 	public static Code3a genVar(Operand3a t) {
 		Inst3a i = new Inst3a(Inst3a.TAC.VAR, t, null, null);
 		return new Code3a(i);
@@ -51,8 +51,8 @@ public class Code3aGenerator {
 
 
 	/** 
-	* Generate code for affectation
-	**/
+	 * Generate code for affectation
+	 */
 	public static Code3a genAff(Operand3a var, ExpAttribute exp) {
 		Code3a cod = new Code3a();
 		cod.append(exp.code);
@@ -62,8 +62,8 @@ public class Code3aGenerator {
 
 
 	/** 
-	* Generate code for return
-	**/
+	 * Generate code for return
+	 */
 	public static Code3a genReturn(ExpAttribute exp) {
 		Code3a code = new Code3a();
 
@@ -76,8 +76,8 @@ public class Code3aGenerator {
 
 
 	/** 
-	* Generate code for IF ..... THEN
-	**/
+	 * Generate code for IF ..... THEN
+	 */
 	public static Code3a genIF(ExpAttribute exp, Code3a code1) {
 		LabelSymbol end = SymbDistrib.newLabel();
 		Code3a code = new Code3a();
@@ -89,8 +89,8 @@ public class Code3aGenerator {
 
 
 	/** 
-	* Generate code for IF ..... THEN ...... ELSE
-	**/
+	 * Generate code for IF ..... THEN ...... ELSE
+	 */
 	public static Code3a genIFELSE(ExpAttribute exp, Code3a code1, Code3a code2) {
 		LabelSymbol elSe = SymbDistrib.newLabel();
 		LabelSymbol end = SymbDistrib.newLabel();
@@ -106,8 +106,8 @@ public class Code3aGenerator {
 
 
 	/** 
-	* Generate code for WHILE ..... DO ...... DONE
-	**/
+	 * Generate code for WHILE ..... DO ...... DONE
+	 */
 	public static Code3a genWHILE(ExpAttribute exp, Code3a code1) {
 		LabelSymbol repeat = SymbDistrib.newLabel();
 		LabelSymbol end = SymbDistrib.newLabel();
@@ -122,8 +122,8 @@ public class Code3aGenerator {
 
 
 	/** 
-	* Generate code for PrintSting
-	**/
+	 * Generate code for PrintSting
+	 */
 	public static Code3a genPrintString(String msg) {
 		Code3a code = new Code3a();
 		Data3a data = new Data3a(msg);
@@ -135,8 +135,8 @@ public class Code3aGenerator {
 
 
 	/** 
-	* Generate code for PrintInteger
-	**/
+	 * Generate code for PrintInteger
+	 */
 	public static Code3a genPrintInteger(ExpAttribute exp) {
 		Code3a code = new Code3a();
 		code.append(exp.code);
@@ -147,8 +147,8 @@ public class Code3aGenerator {
 
 
 	/** 
-	* Generate code for Read Integer
-	**/
+	 * Generate code for Read Integer
+	 */
 	public static Code3a genReadInteger(VarSymbol var) {
 		Code3a code = new Code3a();
 		code.append(new Inst3a(Inst3a.TAC.CALL, var, SymbDistrib.builtinRead, null));
@@ -157,8 +157,8 @@ public class Code3aGenerator {
 
 
 	/** 
-	* Generate code for a variable declaration
-	**/
+	 * Generate code for a variable declaration
+	 */
 	public static Code3a genVarDeclaration(VarSymbol var) {
 		Code3a code = new Code3a();
 		code.append(new Inst3a(Inst3a.TAC.VAR, (Operand3a)var, null, null));
@@ -167,8 +167,8 @@ public class Code3aGenerator {
 
 
 	/** 
-	* Generate code for a function declaration
-	**/
+	 * Generate code for a function declaration
+	 */
 	public static Code3a genFunction(FunctionSymbol functionSymbol, Code3a statementCode) {
 		Code3a code = new Code3a();
 
@@ -190,8 +190,8 @@ public class Code3aGenerator {
 
 
 	/** 
-	* Generate code for everytime we have to append two codes
-	**/
+	 * Generate code for everytime we have to append two codes
+	 */
 	public static Code3a concatenateCodes(Code3a c1, Code3a c2) {
 		Code3a code = new Code3a();
 		code.append(c1);
@@ -200,8 +200,8 @@ public class Code3aGenerator {
 	}
 
 	/** 
-	* Generate code for Instruction
-	**/
+	 * Generate code for Instruction
+	 */
 	public static Code3a genInstruction(Code3a c) {
 		Code3a code = new Code3a();
 		code.append(c);
@@ -209,13 +209,21 @@ public class Code3aGenerator {
 	}
 
 	/**
-	 * Generate code for Argument
-	 **/
+	 * Generate code for a function call
+	 */
+	public static ExpAttribute genFunctionCall(String funcName, FunctionType f, ExpAttribute e) {
 
-	public static Code3a genArg(ExpAttribute e){
-		Code3a code = e.code;
-		code.append(new Inst3a(Inst3a.TAC.ARG,e.place ,null ,null));
-		return code;
+		// Generate a new place
+		VarSymbol resultFunction = SymbDistrib.newTemp();
+
+		// Create the ExpAttribute
+		ExpAttribute exp = new ExpAttribute(f.getReturnType(), e.code, resultFunction);
+
+		// Then call the function
+		exp.code.append(new Inst3a(Inst3a.TAC.CALL, new LabelSymbol(funcName), null, null));
+
+		// In the end, return this ExpAttribute
+		return exp;
 	}
 
 } // Code3aGenerator ***

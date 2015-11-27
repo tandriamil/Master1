@@ -1,4 +1,8 @@
 {
 	INT x, y, z, a, b, c, d
 	RETURN x
+	PRINT x
+	PRINT y
+	PRINT z
+	PRINT d
 }

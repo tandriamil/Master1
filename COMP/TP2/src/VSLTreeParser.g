@@ -212,11 +212,6 @@ inst_list [SymbolTable symTab] returns [Code3a code]
 		{
 			$code = $code = Code3aGenerator.genInstruction($st.code);
 		}
-
-	| ^(DECL decl_item[symTab]+)
-		{
-			$code = $decl_item.code;
-		}
 ;
 
 
@@ -303,8 +298,6 @@ primary [SymbolTable symTab] returns [ExpAttribute expAtt]
 			// Create a const symbol 3a code and just put the integer value
 			ConstSymbol cs = new ConstSymbol(Integer.parseInt($INTEGER.text));
 			$expAtt = new ExpAttribute(Type.INT, new Code3a(), cs);
-
-			// System.err.println("ExpAtt of an Integer, value of code is " + $expAtt.code);
 		}
 
 	| IDENT
@@ -319,6 +312,22 @@ primary [SymbolTable symTab] returns [ExpAttribute expAtt]
 			$expAtt = new ExpAttribute(id.type, new Code3a(), id);
 		}
 
+	| ^(FCALL IDENT argument_list[symTab]?)
+		{
+			// We check that the function is defined
+			Operand3a function = $symTab.lookup($IDENT.text);
+			if (function == null) Errors.unknownIdentifier($IDENT, $IDENT.text, null);
+
+			// Check that the function is a function typed
+			if (!(function instanceof FunctionSymbol)) Errors.unknownIdentifier($IDENT, $IDENT.text, "Label not known as a function");
+
+			// We check also that it's a function
+			if (!function.type.isCompatible(new FunctionType(Type.VOID))) Errors.incompatibleTypes($FCALL, Type.LABEL, function.type, "");
+
+			// We build ExpAtt from extern method
+			$expAtt = Code3aGenerator.genFunctionCall($IDENT.text, (FunctionType)function.type, $argument_list.expAtt);
+		}
+
 	| ^(NEGAT p=primary[symTab])
 		{
 			// Get a new temporary var for the 3a code
@@ -330,11 +339,11 @@ primary [SymbolTable symTab] returns [ExpAttribute expAtt]
 ;
 
 
-argument_list [SymbolTable symTab] returns [Code3a code]
-	: e1=expression[symTab] (e2=expression[symTab])*
+argument_list [SymbolTable symTab] returns [ExpAttribute expAtt]
+	: expression[symTab]+
 		{
-			// Get the code of each expression and append them
-			$code = Code3aGenerator.concatenateCodes($e1.expAtt.code, $e2.expAtt.code);
+			// Return the expAtt given by the expression
+			$expAtt = $expression.expAtt;
 		}
 ;
 
@@ -432,8 +441,4 @@ decl_item [SymbolTable symTab] returns [Code3a code]
 			// TODO
 			$code = new Code3a();
 		}
-;
-// gérer l'appel 
-argument_list
-    : expression (COM! expression)*
 ;
