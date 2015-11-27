@@ -14,7 +14,7 @@ then
 fi
 
 # Some local definitions
-if [ -n $LOCAL_ANTLR ]
+if [ $LOCAL_ANTLR != "" ]
 then
 	antlr_jar=$LOCAL_ANTLR
 else

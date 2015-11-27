@@ -1,0 +1,4 @@
+PROTO INT fact(x)
+FUNC VOID main(x, y, z) {
+	PRINT "HEY"
+}

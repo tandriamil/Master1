@@ -5,7 +5,7 @@ bin_dir=./bin
 test_dir=./tests
 
 # Some local definitions
-if [ -n $LOCAL_ANTLR ]
+if [ $LOCAL_ANTLR != "" ]
 then
 	antlr_jar=$LOCAL_ANTLR
 else
@@ -15,7 +15,7 @@ fi
 # Runs tests
 echo "Running tests"
 echo "My own test file"
-java -cp $src_dir:$bin_dir:$antlr_jar VslComp $test_dir/my_test.vsl
+java -cp $src_dir:$bin_dir:$antlr_jar VslComp $test_dir/personnal_tests/my_test.vsl
 echo ""
 
 # echo "Code result for hello_world.vsl:"
