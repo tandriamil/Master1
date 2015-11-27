@@ -208,10 +208,7 @@ array_elem [SymbolTable symTab] returns [Code3a code]
 
 
 inst_list [SymbolTable symTab] returns [Code3a code]
-	: ^(INST (st = statement[symTab])+)
-		{
-			$code = $code = Code3aGenerator.genInstruction($st.code);
-		}
+	: ^(INST {Code3a code1 = new Code3a();} (st = statement[symTab] {code1.append(Code3aGenerator.genInstruction($st.code));} )+ {$code = code1;})
 ;
 
 
@@ -398,22 +395,7 @@ read_item [SymbolTable symTab] returns [Code3a code]
 
 
 declaration [SymbolTable symTab] returns [Code3a code]
-	: ^(DECL decl_item[symTab]+)
-		{
-			// Get the code and append it
-			$code = $decl_item.code;
-		}
-;
-
-
-decl_list [SymbolTable symTab] returns [Code3a code]
-	: (dc=decl_item[symTab])+
-		{
-			// Just append the generated codes
-			//$code = Code3aGenerator.concatenateCodes($d1.code, $d2.code);
-			// Append
-			$code = $dc.code;
-		}
+	: ^(DECL { Code3a code1 = new Code3a(); }  ( decl_item[symTab]  { code1.append($decl_item.code); } )+  { $code = code1; } ) 
 ;
 
 
