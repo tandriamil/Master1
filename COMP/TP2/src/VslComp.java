@@ -79,8 +79,8 @@ public class VslComp {
 				// one wishes to parse just a fragment of the language (e.g.
 				// begin with an expression). >>>
 				SymbolTable symTab = new SymbolTable();
-				Code3a c = tparser.s(symTab).code;
-				c.print();
+				Code3a code = tparser.s(symTab).code;
+				code.print();
 				symTab.print();
 
 				// We prepare the MIPS code generator, which will compile

@@ -1,4 +1,5 @@
 PROTO INT fact(x)
 FUNC VOID main(x, y, z) {
-	PRINT "HEY"
+	z := x + y
+	PRINT z
 }

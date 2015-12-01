@@ -81,13 +81,6 @@ proto [SymbolTable symTab] returns [Code3a code]
 			// Add it to tabSymb
 			$symTab.insert($IDENT.text, functionSymbol);
 
-			// For each parameters, add it to the list of arguments
-			/*Code3a params = $param_list.code;
-			List<Inst3a> list_insts = params.getCode();
-			for(Inst3a inst : list_insts) {
-				functionType.extend(inst.);
-			}*/
-
 			// No code, just a prototype added to the tabSymb
 			$code = new Code3a();
 		}
@@ -117,12 +110,25 @@ param_list [SymbolTable symTab] returns [Code3a code]
 param [SymbolTable symTab] returns [Code3a code]
 	: ^(ARRAY IDENT)
 		{
+			// Add this param to the symTab of this function or prototype
+			VarSymbol vs = new VarSymbol(Type.ARRAY, $IDENT.text, $symTab.getScope());
+
+			// But first, we say that this is a parameter
+			vs.setParam();
+			$symTab.insert($IDENT.text, vs);
+
+			// TODO: Build the code for the array
 			$code = new Code3a();
 		}
 
 	| IDENT
 		{
-			// TODO: Add this param to the symTab of this function or prototype
+			// Add this param to the symTab of this function or prototype
+			VarSymbol vs = new VarSymbol(Type.INT, $IDENT.text, $symTab.getScope());
+
+			// But first, we say that this is a parameter
+			vs.setParam();
+			$symTab.insert($IDENT.text, vs);
 
 			// Just generate the code corresponding to an ident param
 			$code = new Code3a(new Inst3a(Inst3a.TAC.VAR, new VarSymbol(Type.INT, $IDENT.text, symTab.getScope()), null, null));

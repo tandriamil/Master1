@@ -18,6 +18,12 @@ echo "My own test file"
 java -cp $src_dir:$bin_dir:$antlr_jar VslComp $test_dir/personnal_tests/my_test.vsl
 echo ""
 
+# The example test provided
+# echo ""
+# echo "The example test provided"
+# java -cp $src_dir:$bin_dir:$antlr_jar VslComp $test_dir/personnal_tests/example_test.vsl
+# echo ""
+
 # echo "Code result for hello_world.vsl:"
 # java -cp $src_dir:$bin_dir:$antlr_jar VslComp $test_dir/testlevel1/hello_world.vsl
 # echo ""
