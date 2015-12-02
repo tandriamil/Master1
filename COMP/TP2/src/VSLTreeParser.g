@@ -104,6 +104,12 @@ type returns [Type type]
 
 param_list [SymbolTable symTab] returns [Code3a code]
 	: ^(PARAM  { Code3a c = new Code3a(); }  ( param[symTab] { c.append($param.code); } )*  { $code = c; } )
+
+	| PARAM
+		{
+			// A rule that we don't understand, we'll just return an empty code then
+			$code = new Code3a();
+		}
 ;
 
 
@@ -155,6 +161,12 @@ statement [SymbolTable symTab] returns [Code3a code]
 			$code = Code3aGenerator.genAff(id, $expression.expAtt);
 		}
 
+	| ^(ASSIGN_KW expression[symTab] array_elem[symTab])
+		{
+			// TODO
+			$code = new Code3a();
+		}
+
 	| ^(RETURN_KW expression[symTab])
 		{
 			// Put the return of the function
@@ -186,7 +198,13 @@ statement [SymbolTable symTab] returns [Code3a code]
 		{
 			// Generate the while code
 			$code = Code3aGenerator.genWHILE($expression.expAtt, $st.code);
-	 	}
+		}
+
+	| ^(FCALL_S IDENT argument_list[symTab]?)
+		{
+			// TODO
+			$code = new Code3a();
+		}
 
 	| block[symTab]
 		{
@@ -229,7 +247,7 @@ array_elem [SymbolTable symTab] returns [Code3a code]
 
 
 inst_list [SymbolTable symTab] returns [Code3a code]
-	: ^(INST {Code3a code1 = new Code3a();} (st = statement[symTab] {code1.append(Code3aGenerator.genInstruction($st.code));} )+ {$code = code1;})
+	: ^(INST  { Code3a c = new Code3a(); }  (st=statement[symTab]  { c.append(Code3aGenerator.genInstruction($st.code)); }  )+  { $code = c; } )
 ;
 
 
@@ -272,25 +290,25 @@ expression [SymbolTable symTab] returns [ExpAttribute expAtt]
 
 
 factor [SymbolTable symTab] returns [ExpAttribute expAtt]
-	: ^(MUL p1=factor[symTab] p2=factor[symTab])
+	: ^(MUL f1=factor[symTab] f2=factor[symTab])
 		{
 			// We get the result of check type
-			Type ty = TypeCheck.checkBinOp($p1.expAtt.type, $p2.expAtt.type);
+			Type ty = TypeCheck.checkBinOp($f1.expAtt.type, $f2.expAtt.type);
 
 			// If wrong type
 			if (ty == Type.ERROR) Errors.incompatibleTypes($MUL, Type.INT, ty, null);
 
 			// Get a new temporary var for the 3ad code
 			VarSymbol temp = SymbDistrib.newTemp();
-		 
+		
 			// Return the Expression attribute
-			$expAtt = new ExpAttribute(ty, Code3aGenerator.genBinOp(Inst3a.TAC.MUL, temp, $p1.expAtt, $p2.expAtt), temp);
+			$expAtt = new ExpAttribute(ty, Code3aGenerator.genBinOp(Inst3a.TAC.MUL, temp, $f1.expAtt, $f2.expAtt), temp);
 		}
 	
-	| ^(DIV p1=factor[symTab] p2=factor[symTab])
+	| ^(DIV f1=factor[symTab] f2=factor[symTab])
 		{
 			// We get the result of check type
-			Type ty = TypeCheck.checkBinOp($p1.expAtt.type, $p2.expAtt.type);
+			Type ty = TypeCheck.checkBinOp($f1.expAtt.type, $f2.expAtt.type);
 
 			// If wrong type
 			if (ty == Type.ERROR) Errors.incompatibleTypes($DIV, Type.INT, ty, null);
@@ -299,7 +317,7 @@ factor [SymbolTable symTab] returns [ExpAttribute expAtt]
 			VarSymbol temp = SymbDistrib.newTemp();
 
 			// Return the Expression attribute
-			$expAtt = new ExpAttribute(ty, Code3aGenerator.genBinOp(Inst3a.TAC.DIV, temp, $p1.expAtt, $p2.expAtt), temp);
+			$expAtt = new ExpAttribute(ty, Code3aGenerator.genBinOp(Inst3a.TAC.DIV, temp, $f1.expAtt, $f2.expAtt), temp);
 		}
 
 	| primary[symTab]
@@ -329,6 +347,11 @@ primary [SymbolTable symTab] returns [ExpAttribute expAtt]
 			$expAtt = new ExpAttribute(id.type, new Code3a(), id);
 		}
 
+	| array_elem[symTab]
+		{
+
+		}
+
 	| ^(FCALL IDENT argument_list[symTab]?)
 		{
 			// We check that the function is defined
@@ -343,6 +366,11 @@ primary [SymbolTable symTab] returns [ExpAttribute expAtt]
 
 			// We build ExpAtt from extern method
 			$expAtt = Code3aGenerator.genFunctionCall($IDENT.text, (FunctionType)function.type, $argument_list.expAtt);
+		}
+
+	| LP! expression[symTab] RP!
+		{
+			
 		}
 
 	| ^(NEGAT p=primary[symTab])
