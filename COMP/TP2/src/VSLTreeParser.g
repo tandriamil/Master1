@@ -38,41 +38,36 @@ unit [SymbolTable symTab] returns [Code3a code]
 
 
 function [SymbolTable symTab] returns [Code3a code]
-	: ^(FUNC_KW type IDENT param_list[symTab] ^(BODY statement[symTab]))
-		{
-			// Get the ident from the symtab
-			Operand3a id = $symTab.lookup($IDENT.text);
+	: ^(FUNC_KW type IDENT  { FunctionType functionType = new FunctionType($type.type, false); }  param_list[symTab, functionType] ^(BODY statement[symTab])
+			{
+				// Get the ident from the symtab
+				Operand3a id = $symTab.lookup($IDENT.text);
 
-			// If the ident is already defined
-			if (id != null) Errors.redefinedIdentifier($IDENT, $IDENT.text, null);
+				// If the ident is already defined
+				if (id != null) Errors.redefinedIdentifier($IDENT, $IDENT.text, null);
 
-			// The function type
-			FunctionType functionType = new FunctionType($type.type, false);
+				// Create the function symbol
+				LabelSymbol functionLabel = new LabelSymbol($IDENT.text);
+				FunctionSymbol functionSymbol = new FunctionSymbol(functionLabel, functionType);
 
-			// Create the function symbol
-			LabelSymbol functionLabel = new LabelSymbol($IDENT.text);
-			FunctionSymbol functionSymbol = new FunctionSymbol(functionLabel, functionType);
+				// Add it to tabSymb
+				$symTab.insert($IDENT.text, functionSymbol);
 
-			// Add it to tabSymb
-			$symTab.insert($IDENT.text, functionSymbol);
-
-			// Generate its code
-			$code = Code3aGenerator.genFunction(functionSymbol, $param_list.code, $statement.code);
-		}
+				// Generate its code
+				$code = Code3aGenerator.genFunction(functionSymbol, $param_list.code, $statement.code);
+			}
+		)
 ;
 
 
 proto [SymbolTable symTab] returns [Code3a code]
-	: ^(PROTO_KW type IDENT param_list[symTab])
+	: ^(PROTO_KW type IDENT  { FunctionType functionType = new FunctionType($type.type, false); }  param_list[symTab])
 		{
 			// Get the ident from the symtab
 			Operand3a id = $symTab.lookup($IDENT.text);
 
 			// If the ident is already defined
 			if (id != null) Errors.redefinedIdentifier($IDENT, $IDENT.text, null);
-
-			// The function type
-			FunctionType functionType = new FunctionType($type.type, true);
 
 			// Create the function symbol
 			LabelSymbol functionLabel = new LabelSymbol($IDENT.text);
@@ -102,8 +97,8 @@ type returns [Type type]
 ;
 
 
-param_list [SymbolTable symTab] returns [Code3a code]
-	: ^(PARAM  { Code3a c = new Code3a(); }  ( param[symTab] { c.append($param.code); } )*  { $code = c; } )
+param_list [SymbolTable symTab, FunctionType functionType] returns [Code3a code]
+	: ^(PARAM  { Code3a c = new Code3a(); }  ( param[symTab, functionType] { c.append($param.code); } )*  { $code = c; } )
 
 	| PARAM
 		{
@@ -113,7 +108,7 @@ param_list [SymbolTable symTab] returns [Code3a code]
 ;
 
 
-param [SymbolTable symTab] returns [Code3a code]
+param [SymbolTable symTab, FunctionType functionType] returns [Code3a code]
 	: ^(ARRAY IDENT)
 		{
 			// Add this param to the symTab of this function or prototype
@@ -122,6 +117,9 @@ param [SymbolTable symTab] returns [Code3a code]
 			// But first, we say that this is a parameter
 			vs.setParam();
 			$symTab.insert($IDENT.text, vs);
+
+			// Add the parameter to the functionType list
+			functionType.expend(Type.ARRAY);
 
 			// TODO: Build the code for the array
 			$code = new Code3a();
@@ -135,6 +133,9 @@ param [SymbolTable symTab] returns [Code3a code]
 			// But first, we say that this is a parameter
 			vs.setParam();
 			$symTab.insert($IDENT.text, vs);
+
+			// Add the parameter to the functionType list
+			functionType.expend(Type.INT);
 
 			// Just generate the code corresponding to an ident param
 			$code = new Code3a(new Inst3a(Inst3a.TAC.VAR, new VarSymbol(Type.INT, $IDENT.text, symTab.getScope()), null, null));
