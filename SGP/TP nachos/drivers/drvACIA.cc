@@ -34,25 +34,118 @@
   working mode and create the semaphore.
   */
 //-------------------------------------------------------------------------
-
+#ifndef ETUDIANTS_TP
 DriverACIA::DriverACIA()
 {
   printf("**** Warning: contructor of the ACIA driver not implemented yet\n");
   exit(-1);
 }
+#endif
+
+#ifdef ETUDIANTS_TP
+DriverACIA::DriverACIA() {
+
+	// Assert that we are allowing ACIA driver
+	ASSERT(g_cfg->ACIA != ACIA_NONE);
+
+
+	// Clear the buffers
+	bzero(send_buffer, BUFFER_SIZE);
+	bzero(receive_buffer, BUFFER_SIZE);
+
+	// In function of the working mode got from nachos config file
+	if (g_cfg->ACIA == ACIA_BUSY_WAITING)
+		g_machine->acia->SetWorkingMode(BUSY_WAITING);
+	else if (g_cfg->ACIA == ACIA_INTERRUPT)
+		g_machine->acia->SetWorkingMode(REC_INTERRUPT | SEND_INTERRUPT);
+
+
+	/* ######################### Busy Waiting Mode ######################### */
+	if (g_machine->acia->GetWorkingMode() == BUSY_WAITING) {
+
+		// Initialize semaphores
+		send_sema = new Semaphore((char*)"ACIASendSema", 1);
+		receive_sema = new Semaphore((char*)"ACIAReceiveSema", 1);
+
+	}
+
+
+	/* ######################### Reception Interrupts Mode ######################### */
+	if (g_machine->acia->GetWorkingMode() == REC_INTERRUPT) {
+
+	}
+
+
+	/* ######################### Send Interrupts Mode ######################### */
+	if (g_machine->acia->GetWorkingMode() == SEND_INTERRUPT) {
+		
+	}
+
+}
+#endif
 
 //-------------------------------------------------------------------------
 // DriverACIA::TtySend(char* buff)
 /*! Routine to send a message through the ACIA (Busy Waiting or Interrupt mode)
   */
 //-------------------------------------------------------------------------
-
+#ifndef ETUDIANTS_TP
 int DriverACIA::TtySend(char* buff)
 { 
   printf("**** Warning: method Tty_Send of the ACIA driver not implemented yet\n");
   exit(-1);
   return 0;
 }
+#endif
+
+#ifdef ETUDIANTS_TP
+int DriverACIA::TtySend(char* buff) {
+
+	/* ######################### Busy Waiting Mode ######################### */
+	if (g_machine->acia->GetWorkingMode() == BUSY_WAITING) {
+
+		// Block with sema
+		send_sema->P();
+
+		// The index to parse the buffer passed
+		int buf_ind = 0;
+
+		// Transfer until we got the end of file char
+		do {
+
+			// Busy waiting
+			while (g_machine->acia->GetOutputStateReg() == FULL);
+
+			// Put the char
+			g_machine->acia->PutChar(buff[buf_ind]);
+
+			// Increment
+			buf_ind++;
+
+		} while ((int)buff[buf_ind] != 0);
+
+		// Unblock with sema
+		send_sema->V();
+
+	}
+
+
+	/* ######################### Reception Interrupts Mode ######################### */
+	if (g_machine->acia->GetWorkingMode() == REC_INTERRUPT) {
+
+	}
+
+
+	/* ######################### Send Interrupts Mode ######################### */
+	if (g_machine->acia->GetWorkingMode() == SEND_INTERRUPT) {
+
+	}
+
+	// Return ok then
+	return 0;
+
+}
+#endif
 
 //-------------------------------------------------------------------------
 // DriverACIA::TtyReceive(char* buff,int length)
@@ -60,13 +153,65 @@ int DriverACIA::TtySend(char* buff)
 //  (Busy Waiting and Interrupt mode).
   */
 //-------------------------------------------------------------------------
-
+#ifndef ETUDIANTS_TP
 int DriverACIA::TtyReceive(char* buff,int lg)
 {
    printf("**** Warning: method Tty_Receive of the ACIA driver not implemented yet\n");
   exit(-1);
   return 0;
 }
+#endif
+
+#ifdef ETUDIANTS_TP
+int DriverACIA::TtyReceive(char *buff, int lg) {
+
+	/* ######################### Busy Waiting Mode ######################### */
+	if (g_machine->acia->GetWorkingMode() == BUSY_WAITING) {
+
+		// Block with sema
+		receive_sema->P();
+
+		// The index to parse the buffer passed
+		int buf_ind = 0;
+
+		// Transfer until we got the end of file char
+		do {
+
+			// Busy waiting
+			while (g_machine->acia->GetInputStateReg() == EMPTY);
+
+			// Get the char
+			buff[buf_ind] = g_machine->acia->GetChar();
+
+			// Increment
+			buf_ind++;
+
+		} while ((int)buff[buf_ind] != 0);
+
+		// Before leaving, put the length
+		*(&lg) = buf_ind;
+
+		// Unblock with sema
+		receive_sema->V();
+
+	}
+
+
+	/* ######################### Reception Interrupts Mode ######################### */
+	if (g_machine->acia->GetWorkingMode() == REC_INTERRUPT) {
+
+	}
+
+
+	/* ######################### Send Interrupts Mode ######################### */
+	if (g_machine->acia->GetWorkingMode() == SEND_INTERRUPT) {
+
+	}
+
+	// Return ok then
+	return 0;
+}
+#endif
 
 
 //-------------------------------------------------------------------------
@@ -76,12 +221,22 @@ int DriverACIA::TtyReceive(char* buff,int lg)
   Detects when it's the end of the message (if so, releases the send_sema semaphore), else sends the next character according to index ind_send.
   */
 //-------------------------------------------------------------------------
-
+#ifndef ETUDIANTS_TP
 void DriverACIA::InterruptSend()
 {
   printf("**** Warning: send interrupt handler not implemented yet\n");
   exit(-1);
 }
+#endif
+
+#ifdef ETUDIANTS_TP
+void DriverACIA::InterruptSend() {
+
+	// Assert that we are not in busy waiting
+	ASSERT(g_machine->acia->GetWorkingMode() != BUSY_WAITING);
+
+}
+#endif
 
 //-------------------------------------------------------------------------
 // DriverACIA::Interrupt_receive()
@@ -92,9 +247,19 @@ void DriverACIA::InterruptSend()
   (character '\0').
   */
 //-------------------------------------------------------------------------
-
+#ifndef ETUDIANTS_TP
 void DriverACIA::InterruptReceive()
 {
   printf("**** Warning: receive interrupt handler not implemented yet\n");
   exit(-1);
 }
+#endif
+
+#ifdef ETUDIANTS_TP
+void DriverACIA::InterruptReceive() {
+
+	// Assert that we are not in busy waiting
+	ASSERT(g_machine->acia->GetWorkingMode() != BUSY_WAITING);
+
+}
+#endif
