@@ -61,7 +61,8 @@ function [SymbolTable symTab] returns [Code3a code]
 
 
 proto [SymbolTable symTab] returns [Code3a code]
-	: ^(PROTO_KW type IDENT  { FunctionType functionType = new FunctionType($type.type, false); }  param_list[symTab])
+    // TRUE INSTEAD OF FLASE BECAUSE IS prototype
+	: ^(PROTO_KW type IDENT  { FunctionType functionType = new FunctionType($type.type, true); }  param_list[symTab, functionType]
 		{
 			// Get the ident from the symtab
 			Operand3a id = $symTab.lookup($IDENT.text);
@@ -79,6 +80,7 @@ proto [SymbolTable symTab] returns [Code3a code]
 			// No code, just a prototype added to the tabSymb
 			$code = new Code3a();
 		}
+	)	
 ;
 
 
@@ -109,7 +111,7 @@ param_list [SymbolTable symTab, FunctionType functionType] returns [Code3a code]
 
 
 param [SymbolTable symTab, FunctionType functionType] returns [Code3a code]
-	: ^(ARRAY IDENT)
+	: /*^(ARRAY IDENT)
 		{
 			// Add this param to the symTab of this function or prototype
 			VarSymbol vs = new VarSymbol(Type.ARRAY, $IDENT.text, $symTab.getScope());
@@ -125,7 +127,7 @@ param [SymbolTable symTab, FunctionType functionType] returns [Code3a code]
 			$code = new Code3a();
 		}
 
-	| IDENT
+	| */IDENT
 		{
 			// Add this param to the symTab of this function or prototype
 			VarSymbol vs = new VarSymbol(Type.INT, $IDENT.text, $symTab.getScope());
@@ -135,7 +137,7 @@ param [SymbolTable symTab, FunctionType functionType] returns [Code3a code]
 			$symTab.insert($IDENT.text, vs);
 
 			// Add the parameter to the functionType list
-			functionType.expend(Type.INT);
+			functionType.extend(Type.INT);
 
 			// Just generate the code corresponding to an ident param
 			$code = new Code3a(new Inst3a(Inst3a.TAC.VAR, new VarSymbol(Type.INT, $IDENT.text, symTab.getScope()), null, null));
@@ -162,11 +164,11 @@ statement [SymbolTable symTab] returns [Code3a code]
 			$code = Code3aGenerator.genAff(id, $expression.expAtt);
 		}
 
-	| ^(ASSIGN_KW expression[symTab] array_elem[symTab])
+	/*| ^(ASSIGN_KW expression[symTab] array_elem[symTab])
 		{
 			// TODO
 			$code = new Code3a();
-		}
+		}*/
 
 	| ^(RETURN_KW expression[symTab])
 		{
