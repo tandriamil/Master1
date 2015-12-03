@@ -214,19 +214,29 @@ public class Code3aGenerator {
 	/**
 	 * Generate code for a function call
 	 */
-	public static ExpAttribute genFunctionCall(String funcName, FunctionType f, ExpAttribute e) {
+	public static ExpAttribute genFunctionCall(String funcName, FunctionType f, Code3a c) {
 
 		// Generate a new place
 		VarSymbol resultFunction = SymbDistrib.newTemp();
 
 		// Create the ExpAttribute
-		ExpAttribute exp = new ExpAttribute(f.getReturnType(), e.code, resultFunction);
+		ExpAttribute exp = new ExpAttribute(f.getReturnType(), c, resultFunction);
 
 		// Then call the function
 		exp.code.append(new Inst3a(Inst3a.TAC.CALL, new LabelSymbol(funcName), null, null));
 
 		// In the end, return this ExpAttribute
 		return exp;
+	}
+
+	/**
+	 * Generate code for a argument call
+	 */
+	public static Code3a genArg(ExpAttribute e) {
+
+		Code3a code = e.code;
+       	code.append(new Inst3a(Inst3a.TAC.ARG, e.place, null, null));
+ 		return code;
 	}
 
 } // Code3aGenerator ***

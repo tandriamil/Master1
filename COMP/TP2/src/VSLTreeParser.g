@@ -102,11 +102,6 @@ type returns [Type type]
 param_list [SymbolTable symTab, FunctionType functionType] returns [Code3a code]
 	: ^(PARAM  { Code3a c = new Code3a(); }  ( param[symTab, functionType] { c.append($param.code); } )*  { $code = c; } )
 
-	| PARAM
-		{
-			// A rule that we don't understand, we'll just return an empty code then
-			$code = new Code3a();
-		}
 ;
 
 
@@ -139,8 +134,12 @@ param [SymbolTable symTab, FunctionType functionType] returns [Code3a code]
 			// Add the parameter to the functionType list
 			functionType.extend(Type.INT);
 
+			// Is temporarie 
+			VarSymbol tempr = SymbDistrib.newTemp();
+
 			// Just generate the code corresponding to an ident param
-			$code = new Code3a(new Inst3a(Inst3a.TAC.VAR, new VarSymbol(Type.INT, $IDENT.text, symTab.getScope()), null, null));
+			//$code = new Code3a(new Inst3a(Inst3a.TAC.VAR, new VarSymbol(Type.INT, $IDENT.text, symTab.getScope()), null, null));
+			$code = Code3aGenerator.genVarDeclaration(tempr);
 		}
 ;
 
@@ -206,7 +205,11 @@ statement [SymbolTable symTab] returns [Code3a code]
 	| ^(FCALL_S IDENT argument_list[symTab]?)
 		{
 			// TODO
-			$code = new Code3a();
+			Code3a c = new Code3a();
+			c.append($argument_list.code);
+			LabelSymbol label = new LabelSymbol($IDENT.text);
+			c.append(new Inst3a(Inst3a.TAC.CALL, null, label, null));
+			$code = c;
 		}
 
 	| block[symTab]
@@ -368,12 +371,12 @@ primary [SymbolTable symTab] returns [ExpAttribute expAtt]
 			if (!function.type.isCompatible(new FunctionType(Type.VOID))) Errors.incompatibleTypes($FCALL, Type.LABEL, function.type, "");
 
 			// We build ExpAtt from extern method
-			$expAtt = Code3aGenerator.genFunctionCall($IDENT.text, (FunctionType)function.type, $argument_list.expAtt);
+			$expAtt = Code3aGenerator.genFunctionCall($IDENT.text, (FunctionType)function.type, $argument_list.code);
 		}
 
 	| LP! expression[symTab] RP!
 		{
-			
+		   	$expAtt = $expression.expAtt;
 		}
 
 	| ^(NEGAT p=primary[symTab])
@@ -387,12 +390,8 @@ primary [SymbolTable symTab] returns [ExpAttribute expAtt]
 ;
 
 
-argument_list [SymbolTable symTab] returns [ExpAttribute expAtt]
-	: expression[symTab]+
-		{
-			// Return the expAtt given by the expression
-			$expAtt = $expression.expAtt;
-		}
+argument_list [SymbolTable symTab] returns [Code3a code]
+	: { Code3a c = new Code3a(); }(expression[symTab] { c = Code3aGenerator.genArg($expression.expAtt); } )+ {$code = c;}
 ;
 
 
