@@ -110,11 +110,11 @@ int DriverACIA::TtySend(char* buff) {
 		// The index to parse the buffer passed
 		int buf_ind = 0;
 
+		// Busy waiting
+		while (g_machine->acia->GetOutputStateReg() == FULL);
+
 		// Transfer until we got the end of file char
 		do {
-
-			// Busy waiting
-			while (g_machine->acia->GetOutputStateReg() == FULL);
 
 			// Put the char
 			g_machine->acia->PutChar(buff[buf_ind]);
@@ -174,11 +174,11 @@ int DriverACIA::TtyReceive(char *buff, int lg) {
 		// The index to parse the buffer passed
 		int buf_ind = 0;
 
+		// Busy waiting
+		while (g_machine->acia->GetInputStateReg() == EMPTY);
+
 		// Transfer until we got the end of file char
 		do {
-
-			// Busy waiting
-			while (g_machine->acia->GetInputStateReg() == EMPTY);
 
 			// Get the char
 			buff[buf_ind] = g_machine->acia->GetChar();
