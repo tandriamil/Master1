@@ -122,7 +122,7 @@ int DriverACIA::TtySend(char* buff) {
 			// Increment
 			buf_ind++;
 
-		} while ((int)buff[buf_ind] != 0);
+		} while (buff[buf_ind-1] != '\0');
 
 		// Unblock with sema
 		send_sema->V();
@@ -186,7 +186,7 @@ int DriverACIA::TtyReceive(char *buff, int lg) {
 			// Increment
 			buf_ind++;
 
-		} while ((int)buff[buf_ind] != 0);
+		} while (buff[buf_ind-1] != '\0');
 
 		// Before leaving, put the length
 		*(&lg) = buf_ind;
