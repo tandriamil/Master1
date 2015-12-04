@@ -1,5 +1,27 @@
-PROTO INT fact(x)
-FUNC VOID main(x, y, z) {
-	z := x + y
-	PRINT z
+PROTO INT fact(k)
+
+FUNC VOID main() {
+	INT n, i, x
+	PRINT "Input n between 0 and 11:\n"
+	READ n
+	i := 0
+
+	WHILE n-i DO {
+		x := fact(i)
+		i := i+1
+	} DONE
+
+	i := 0
+	WHILE n-i DO {
+		PRINT "f(", i, ") = ", x, "\n"
+		i := i+1
+	} DONE
+}
+
+FUNC INT fact(n) {
+	IF n THEN
+		RETURN n*fact(n-1)
+	ELSE
+		RETURN 1
+	FI
 }

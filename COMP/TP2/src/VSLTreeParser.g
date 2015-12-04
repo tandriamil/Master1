@@ -44,7 +44,7 @@ function [SymbolTable symTab] returns [Code3a code]
 				Operand3a id = $symTab.lookup($IDENT.text);
 
 				// If the ident is already defined
-				if (id != null) Errors.redefinedIdentifier($IDENT, $IDENT.text, null);
+				if ((id != null) && (!functionType.isCompatible(id.type))) Errors.redefinedIdentifier($IDENT, $IDENT.text, null);
 
 				// Create the function symbol
 				LabelSymbol functionLabel = new LabelSymbol($IDENT.text);
@@ -202,15 +202,16 @@ statement [SymbolTable symTab] returns [Code3a code]
 			$code = Code3aGenerator.genWHILE($expression.expAtt, $st.code);
 		}
 
-	| ^(FCALL_S IDENT argument_list[symTab]?)
-		{
-			// TODO
-			Code3a c = new Code3a();
-			c.append($argument_list.code);
-			LabelSymbol label = new LabelSymbol($IDENT.text);
-			c.append(new Inst3a(Inst3a.TAC.CALL, null, label, null));
-			$code = c;
-		}
+	| ^(FCALL_S IDENT  { FunctionType expectedType = new FunctionType(Type.VOID); }  argument_list[symTab, expectedType]?
+			{
+				// TODO
+				Code3a c = new Code3a();
+				c.append($argument_list.code);
+				LabelSymbol label = new LabelSymbol($IDENT.text);
+				c.append(new Inst3a(Inst3a.TAC.CALL, null, label, null));
+				$code = c;
+			}
+		)
 
 	| block[symTab]
 		{
@@ -358,21 +359,22 @@ primary [SymbolTable symTab] returns [ExpAttribute expAtt]
 
 		}
 
-	| ^(FCALL IDENT argument_list[symTab]?)
-		{
-			// We check that the function is defined
-			Operand3a function = $symTab.lookup($IDENT.text);
-			if (function == null) Errors.unknownIdentifier($IDENT, $IDENT.text, null);
+	| ^(FCALL IDENT  { FunctionType expectedType = new FunctionType(Type.INT); }  argument_list[symTab, expectedType]?
+			{
+				// We check that the function is defined
+				Operand3a function = $symTab.lookup($IDENT.text);
+				if (function == null) Errors.unknownIdentifier($IDENT, $IDENT.text, null);
 
-			// Check that the function is a function typed
-			if (!(function instanceof FunctionSymbol)) Errors.unknownIdentifier($IDENT, $IDENT.text, "Label not known as a function");
+				// Check that the function is a function typed
+				if (!(function instanceof FunctionSymbol)) Errors.unknownIdentifier($IDENT, $IDENT.text, "Label not known as a function");
 
-			// We check also that it's a function
-			if (!function.type.isCompatible(new FunctionType(Type.VOID))) Errors.incompatibleTypes($FCALL, Type.LABEL, function.type, "");
+				// We check also that it's a function
+				if (!function.type.isCompatible(expectedType)) Errors.incompatibleTypes($FCALL, expectedType, function.type, "");
 
-			// We build ExpAtt from extern method
-			$expAtt = Code3aGenerator.genFunctionCall($IDENT.text, (FunctionType)function.type, $argument_list.code);
-		}
+				// We build ExpAtt from extern method
+				$expAtt = Code3aGenerator.genFunctionCall($IDENT.text, (FunctionType)function.type, $argument_list.code);
+			}
+		)
 
 	| LP! expression[symTab] RP!
 		{
@@ -390,8 +392,8 @@ primary [SymbolTable symTab] returns [ExpAttribute expAtt]
 ;
 
 
-argument_list [SymbolTable symTab] returns [Code3a code]
-	: { Code3a c = new Code3a(); }(expression[symTab] { c = Code3aGenerator.genArg($expression.expAtt); } )+ {$code = c;}
+argument_list [SymbolTable symTab, FunctionType expectedType] returns [Code3a code]
+	: { Code3a c = new Code3a(); }  ( expression[symTab]  { c = Code3aGenerator.genArg($expression.expAtt); expectedType.extend($expression.expAtt.type); }  )+  { $code = c; }
 ;
 
 

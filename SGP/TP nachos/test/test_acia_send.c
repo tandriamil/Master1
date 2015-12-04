@@ -23,12 +23,12 @@ int main() {
 	// Create a message
 	//char message[1024];
 	char *message = "Bonjour, ceci est un message à envoyer sur le terminal.";
-	n_printf("Message correctly created");
+	n_printf("Message correctly created\n");
 
 	// Send this message
 	int ret;
 	ret = TtySend(message);
-	n_printf("Message sent, with return value = %d", ret);
+	n_printf("Message sent, with return value = %d\n", ret);
 
 	// Exit the program
 	Exit(0);

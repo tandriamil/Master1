@@ -26,8 +26,8 @@ int main() {
 	// Send this message
 	int ret, length = 0;
 	ret = TtyReceive((char*)message, length);
-	n_printf("Message received is %s", message);
-	n_printf("Message receive, with return value = %d and length of %d", ret, length);
+	n_printf("Message received is %s\n", message);
+	n_printf("Message receive, with return value = %d and length of %d\n", ret, length);
 
 	// Exit the program
 	Exit(0);
