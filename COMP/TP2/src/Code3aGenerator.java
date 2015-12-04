@@ -202,6 +202,7 @@ public class Code3aGenerator {
 		return code;
 	}
 
+
 	/** 
 	 * Generate code for Instruction
 	 */
@@ -210,6 +211,7 @@ public class Code3aGenerator {
 		code.append(c);
 		return code;
 	}
+
 
 	/**
 	 * Generate code for a function call
@@ -223,11 +225,27 @@ public class Code3aGenerator {
 		ExpAttribute exp = new ExpAttribute(f.getReturnType(), c, resultFunction);
 
 		// Then call the function
-		exp.code.append(new Inst3a(Inst3a.TAC.CALL, new LabelSymbol(funcName), null, null));
+		exp.code.append(new Inst3a(Inst3a.TAC.CALL, resultFunction, new LabelSymbol(funcName), null));
 
 		// In the end, return this ExpAttribute
 		return exp;
 	}
+
+
+	/**
+	 * Generate code for a procedure call
+	 */
+	public static Code3a genProcedureCall(String funcName, Code3a c) {
+
+		// Then call the function
+		Code3a code = new Code3a();
+		code.append(c);  // First, the arguments passed
+		code.append(new Inst3a(Inst3a.TAC.CALL, null, new LabelSymbol(funcName), null));
+
+		// In the end, return this code
+		return code;
+	}
+
 
 	/**
 	 * Generate code for a argument call

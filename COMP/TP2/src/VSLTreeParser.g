@@ -134,12 +134,8 @@ param [SymbolTable symTab, FunctionType functionType] returns [Code3a code]
 			// Add the parameter to the functionType list
 			functionType.extend(Type.INT);
 
-			// Is temporarie 
-			VarSymbol tempr = SymbDistrib.newTemp();
-
 			// Just generate the code corresponding to an ident param
-			//$code = new Code3a(new Inst3a(Inst3a.TAC.VAR, new VarSymbol(Type.INT, $IDENT.text, symTab.getScope()), null, null));
-			$code = Code3aGenerator.genVarDeclaration(tempr);
+			$code = new Code3a(new Inst3a(Inst3a.TAC.VAR, new VarSymbol(Type.INT, $IDENT.text, $symTab.getScope()), null, null));
 		}
 ;
 
@@ -204,12 +200,29 @@ statement [SymbolTable symTab] returns [Code3a code]
 
 	| ^(FCALL_S IDENT  { FunctionType expectedType = new FunctionType(Type.VOID); }  argument_list[symTab, expectedType]?
 			{
-				// TODO
-				Code3a c = new Code3a();
-				c.append($argument_list.code);
-				LabelSymbol label = new LabelSymbol($IDENT.text);
-				c.append(new Inst3a(Inst3a.TAC.CALL, null, label, null));
-				$code = c;
+				// We check that the function is defined
+				Operand3a function = $symTab.lookup($IDENT.text);
+				if (function == null) Errors.unknownIdentifier($IDENT, $IDENT.text, null);
+
+				// Check that the function is a function typed
+				if (!(function instanceof FunctionSymbol)) Errors.unknownIdentifier($IDENT, $IDENT.text, "Label not known as a function");
+
+				// We check also that it's a function
+				if (!function.type.isCompatible(expectedType)) {
+
+					// If not a VOID one, it can be an INT one
+					FunctionType maybeInt = new FunctionType(Type.INT);
+					for (Type t : expectedType.getArguments()) {
+						maybeInt.extend(t);
+					}
+
+					// Check with INT one
+					if (!function.type.isCompatible(maybeInt))
+						Errors.incompatibleTypes($FCALL_S, expectedType, function.type, "Waited a function, no matter its return value");
+				}
+
+				// We build the code from extern method
+				$code = Code3aGenerator.genProcedureCall($IDENT.text, $argument_list.code);
 			}
 		)
 
