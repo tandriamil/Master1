@@ -106,23 +106,23 @@ param_list [SymbolTable symTab, FunctionType functionType] returns [Code3a code]
 
 
 param [SymbolTable symTab, FunctionType functionType] returns [Code3a code]
-	: /*^(ARRAY IDENT)
+	: ^(ARRAY IDENT)
 		{
 			// Add this param to the symTab of this function or prototype
-			VarSymbol vs = new VarSymbol(Type.ARRAY, $IDENT.text, $symTab.getScope());
+			VarSymbol vs = new VarSymbol(Type.POINTER, $IDENT.text, $symTab.getScope());
 
 			// But first, we say that this is a parameter
 			vs.setParam();
 			$symTab.insert($IDENT.text, vs);
 
 			// Add the parameter to the functionType list
-			functionType.expend(Type.ARRAY);
+			functionType.extend(Type.POINTER);
 
 			// TODO: Build the code for the array
 			$code = new Code3a();
 		}
 
-	| */IDENT
+	| 	IDENT
 		{
 			// Add this param to the symTab of this function or prototype
 			VarSymbol vs = new VarSymbol(Type.INT, $IDENT.text, $symTab.getScope());
@@ -141,29 +141,34 @@ param [SymbolTable symTab, FunctionType functionType] returns [Code3a code]
 
 
 statement [SymbolTable symTab] returns [Code3a code]
-	: ^(ASSIGN_KW expression[symTab] IDENT)
-		{
-			// Get the ident from the symtab
-			Operand3a id = $symTab.lookup($IDENT.text);
+	: ^(ASSIGN_KW expression[symTab]
+		( IDENT
+			{
+				// Get the ident from the symtab
+				Operand3a id = $symTab.lookup($IDENT.text);
 
-			// If the ident wasn't found
-			if (id == null) Errors.unknownIdentifier($ASSIGN_KW, $IDENT.text, null);
+				// If the ident wasn't found
+				if (id == null) Errors.unknownIdentifier($ASSIGN_KW, $IDENT.text, null);
 
-			// Check expression and IDENT type
-			Type ty = TypeCheck.checkBinOp(id.type, $expression.expAtt.type);
+				// Check expression and IDENT type
+				Type ty = TypeCheck.checkBinOp(id.type, $expression.expAtt.type);
 
-			// If wrong type
-			if (ty == Type.ERROR) Errors.incompatibleTypes($ASSIGN_KW, id.type, ty, null);
+				// If wrong type
+				if (ty == Type.ERROR) Errors.incompatibleTypes($ASSIGN_KW, id.type, ty, null);
 
-			// And here, affect
-			$code = Code3aGenerator.genAff(id, $expression.expAtt);
-		}
+				// And here, affect
+				$code = Code3aGenerator.genAff(id, $expression.expAtt);
+			}
 
-	/*| ^(ASSIGN_KW expression[symTab] array_elem[symTab])
-		{
-			// TODO
-			$code = new Code3a();
-		}*/
+		| array_elem[symTab]
+			{
+				// check the INDEX's type
+				if(!($expression.expAtt.type.isCompatible(Type.INT))) Errors.incompatibleTypes($ASSIGN_KW, Type.INT, $expression.expAtt.type, null);
+
+				$code = Code3aGenerator.genAffarray($array_elem.code, $expression.expAtt);
+			}
+		)
+	)
 
 	| ^(RETURN_KW expression[symTab])
 		{
@@ -261,7 +266,20 @@ block [SymbolTable symTab] returns [Code3a code]
 array_elem [SymbolTable symTab] returns [Code3a code]
 	: ^(ARELEM IDENT expression[symTab])
 		{
-			$code = $expression.expAtt.code;
+			// Get the ident from the symtab
+			Operand3a id = $symTab.lookup($IDENT.text);
+
+            // If the ident wasn't found
+			if (id == null) Errors.unknownIdentifier($IDENT, $IDENT.text, null);
+
+			// check the IDENT's type
+			if(!(id.type.isCompatible(Type.POINTER))) Errors.incompatibleTypes($IDENT, Type.POINTER, id.type, null);
+
+			// check the INDEX's type
+			if(!($expression.expAtt.type.isCompatible(Type.INT))) Errors.incompatibleTypes($ARELEM, Type.INT, $expression.expAtt.type, null);
+
+			// Return The code 
+			$code = Code3aGenerator.genArrayElem(id , $expression.expAtt);
 		}
 ;
 
@@ -369,6 +387,8 @@ primary [SymbolTable symTab] returns [ExpAttribute expAtt]
 
 	| array_elem[symTab]
 		{
+
+					
 
 		}
 
@@ -478,7 +498,20 @@ decl_item [SymbolTable symTab] returns [Code3a code]
 
 	| ^(ARDECL IDENT INTEGER)
 		{
-			// TODO
-			$code = new Code3a();
+
+			// Get the ident from the symtab
+			Operand3a id = $symTab.lookup($IDENT.text);
+
+			// If the ident of array is already defined
+			if (id != null) Errors.redefinedIdentifier($IDENT, $IDENT.text, null);
+
+			// Code generated to declare a array (var [varname])
+			VarSymbol declaredArray = new VarSymbol(Type.POINTER, $IDENT.text, $symTab.getScope());  // Only integers
+
+			// Then add the var to the actual tabSymb scope
+			$symTab.insert($IDENT.text, declaredArray);
+
+			// Generate the code
+			$code = Code3aGenerator.genVarDeclaration(declaredArray);
 		}
 ;

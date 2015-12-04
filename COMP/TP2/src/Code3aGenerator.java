@@ -1,3 +1,5 @@
+import java.util.*;
+
 /**
  * This class implements all the methods for 3a code generation (NOTE: this
  * class must be coded by the student; the methods indicated here can be seen as
@@ -255,6 +257,26 @@ public class Code3aGenerator {
 		Code3a code = e.code;
        	code.append(new Inst3a(Inst3a.TAC.ARG, e.place, null, null));
  		return code;
+	}
+
+	/**
+	 * Generates the 3a statement: ARRAY
+	 */
+	public static Code3a genArrayElem(Operand3a t , ExpAttribute e) {
+		Code3a code = new Code3a();
+		code.append(new Inst3a(Inst3a.TAC.VARTAB, t,e.place , null));
+		return code;
+	}
+
+	/**
+	 * Generates the 3a statement: Affectation of ARRAY
+	 */
+	public static Code3a genAffarray(Code3a c, ExpAttribute e) {
+		Code3a code = new Code3a();
+		List<Inst3a> l = c.getCode();
+		Inst3a i = l.get(0);
+		code.append(new Inst3a(i.getOp(), i.getA(), i.getB(), e.place));
+		return code;
 	}
 
 } // Code3aGenerator ***
