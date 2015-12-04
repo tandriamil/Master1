@@ -1,5 +1,7 @@
 src/*.class
 src/VSL*.java
 
+build
+
 bin
 *.tokens

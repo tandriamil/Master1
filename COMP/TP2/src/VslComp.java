@@ -80,22 +80,22 @@ public class VslComp {
 				// begin with an expression). >>>
 				SymbolTable symTab = new SymbolTable();
 				Code3a code = tparser.s(symTab).code;
-				code.print();
-				symTab.print();
+				//code.print();
+				//symTab.print();
 
 				// We prepare the MIPS code generator, which will compile
 				// the three-address code into MIPS assembly.
-				//MIPSCodeGenerator cg = new MIPSCodeGenerator(System.out); // NOT NEEDED AT THE BEGINNING
+				MIPSCodeGenerator cg = new MIPSCodeGenerator(System.out); // NOT NEEDED AT THE BEGINNING
 					
 				// NOTE: if necessary, uncomment the call to addStubMain
 				// to add the header and footer for the main function.
 				// This allows the program to be run using the NachOS
 				// emulator.
-				//code = cg.addStubMain(code);  // NOT NEEDED AT THE BEGINNING
+				code = cg.addStubMain(code);  // NOT NEEDED AT THE BEGINNING
 					
 				// Generates the actual MIPS code, printing it to the
 				// stream chosen previously (by default, System.out).
-				//cg.genCode(code);  // NOT NEEDED AT THE BEGINNING
+				cg.genCode(code);  // NOT NEEDED AT THE BEGINNING
 				// The rest of the main function are standard error handlers.
 			} catch (Exception e) {
 				System.err.println(e.getMessage());
