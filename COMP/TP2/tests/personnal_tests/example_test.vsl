@@ -1,21 +1,7 @@
 PROTO INT fact(k)
 
-FUNC VOID main() {
-	INT n, i, t[11]
-	PRINT "Input n between 0 and 11:\n"
-	READ n
-	i := 0
-
-	WHILE n-i DO {
-		t[i] := fact(i)
-		i := i+1
-	} DONE
-
-	i := 0
-	WHILE n-i DO {
-		PRINT "f(", i, ") = ", t[i], "\n"
-		i := i+1
-	} DONE
+FUNC INT main() {
+   RETURN fact(2)
 }
 
 FUNC INT fact(n) {

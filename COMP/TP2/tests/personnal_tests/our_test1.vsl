@@ -1,0 +1,62 @@
+PROTO INT plusgrand(o,m)
+PROTO INT fact(k)
+PROTO INT pgcd(a,b)
+
+// Ce programme le max des pgcd pour chaque factorielle
+//=====================================================
+FUNC VOID main()
+{
+
+  INT n, i, x, y, max
+  PRINT "Input n between 0 and 11:\n"
+  READ n
+  i := 0
+  max := 0
+
+  WHILE n-i DO {
+    x := fact(i)
+    PRINT "f(", i, ") = ", x, "\n"
+    y := pgcd(x,10)
+    max := plusgrand(max,y)
+    PRINT "pgcd(", i, ") = ", x, "\n"
+    i := i+1
+  } DONE
+
+  PRINT "max des pgcd == ", max, "\n"
+}
+
+// fonction de comparaison entre entiers
+//======================================
+FUNC INT plusgrand(l,p)
+{
+  IF l-p THEN 
+    RETURN l
+  ELSE 
+    RETURN p
+  FI
+}
+
+// Fonction pour calculer la factorielle de n
+//===========================================
+FUNC INT fact(n) {
+  IF n THEN
+    RETURN n*fact(n-1)
+  ELSE
+    RETURN 1
+  FI
+}
+
+// Fonction pour calculer le pgcd x et y
+//===========================================
+FUNC INT pgcd(x,y)
+{
+  INT r
+  WHILE y DO
+  {
+      r := x / y
+      x := y
+      y := r
+  }
+  DONE
+  RETURN x
+}
