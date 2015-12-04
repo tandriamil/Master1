@@ -81,12 +81,12 @@ public class VslComp {
 				// begin with an expression). >>>
 				SymbolTable symTab = new SymbolTable();
 				Code3a code = tparser.s(symTab).code;
-				//code.print();
-				//symTab.print();
+				code.print();
+				symTab.print();
 
 				// We prepare the MIPS code generator, which will compile
 				// the three-address code into MIPS assembly.
-				PrintStream fos = new PrintStream("file.s");
+				PrintStream fos = new PrintStream("nachos/test/file.s");
 				MIPSCodeGenerator cg = new MIPSCodeGenerator(fos); // NOT NEEDED AT THE BEGINNING
 					
 				// NOTE: if necessary, uncomment the call to addStubMain
