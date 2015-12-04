@@ -1,5 +1,6 @@
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.logging.*;
 
 import org.antlr.runtime.ANTLRFileStream;
@@ -85,7 +86,8 @@ public class VslComp {
 
 				// We prepare the MIPS code generator, which will compile
 				// the three-address code into MIPS assembly.
-				MIPSCodeGenerator cg = new MIPSCodeGenerator(System.out); // NOT NEEDED AT THE BEGINNING
+				PrintStream fos = new PrintStream("file.s");
+				MIPSCodeGenerator cg = new MIPSCodeGenerator(fos); // NOT NEEDED AT THE BEGINNING
 					
 				// NOTE: if necessary, uncomment the call to addStubMain
 				// to add the header and footer for the main function.
