@@ -1,12 +1,11 @@
 PROTO INT division(k)
 
+// Programme de devision qui nous ren comme résultat si le n est divisible par 2
 FUNC VOID main() {
 	INT n, y
 	PRINT "Input n between 0 and 11:\n"
 	READ n
-	PRINT "Input n between 0 and 11:\n"
-	READ y
-    division(n,y)
+    division(n,2)
 }
 
 FUNC VOID division(x,y)

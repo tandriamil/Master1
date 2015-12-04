@@ -2,8 +2,8 @@ PROTO INT plusgrand(o,m)
 PROTO INT fact(k)
 PROTO INT pgcd(a,b)
 
-// Ce programme le max des pgcd pour chaque factorielle
-//=====================================================
+// Ce programme le max des pgcd pour chaque itération factorielle 
+//===============================================================
 FUNC VOID main()
 {
 
