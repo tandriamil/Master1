@@ -207,7 +207,7 @@ void Lock::Acquire() {
 	IntStatus previous_int_status = g_machine->interrupt->SetStatus(INTERRUPTS_OFF);
 
 	// Check that the lock is free or not
-	if (!free) {
+	if (free == false) {
 
 		// Add this thread to the waiting ones
 		sleepqueue->Append(g_current_thread);
@@ -264,13 +264,15 @@ void Lock::Release() {
 	if (!sleepqueue->IsEmpty()) {
 
 		// Get the more ancient thread and put him in the ready list
-		Thread *waiting_thread = (Thread *)sleepqueue->Remove();
+		Thread *waiting_thread = (Thread *)(sleepqueue->Remove());
 
 		// And put it in ready threads list
 		g_scheduler->ReadyToRun(waiting_thread);
 
 		// And so, it become the new owner
 		owner = waiting_thread;
+	} else {  // If there's no new owner
+		owner = NULL;
 	}
 
 	// Put back the previous state of interrupts
