@@ -94,7 +94,7 @@ void Semaphore::P() {
 	--value;
 
 	// If no more tickets
-	while (value < 0) {
+	if (value < 0) {
 
 		// Add this thread to the waiting ones
 		queue->Append(g_current_thread);

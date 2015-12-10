@@ -17,12 +17,13 @@
 //
 */
 
-/* Includes */
 
+/* Includes */
 #include "kernel/system.h"         // for the ACIA object
 #include "kernel/synch.h"
 #include "machine/ACIA.h"
 #include "drivers/drvACIA.h"
+
 
 //-------------------------------------------------------------------------
 // DriverACIA::DriverACIA()
@@ -83,6 +84,7 @@ DriverACIA::DriverACIA() {
 
 }
 #endif
+
 
 //-------------------------------------------------------------------------
 // DriverACIA::TtySend(char* buff)
@@ -237,6 +239,7 @@ void DriverACIA::InterruptSend() {
 
 }
 #endif
+
 
 //-------------------------------------------------------------------------
 // DriverACIA::Interrupt_receive()
