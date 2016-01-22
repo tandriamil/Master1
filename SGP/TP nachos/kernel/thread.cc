@@ -437,7 +437,6 @@ void Thread::SaveProcessorState() {
 */
 //----------------------------------------------------------------------
 #ifndef ETUDIANTS_TP
-
 void
 Thread::RestoreProcessorState()
 {
@@ -454,6 +453,13 @@ void Thread::RestoreProcessorState() {
   memcpy(g_machine->int_registers, thread_context.int_registers, sizeof(thread_context.int_registers));
   memcpy(g_machine->float_registers, thread_context.float_registers, sizeof(thread_context.float_registers));
   memcpy(&g_machine->cc, &thread_context.cc, sizeof(thread_context.cc));
+
+  // Get a pointer to the translation table of this thread
+  TranslationTable *tt = GetProcessOwner()->addrspace->translationTable;
+
+  // Put it as the current translation table in the machine mmu
+  g_machine->mmu->translationTable = tt;
+
 }
 #endif
 
