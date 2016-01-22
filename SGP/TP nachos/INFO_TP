@@ -9,3 +9,6 @@ Rendu du TP5:
 	- Fichiers de test
 	- Sources des fichiers modifiés
 	- Compte-rendu honnète! (ce qui a été fait OU NON)
+
+Erreurs:
+	- Process exec/join passe pas, accès mémoire non autorisé

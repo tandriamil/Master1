@@ -258,7 +258,7 @@ void Lock::Release() {
 	IntStatus previous_int_status = g_machine->interrupt->SetStatus(INTERRUPTS_OFF);
 
 	// Put the state to free
-	free = true;
+	//free = true;  // Not here because another thread can take the lock
 
 	// If there are waiting threads
 	if (!sleepqueue->IsEmpty()) {
@@ -273,6 +273,7 @@ void Lock::Release() {
 		owner = waiting_thread;
 	} else {  // If there's no new owner
 		owner = NULL;
+		free = true;
 	}
 
 	// Put back the previous state of interrupts
