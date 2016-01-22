@@ -262,7 +262,7 @@ AddrSpace::AddrSpace(OpenFile * exec_file, Process *p, int *err)
     translationTable->setAddrDisk(virt_page,-1);
 
     // The entry is valid
-    translationTable->setBitValid(virt_page);
+    translationTable->setBitValid(0);
     
     /* End of code without demand paging */
 #endif
