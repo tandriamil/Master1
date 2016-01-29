@@ -38,14 +38,23 @@ PageFaultManager::~PageFaultManager() {
 //        size of the address space, and supposed to correspond to a
 //        page mapped to something [code/data/bss/...])
 //	\return the exception (generally the NO_EXCEPTION constant)
-*/  
+*/
+#ifndef ETUDIANTS_TP
 ExceptionType PageFaultManager::PageFault(int virtualPage) 
 {
   printf("**** Warning: page fault manager is not implemented yet\n");
     exit(-1);
     return ((ExceptionType)0);
 }
+#endif
 
+#ifdef ETUDIANTS_TP
+/*!
+// The process to manage a page fault
+*/
+ExceptionType PageFaultManager::PageFault(int virtualPage) {
 
+	
 
-
+}
+#endif
