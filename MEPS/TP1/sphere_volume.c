@@ -3,6 +3,10 @@
 #include <string.h>
 #include <math.h>
 
+// Constants
+#define ERROR_ENCOUNTERED -1
+#define EXECUTION_OK 0
+
 
 /* ################################### Externs ################################### */
 /**
@@ -77,7 +81,7 @@ int main(int argc, char** argv) {
 	// Check the arguments
 	if (argc != 2) {
 		printf("The correct syntax is: %s nb_runs\n", argv[0]);
-		return -1;
+		return ERROR_ENCOUNTERED;
 	}
 
 	// The result to return and the random value got
@@ -106,5 +110,5 @@ int main(int argc, char** argv) {
 	printf("Estimation of the volume of the sphere: %lf.\n", result);
 
 	// Exit correctly
-	return 0;
+	return EXECUTION_OK;
 }
