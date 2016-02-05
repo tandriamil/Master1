@@ -118,7 +118,6 @@ void PhysicalMemManager::ChangeOwner(long numPage, Thread* owner) {
 //  \return A new physical page number.
 */
 //-----------------------------------------------------------------
-
 #ifndef ETUDIANTS_TP
 int PhysicalMemManager::AddPhysicalToVirtualMapping(AddrSpace* owner,int virtualPage) 
 {
@@ -131,22 +130,25 @@ int PhysicalMemManager::AddPhysicalToVirtualMapping(AddrSpace* owner,int virtual
 #ifdef ETUDIANTS_TP
 int PhysicalMemManager::AddPhysicalToVirtualMapping(AddrSpace* owner, int virtualPage) {
 
-	// The index of the physical page to get here
-	int pp;
+	// Get a page in physical memory, evict one if none free
+	int pp = FindFreePage();
+	if (pp == -1) pp = EvictPage();
 
+	// TODO: This part can be false:
+/*
 	// If we have to get the section from the memory
-	if (owner->translationTable->getAddrDisk(virtualPage) != -1) {
-		exec_file->ReadAt((char *)&(g_machine->mainMemory[translationTable->getPhysicalPage(virt_page)*g_cfg->PageSize]),
-            g_cfg->PageSize, owner->translationTable->getAddrDisk(virtualPage));
+	int position_on_disk = owner->translationTable->getAddrDisk(virtualPage);
+	if (position_on_disk != -1) {
 
-	} else {
+		// Try to get this open file
+		OpenFile * exec_file = owner->findMappedFile(position_on_disk);
+		ASSERT(exec_file != NULL);
 
-		// Get a page in physical memory, evict one if none free
-		pp = FindFreePage();
-		if (pp == -1) pp = EvictPage();
+		// Read it then
+		exec_file->Read((char *)&(g_machine->mainMemory[pp * g_cfg->PageSize]), g_cfg->PageSize);
 
 	}
-
+*/
 	// Link this page to the given virtual page
 	tpr[pp].virtualPage = virtualPage;
 	tpr[pp].owner = owner;
@@ -156,10 +158,14 @@ int PhysicalMemManager::AddPhysicalToVirtualMapping(AddrSpace* owner, int virtua
 	// Link the physical to the virtual page
 	owner->translationTable->setPhysicalPage(virtualPage, pp);
 
+	// TODO: Check if we have things to do on the virtual page table
+
 	// Return the index of the physical page
 	return pp;
 }
 #endif
+
+
 //-----------------------------------------------------------------
 // PhysicalMemManager::FindFreePage
 //
