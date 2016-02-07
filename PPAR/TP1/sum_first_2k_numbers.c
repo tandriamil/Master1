@@ -17,18 +17,16 @@
 int main(int argc, char** argv) {
 	
 	// The variables used here
-	int k, i, n, res = 0;
+	int k, i, n = 1, res = 0;
 
 	// Get the argument k
-	if (argc > 2) {
+	if (argc != 2) {
 		fprintf(stderr, "Correct syntax is: %s k\n", argv[0]);
 		return ERROR_ENCOUNTERED;
-	} else if (argc < 2) {
-		printf("Please provide k:");
-		fscanf(stdin, "%d", &k);
-	} else {
-		k = atoi(argv[1]);
 	}
+
+	// The value of k
+	k = atoi(argv[1]);
 
 	// Check the k argument given
 	if ((k < MIN_K) || (k > MAX_K)) {
@@ -41,14 +39,14 @@ int main(int argc, char** argv) {
 	int a[n];
 
 	// Compute the sum
-	for (i = 0; i < n; i++) {
-		a[i] = i+1;
-		res += i+1;
+	for (i = 0; i < n; ++i) {
+		a[i] = i + 1;
+		res += i + 1;
 	}
 
 	// Display the table
 	printf("The table a contains [");
-	for (i = 0; i < (n-1); i++) {
+	for (i = 0; i < (n - 1); ++i) {
 		printf("%d, ", a[i]);
 	}
 	printf("%d]\n", a[i]);
