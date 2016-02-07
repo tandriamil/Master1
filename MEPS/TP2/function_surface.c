@@ -90,13 +90,13 @@ int main(int argc, char** argv) {
 	}
 
 	// The result to return and the random value got
-	double variance, random_x, random_y, value, result = 0, nb_runs = atoi(argv[1]);
+	double variance, random_x, random_y, value, result = 0.0, nb_runs = atoi(argv[1]);
 
 	// Runs nb_runs tries
 	int i;
-	for (i = 0; i < nb_runs; i++) {
+	for (i = 0; i < nb_runs; ++i) {
 
-		// Get 3 random variables
+		// Get 2 random variables
 		random_x = MRG32k3a();
 		random_y = MRG32k3a();
 
@@ -104,11 +104,11 @@ int main(int argc, char** argv) {
 		value = 3.0 * pow(random_x, 2);
 
 		// If less than the radius of the sphere
-		if (random_y <= value) result += 1;
+		if (random_y <= value) ++result;
 	}
 
 	// Multiply the result by 3 (because we have a [1;3] grid and not a [1;1])
-	result *= 3;
+	//result *= 3;
 
 	// Get the variance
 	variance = sqrt((result - (nb_runs * pow((result / nb_runs), 2))) / (nb_runs - 1));
