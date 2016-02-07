@@ -98,7 +98,7 @@ int main(int argc, char** argv) {
 
 		// Get 3 random variables
 		random_x = MRG32k3a();
-		random_y = MRG32k3a();
+		random_y = MRG32k3a() * 3;
 
 		// Get the value of the function for the random x
 		value = 3.0 * pow(random_x, 2);
