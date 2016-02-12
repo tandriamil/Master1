@@ -6,6 +6,8 @@
 // Constants
 #define ERROR_ENCOUNTERED -1
 #define EXECUTION_OK 0
+#define ARRIVAL 0
+#define DEPARTURE 1
 
 
 /* ################################### Externs ################################### */
@@ -69,10 +71,14 @@ double MRG32k3a() {
 
 /* ################################### End of Externs ################################### */
 
-// My constants
-#define C90 1.645
-#define C95 1.96
-#define C99 2.58
+/**
+ * To get a random value from exponential time distribution
+ *
+ * \param lambda The parameter for the exponential time distribution
+ */
+double exponential(double lambda) {
+   return -1.0 * (log(MRG32k3a()) / lambda);
+}
 
 
 /**
@@ -84,43 +90,73 @@ double MRG32k3a() {
 int main(int argc, char** argv) {
 
 	// Check the arguments
-	if (argc != 2) {
-		printf("The correct syntax is: %s nb_runs\n", argv[0]);
+	if (argc != 4) {
+		printf("The correct syntax is: %s lambda mu t_max\n", argv[0]);
 		return ERROR_ENCOUNTERED;
 	}
 
-	// The result to return and the random value got
-	double variance, random_x, random_y, value, result = 0, nb_runs = atoi(argv[1]);
+	// The parameters for this simulation
+	double lambda = atoi(argv[1]), mu = atoi(argv[2]), t_max = atoi(argv[3]),
+	arrival_t, departure_t, current_t, previous_t,  // The different times to save
+	area = 0.0;
+	int event, nb_users = 0;
 
-	// Runs nb_runs tries
-	int i;
-	for (i = 0; i < nb_runs; i++) {
+	// Initialize times
+	arrival_t = exponential(lambda);
+	departure_t = arrival_t + exponential(mu);
+	previous_t = 0.0;
 
-		// Get 3 random variables
-		random_x = MRG32k3a();
-		random_y = MRG32k3a() * 3;
+	// While we didn't reach the limit time
+	while ((arrival_t < t_max) && (departure_t < t_max)) {
 
-		// Get the value of the function for the random x
-		value = 3.0 * pow(random_x, 2);
+		// Arrival comes before departure
+		if (arrival_t <= departure_t) {
 
-		// If less than the radius of the sphere
-		if (random_y <= value) result += 1;
-	}
+			// Update the time
+			current_t = arrival_t;
 
-	// Multiply the result by 3 (because we have a [1;3] grid and not a [1;1])
-	result *= 3;
+			// Put the event that happened
+			event = ARRIVAL;
 
-	// Get the variance
-	variance = sqrt((result - (nb_runs * pow((result / nb_runs), 2))) / (nb_runs - 1));
+		} else {  // Departure comes before
 
-	// Divide by the number of tries
-	result = result / nb_runs;
+			// Update the time
+			current_t = departure_t;
+
+			// Put the event that happened
+			event = DEPARTURE;
+
+		}
+
+		// Update the area
+		area += nb_users * (current_t - previous_t);
+
+		// In function of the event that occured
+		switch (event) {
+
+			case ARRIVAL:
+				++nb_users;
+				arrival_t += exponential(lambda);
+				break;
+
+			case DEPARTURE:
+				--nb_users;
+				if (nb_users > 0) departure_t += exponential(mu);
+				else departure_t = arrival_t + exponential(mu);
+				break;
+
+		}
+
+	} // End of while
+
+	// Update the area
+	area += nb_users * (t_max - previous_t);
+
+	// The area is the total time that each user spend in the system
+	// nb_users is the number of users at each time in the system
 
 	// Display the result
-	printf("Estimation of the mean: %lf.\n", result);
-	printf("Confidence interval with 90 percent rate: [%lf, %lf].\n", result - C90*(variance/sqrt(nb_runs)), result + C90*(variance/sqrt(nb_runs)));
-	printf("Confidence interval with 95 percent rate: [%lf, %lf].\n", result - C95*(variance/sqrt(nb_runs)), result + C95*(variance/sqrt(nb_runs)));
-	printf("Confidence interval with 99 percent rate: [%lf, %lf].\n", result - C99*(variance/sqrt(nb_runs)), result + C99*(variance/sqrt(nb_runs)));
+	printf("Estimation of the mean backlog: %lf.\n", (area / t_max));
 
 	// Exit correctly
 	return EXECUTION_OK;

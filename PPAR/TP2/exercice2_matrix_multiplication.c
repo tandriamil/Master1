@@ -1,11 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <math.h>
 
 // Constants
 #define ERROR_ENCOUNTERED -1
 #define EXECUTION_OK 0
+#define RAND_MIN_VALUE 0
+#define RAND_MAX_VALUE 10
+#define MATRIX_MAX_SIZE 64
+#define MATRIX_MIN_SIZE 0
 
 
 /* ################################### Externs ################################### */
@@ -69,10 +71,32 @@ double MRG32k3a() {
 
 /* ################################### End of Externs ################################### */
 
-// My constants
-#define C90 1.645
-#define C95 1.96
-#define C99 2.58
+/**
+ * Generate a random integer
+ *
+ * \return A random integer
+ */
+int random_int() {
+	return (int)(MRG32k3a() * ((RAND_MAX_VALUE - RAND_MIN_VALUE) + RAND_MIN_VALUE));
+}
+
+
+/**
+ * Simply display a matrix
+ */
+void display_matrice(int size, int m[size][size]) {
+	
+	// Variables used here
+	int i, j;
+
+	// Simply display the matrix
+	for (i = 0; i < size; ++i) {
+		for (j = 0; j < size; ++j) {
+			fprintf(stderr, "[%d] ", m[i][j]);
+		}
+		fprintf(stderr, "\n");
+	}
+}
 
 
 /**
@@ -83,44 +107,60 @@ double MRG32k3a() {
  */
 int main(int argc, char** argv) {
 
+	// The variables used here
+	int n, i, j, k;
+
 	// Check the arguments
 	if (argc != 2) {
-		printf("The correct syntax is: %s nb_runs\n", argv[0]);
+		printf("The correct syntax is: %s matrix_size\n", argv[0]);
 		return ERROR_ENCOUNTERED;
 	}
 
-	// The result to return and the random value got
-	double variance, random_x, random_y, value, result = 0, nb_runs = atoi(argv[1]);
+	// Get the size of the matrices
+	n = atoi(argv[1]);
 
-	// Runs nb_runs tries
-	int i;
-	for (i = 0; i < nb_runs; i++) {
-
-		// Get 3 random variables
-		random_x = MRG32k3a();
-		random_y = MRG32k3a() * 3;
-
-		// Get the value of the function for the random x
-		value = 3.0 * pow(random_x, 2);
-
-		// If less than the radius of the sphere
-		if (random_y <= value) result += 1;
+	// Check this size
+	if ((n < MATRIX_MIN_SIZE) || (n > MATRIX_MAX_SIZE)) {
+		fprintf(stderr, "%s: invalid value for the matrix size, it must be greater than %d and lesser than %d!\n", argv[0], MATRIX_MIN_SIZE, MATRIX_MAX_SIZE);
+		return ERROR_ENCOUNTERED;
 	}
 
-	// Multiply the result by 3 (because we have a [1;3] grid and not a [1;1])
-	result *= 3;
+	// Create the matrices
+	int m1[n][n], m2[n][n], result[n][n];
 
-	// Get the variance
-	variance = sqrt((result - (nb_runs * pow((result / nb_runs), 2))) / (nb_runs - 1));
+	// Initialize the matrices
+	for (i = 0; i < n; ++i) {
+		for (j = 0; j < n; ++j) {
+			m2[i][j] = random_int();
+			m1[i][j] = random_int();
+			result[i][j] = 0;
+		}
+	}
 
-	// Divide by the number of tries
-	result = result / nb_runs;
+	// Display the matrices
+	fprintf(stderr, "\nFirst matrix:\n");
+	display_matrice(n, m1);
+	fprintf(stderr, "\nSecond matrix:\n");
+	display_matrice(n, m2);
+
+	// Matrices multiplication is done in parallel
+	#pragma omp parallel private(i, j, k) shared(n, m1, m2, result)
+	{
+
+		// The for loop done in dynamic schedule
+		#pragma omp for schedule(dynamic)
+		for (i = 0; i < n; ++i) {
+			for (j = 0; j < n; ++j) {
+				for (k = 0; k < n; ++k) {
+					result[i][j] += m1[i][k] * m2[k][j];
+				}
+			}
+		}
+	}
 
 	// Display the result
-	printf("Estimation of the mean: %lf.\n", result);
-	printf("Confidence interval with 90 percent rate: [%lf, %lf].\n", result - C90*(variance/sqrt(nb_runs)), result + C90*(variance/sqrt(nb_runs)));
-	printf("Confidence interval with 95 percent rate: [%lf, %lf].\n", result - C95*(variance/sqrt(nb_runs)), result + C95*(variance/sqrt(nb_runs)));
-	printf("Confidence interval with 99 percent rate: [%lf, %lf].\n", result - C99*(variance/sqrt(nb_runs)), result + C99*(variance/sqrt(nb_runs)));
+	fprintf(stderr, "\nResult matrix:\n");
+	display_matrice(n, result);
 
 	// Exit correctly
 	return EXECUTION_OK;
