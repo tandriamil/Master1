@@ -134,28 +134,11 @@ int PhysicalMemManager::AddPhysicalToVirtualMapping(AddrSpace* owner, int virtua
 	int pp = FindFreePage();
 	if (pp == -1) pp = EvictPage();
 
-	// TODO: This part can be false:
-/*
-	// If we have to get the section from the memory
-	int position_on_disk = owner->translationTable->getAddrDisk(virtualPage);
-	if (position_on_disk != -1) {
-
-		// Try to get this open file
-		OpenFile * exec_file = owner->findMappedFile(position_on_disk);
-		ASSERT(exec_file != NULL);
-
-		// Read it then
-		exec_file->Read((char *)&(g_machine->mainMemory[pp * g_cfg->PageSize]), g_cfg->PageSize);
-
-	}
-*/
 	// Link this page to the given virtual page
 	tpr[pp].virtualPage = virtualPage;
 	tpr[pp].owner = owner;
 	tpr[pp].locked = true;
 	tpr[pp].free = false;
-
-	// TODO: Check if we have things to do on the virtual page table
 
 	// Unlock the new physical page
 	tpr[pp].locked = false;
@@ -197,6 +180,7 @@ int PhysicalMemManager::FindFreePage() {
   return page;
 }
 
+
 //-----------------------------------------------------------------
 // PhysicalMemManager::EvictPage
 //
@@ -206,11 +190,22 @@ int PhysicalMemManager::FindFreePage() {
 //  \return A new free physical page number.
 */
 //-----------------------------------------------------------------
+#ifndef ETUDIANTS_TP
 int PhysicalMemManager::EvictPage() {
   printf("**** Warning: page replacement algorithm is not implemented yet\n");
     exit(-1);
     return (0);
 }
+#endif
+
+#ifdef ETUDIANTS_TP
+int PhysicalMemManager::EvictPage() {
+	printf("**** Warning: page replacement algorithm is not implemented yet\n");
+	exit(-1);
+	return 0;
+}
+#endif
+
 
 //-----------------------------------------------------------------
 // PhysicalMemManager::Print
