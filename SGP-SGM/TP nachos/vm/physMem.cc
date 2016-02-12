@@ -155,10 +155,14 @@ int PhysicalMemManager::AddPhysicalToVirtualMapping(AddrSpace* owner, int virtua
 	tpr[pp].locked = true;
 	tpr[pp].free = false;
 
+	// No need to do that here
 	// Link the physical to the virtual page
-	owner->translationTable->setPhysicalPage(virtualPage, pp);
+	//owner->translationTable->setPhysicalPage(virtualPage, pp);
 
 	// TODO: Check if we have things to do on the virtual page table
+
+	// Unlock the new physical page
+	tpr[pp].locked = false;
 
 	// Return the index of the physical page
 	return pp;

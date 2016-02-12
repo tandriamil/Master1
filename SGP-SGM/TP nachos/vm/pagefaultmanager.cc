@@ -51,19 +51,38 @@ ExceptionType PageFaultManager::PageFault(int virtualPage)
 #ifdef ETUDIANTS_TP
 ExceptionType PageFaultManager::PageFault(int virtualPage) {
 
-	// If we have to get the section from the memory
-	int position_on_disk = g_machine->mmu->translationTable->getAddrDisk(virtualPage);
-	if (position_on_disk != -1) {
+	// Assert that the page is not yet valid
+	ASSERT(!g_machine->mmu->translationTable->getBitValid(virtualPage));
 
-		// Read it then
-		if (!g_machine->mmu->ReadMem(virtualPage, g_cfg->PageSize, (int *)&g_machine->mainMemory[g_machine->mmu->translationTable->getPhysicalPage(virtualPage) * g_cfg->PageSize], false)) {
-			return PAGEFAULT_EXCEPTION;
+	// TODO: Normally, we only deal with temporary pages here
+
+	// If it's stored in the swap
+	if (g_machine->mmu->translationTable->getBitSwap(virtualPage)) {
+
+		// TODO: Maybe another way to do this
+		// A page stealer is dealing with the current page
+		while (g_machine->mmu->translationTable->getAddrDisk(virtualPage) == -1);
+
+		// Get the real page from the swap
+		g_swap_manager->GetPageSwap(g_machine->mmu->translationTable->getAddrDisk(virtualPage), (int *)&g_machine->mainMemory[g_machine->mmu->translationTable->getPhysicalPage(virtualPage) * g_cfg->PageSize]); 
+
+	} else {  // If stored in the disk
+
+		// If anonymous page
+		if (g_machine->mmu->translationTable->getAddrDisk(virtualPage) == -1) {
+			
+			// Fill with 0
+			memset(&(g_machine->mainMemory[g_machine->mmu->translationTable->getPhysicalPage(virtualPage) * g_cfg->PageSize]), 0, g_cfg->PageSize);
+		
+		} else {
+
+			// Load the executive
+			if (!g_machine->mmu->ReadMem(virtualPage, g_cfg->PageSize, (int *)&g_machine->mainMemory[g_machine->mmu->translationTable->getPhysicalPage(virtualPage) * g_cfg->PageSize], false)) {
+				DEBUG('d', (char *)"Page fault on a virtual page that doesn't allow read");
+				return PAGEFAULT_EXCEPTION;
+			}
+
 		}
-
-	} else {
-
-		// Fill with 0
-		memset(&(g_machine->mainMemory[g_machine->mmu->translationTable->getPhysicalPage(virtualPage) * g_cfg->PageSize]), 0, g_cfg->PageSize);
 
 	}
 
