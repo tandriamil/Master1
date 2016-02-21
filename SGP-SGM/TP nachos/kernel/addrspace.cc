@@ -217,54 +217,36 @@ AddrSpace::AddrSpace(OpenFile * exec_file, Process *p, int *err)
 #endif
 
 #ifdef ETUDIANTS_TP
-    /* WITH demand paging */
-    
-    // Set up default values for the page table entry
-    translationTable->clearBitSwap(virt_page);
-    translationTable->setBitReadAllowed(virt_page);
-    if (section_table[i].sh_flags & SHF_WRITE)
-      translationTable->setBitWriteAllowed(virt_page);
-    else translationTable->clearBitWriteAllowed(virt_page);
-    translationTable->clearBitIo(virt_page);
+	/* WITH demand paging */
 
-    // Get a page in physical memory, halt of there is not sufficient space
-    int pp = g_physical_mem_manager->FindFreePage();
-    if (pp == -1) { 
-      printf("Not enough free space to load program %s\n",
-       exec_file->GetName());
-      g_machine->interrupt->Halt(-1);
-    }
-    g_physical_mem_manager->tpr[pp].virtualPage=virt_page;
-    g_physical_mem_manager->tpr[pp].owner = this;
-    g_physical_mem_manager->tpr[pp].locked=true;
-    translationTable->setPhysicalPage(virt_page,pp);
-    
-    // The SHT_NOBITS flag indicates if the section has an image
-    // in the executable file (text or data section) or not 
-    // (bss section)
-    if (section_table[i].sh_type != SHT_NOBITS) {
-      // The section has an image in the executable file
-      // Read it from the disk
-      exec_file->ReadAt((char *)&(g_machine->mainMemory[translationTable->getPhysicalPage(virt_page)*g_cfg->PageSize]),
-            g_cfg->PageSize, section_table[i].sh_offset + pgdisk*g_cfg->PageSize);
+	// Set up default values for the page table entry
+	translationTable->clearBitIo(virt_page);
+	translationTable->clearBitValid(virt_page);
+	translationTable->clearBitSwap(virt_page);
+	translationTable->setBitReadAllowed(virt_page);
+	if (section_table[i].sh_flags & SHF_WRITE)
+		translationTable->setBitWriteAllowed(virt_page);
+	else translationTable->clearBitWriteAllowed(virt_page);
 
-    }
-    else {
-      // The section does not have an image in the executable
-      // Fill it with zeroes
-      memset(&(g_machine->mainMemory[translationTable->getPhysicalPage(virt_page)*g_cfg->PageSize]),
-       0, g_cfg->PageSize);
-    }
-    
-    // The page has been loded in physical memory but
-    // later-on will be saved in the swap disk. We have to indicate this
-    // in the translation table
-    translationTable->setAddrDisk(virt_page,-1);
+	// The SHT_NOBITS flag indicates if the section has an image
+	// in the executable file (text or data section) or not 
+	// (bss section)
+	if (section_table[i].sh_type != SHT_NOBITS) {  // The section has an image in the executable file
 
-    // The entry is valid
-    translationTable->setBitValid(virt_page);
-    
-    /* End of code without demand paging */
+		// Get the position of the diskAddr
+		int position_on_disk = section_table[i].sh_offset + pgdisk*g_cfg->PageSize;
+
+		// Initialize the addrDisk to where we have to search
+		translationTable->setAddrDisk(virt_page, position_on_disk);
+
+	} else {  // The section does not have an image in the executable
+
+		// Initialize the addrDisk to -1
+		translationTable->setAddrDisk(virt_page, -1);
+
+	}
+
+	/* End of code WITH demand paging */
 #endif
 
 	}
@@ -368,29 +350,17 @@ int AddrSpace::StackAllocate(void)
 #endif
 
 #ifdef ETUDIANTS_TP
-    /* WITH demand paging */
+	/* WITH demand paging */
 
-    // Allocate a new physical page for the stack, halt if not page availabke
-    int pp = g_physical_mem_manager->FindFreePage();
-    if (pp == -1) { 
-      printf("Not enough free space to load stack\n");
-      g_machine->interrupt->Halt(-1);
-    }
-    g_physical_mem_manager->tpr[pp].virtualPage=i;
-    g_physical_mem_manager->tpr[pp].owner = this;
-    g_physical_mem_manager->tpr[pp].locked=true;
-    translationTable->setPhysicalPage(i,pp);
+	// Set up default values for the page table entry
+	translationTable->clearBitIo(i);
+	translationTable->clearBitValid(i);
+	translationTable->clearBitSwap(i);
+	translationTable->setBitReadAllowed(i);
+	translationTable->setBitWriteAllowed(i);
+	translationTable->setAddrDisk(i, -1);
 
-    // Fill the page with zeroes
-    memset(&(g_machine->mainMemory[translationTable->getPhysicalPage(i)*g_cfg->PageSize]),
-     0x0,g_cfg->PageSize);
-    translationTable->setAddrDisk(i,-1);
-    translationTable->setBitValid(i);
-    translationTable->clearBitSwap(i);
-    translationTable->setBitReadAllowed(i);
-    translationTable->setBitWriteAllowed(i);
-    translationTable->clearBitIo(i);
-    /* End of code without demand paging */
+	/* End of code WITH demand paging */
 #endif
 
     }

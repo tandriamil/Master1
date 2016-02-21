@@ -38,14 +38,37 @@ PageFaultManager::~PageFaultManager() {
 //        size of the address space, and supposed to correspond to a
 //        page mapped to something [code/data/bss/...])
 //	\return the exception (generally the NO_EXCEPTION constant)
-*/  
+*/
+#ifndef ETUDIANTS_TP
 ExceptionType PageFaultManager::PageFault(int virtualPage) 
 {
   printf("**** Warning: page fault manager is not implemented yet\n");
     exit(-1);
     return ((ExceptionType)0);
 }
+#endif
 
+#ifdef ETUDIANTS_TP
+ExceptionType PageFaultManager::PageFault(int virtualPage) {
 
+	// If we have to get the section from the memory
+	int position_on_disk = g_machine->mmu->translationTable->getAddrDisk(virtualPage);
+	if (position_on_disk != -1) {
 
+		// Read it then
+		if (!g_machine->mmu->ReadMem(virtualPage, g_cfg->PageSize, (int *)&g_machine->mainMemory[g_machine->mmu->translationTable->getPhysicalPage(virtualPage) * g_cfg->PageSize], false)) {
+			return PAGEFAULT_EXCEPTION;
+		}
 
+	} else {
+
+		// Fill with 0
+		memset(&(g_machine->mainMemory[g_machine->mmu->translationTable->getPhysicalPage(virtualPage) * g_cfg->PageSize]), 0, g_cfg->PageSize);
+
+	}
+
+	// If everything's fine
+	return NO_EXCEPTION;
+
+}
+#endif

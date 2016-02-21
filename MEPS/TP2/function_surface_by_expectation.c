@@ -90,13 +90,13 @@ int main(int argc, char** argv) {
 	}
 
 	// The result to return and the random value got
-	double variance, random_x, result = 0, nb_runs = atoi(argv[1]);
+	double variance, random_x, result = 0.0, nb_runs = atoi(argv[1]);
 
 	// Runs nb_runs tries
 	int i;
-	for (i = 0; i < nb_runs; i++) {
+	for (i = 0; i < nb_runs; ++i) {
 
-		// Get 3 random variables
+		// Get a random variables
 		random_x = MRG32k3a();
 
 		// Just add the value

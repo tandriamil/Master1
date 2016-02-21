@@ -118,12 +118,53 @@ void PhysicalMemManager::ChangeOwner(long numPage, Thread* owner) {
 //  \return A new physical page number.
 */
 //-----------------------------------------------------------------
+#ifndef ETUDIANTS_TP
 int PhysicalMemManager::AddPhysicalToVirtualMapping(AddrSpace* owner,int virtualPage) 
 {
   printf("**** Warning: function AddPhysicalToVirtualMapping is not implemented\n");
   exit(-1);
   return (0);
 }
+#endif
+
+#ifdef ETUDIANTS_TP
+int PhysicalMemManager::AddPhysicalToVirtualMapping(AddrSpace* owner, int virtualPage) {
+
+	// Get a page in physical memory, evict one if none free
+	int pp = FindFreePage();
+	if (pp == -1) pp = EvictPage();
+
+	// TODO: This part can be false:
+/*
+	// If we have to get the section from the memory
+	int position_on_disk = owner->translationTable->getAddrDisk(virtualPage);
+	if (position_on_disk != -1) {
+
+		// Try to get this open file
+		OpenFile * exec_file = owner->findMappedFile(position_on_disk);
+		ASSERT(exec_file != NULL);
+
+		// Read it then
+		exec_file->Read((char *)&(g_machine->mainMemory[pp * g_cfg->PageSize]), g_cfg->PageSize);
+
+	}
+*/
+	// Link this page to the given virtual page
+	tpr[pp].virtualPage = virtualPage;
+	tpr[pp].owner = owner;
+	tpr[pp].locked = true;
+	tpr[pp].free = false;
+
+	// Link the physical to the virtual page
+	owner->translationTable->setPhysicalPage(virtualPage, pp);
+
+	// TODO: Check if we have things to do on the virtual page table
+
+	// Return the index of the physical page
+	return pp;
+}
+#endif
+
 
 //-----------------------------------------------------------------
 // PhysicalMemManager::FindFreePage
