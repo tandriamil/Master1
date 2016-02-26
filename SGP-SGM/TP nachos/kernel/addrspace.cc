@@ -224,8 +224,7 @@ AddrSpace::AddrSpace(OpenFile * exec_file, Process *p, int *err)
 	translationTable->clearBitValid(virt_page);
 	translationTable->clearBitSwap(virt_page);
 	translationTable->setBitReadAllowed(virt_page);
-	if (section_table[i].sh_flags & SHF_WRITE)
-		translationTable->setBitWriteAllowed(virt_page);
+	if (section_table[i].sh_flags && SHF_WRITE) translationTable->setBitWriteAllowed(virt_page);
 	else translationTable->clearBitWriteAllowed(virt_page);
 
 	// The SHT_NOBITS flag indicates if the section has an image

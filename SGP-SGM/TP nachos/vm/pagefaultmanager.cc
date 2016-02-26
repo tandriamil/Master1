@@ -60,8 +60,8 @@ ExceptionType PageFaultManager::PageFault(int virtualPage) {
 	// Get a physical page
 	int phys_page_id = g_physical_mem_manager->AddPhysicalToVirtualMapping(g_current_thread->GetProcessOwner()->addrspace, virtualPage);
 
-	// If it's stored in the swap
-	if (g_machine->mmu->translationTable->getBitSwap(virtualPage)) {
+	// If it's stored in the swap (swap bit = 1)
+	if (g_machine->mmu->translationTable->getBitSwap(virtualPage) == 1) {
 
 		// A page stealer is dealing with the current page
 		while (g_machine->mmu->translationTable->getAddrDisk(virtualPage) == -1) {
@@ -73,23 +73,26 @@ ExceptionType PageFaultManager::PageFault(int virtualPage) {
 		}
 
 		// Get the real page from the swap
-		g_swap_manager->GetPageSwap(g_machine->mmu->translationTable->getAddrDisk(virtualPage), temporary_page); 
+		g_swap_manager->GetPageSwap(g_machine->mmu->translationTable->getAddrDisk(virtualPage), temporary_page);
 
-	} else {  // If stored in the disk
+	} else {  // If stored in the disk (swap bit = 0)
 
 		// If anonymous page
 		if (g_machine->mmu->translationTable->getAddrDisk(virtualPage) == -1) {
-			
+
 			// Fill with 0
 			memset(&(g_machine->mainMemory[phys_page_id * g_cfg->PageSize]), 0, g_cfg->PageSize);
 		
 		} else {
 
 			// Load the executive
-			if (!g_machine->mmu->ReadMem(virtualPage, g_cfg->PageSize, (int *)temporary_page, false)) {
+			/*if (!g_machine->mmu->ReadMem(virtualPage, g_cfg->PageSize, (int *)temporary_page, false)) {
 				DEBUG('d', (char *)"Page fault on a virtual page that doesn't allow read");
 				return PAGEFAULT_EXCEPTION;
-			}
+			}*/
+
+			// Read it from the disk
+			g_current_thread->GetProcessOwner()->exec_file->ReadAt((char *)&(g_machine->mainMemory[g_machine->mmu->translationTable->getPhysicalPage(virtualPage) * g_cfg->PageSize]), g_cfg->PageSize, g_machine->mmu->translationTable->getAddrDisk(virtualPage));
 
 		}
 
@@ -100,6 +103,9 @@ ExceptionType PageFaultManager::PageFault(int virtualPage) {
 
 	// Put this physical page as the one for this virtual page
 	g_machine->mmu->translationTable->setPhysicalPage(virtualPage, phys_page_id);
+
+	// Put the valid bit to 1
+	g_machine->mmu->translationTable->setBitValid(virtualPage);
 
 	// If everything's fine
 	return NO_EXCEPTION;
