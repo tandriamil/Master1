@@ -65,9 +65,6 @@ ExceptionType PageFaultManager::PageFault(int virtualPage) {
 	// Block this virtual page from getting resolved by other processes
 	g_machine->mmu->translationTable->setBitIo(virtualPage);
 
-	// Assert that the page is not yet valid
-	ASSERT(!g_machine->mmu->translationTable->getBitValid(virtualPage));
-
 	// Create a temporary page here
 	char temporary_page[g_cfg->PageSize];
 

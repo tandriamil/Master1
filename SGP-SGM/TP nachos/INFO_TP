@@ -4,11 +4,16 @@ DEBUG et ASSERT sont utilisés à pleins d'endroits et servent pour débugger!
 GDB non utilisable pour les deux niveaux.
 Uniquement pour Nachos et pas pour les programmes utilisateurs.
 
+
 Rendu du TP5:
 	- Jeudi 26 novembre 2015 avant 16h15 (exclus)
 	- Fichiers de test
 	- Sources des fichiers modifiés
 	- Compte-rendu honnète! (ce qui a été fait OU NON)
 
-Erreurs:
-	- Process exec/join passe pas, accès mémoire non autorisé
+
+Rendu tu TP SGM:
+	- Vendredi 4 mars avant 8h (exclus)
+	- Sources modifiées
+	- Tests
+	- Compte-rendu honnète! (ce qui a été fait OU NON)
