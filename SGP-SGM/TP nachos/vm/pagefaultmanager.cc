@@ -51,21 +51,55 @@ ExceptionType PageFaultManager::PageFault(int virtualPage)
 #ifdef ETUDIANTS_TP
 ExceptionType PageFaultManager::PageFault(int virtualPage) {
 
-	// If we have to get the section from the memory
-	int position_on_disk = g_machine->mmu->translationTable->getAddrDisk(virtualPage);
-	if (position_on_disk != -1) {
+	// Assert that the page is not yet valid
+	ASSERT(!g_machine->mmu->translationTable->getBitValid(virtualPage));
 
-		// Read it then
-		if (!g_machine->mmu->ReadMem(virtualPage, g_cfg->PageSize, (int *)&g_machine->mainMemory[g_machine->mmu->translationTable->getPhysicalPage(virtualPage) * g_cfg->PageSize], false)) {
-			return PAGEFAULT_EXCEPTION;
+	// Create a temporary page here
+	char temporary_page[g_cfg->PageSize];
+
+	// Get a physical page
+	int phys_page_id = g_physical_mem_manager->AddPhysicalToVirtualMapping(g_current_thread->GetProcessOwner()->addrspace, virtualPage);
+
+	// If it's stored in the swap
+	if (g_machine->mmu->translationTable->getBitSwap(virtualPage)) {
+
+		// A page stealer is dealing with the current page
+		while (g_machine->mmu->translationTable->getAddrDisk(virtualPage) == -1) {
+
+			// Put the current thread at the end of the active thread lists
+			// Run all the other active threads until going back to this one
+			g_current_thread->Yield();
+
 		}
 
-	} else {
+		// Get the real page from the swap
+		g_swap_manager->GetPageSwap(g_machine->mmu->translationTable->getAddrDisk(virtualPage), temporary_page); 
 
-		// Fill with 0
-		memset(&(g_machine->mainMemory[g_machine->mmu->translationTable->getPhysicalPage(virtualPage) * g_cfg->PageSize]), 0, g_cfg->PageSize);
+	} else {  // If stored in the disk
+
+		// If anonymous page
+		if (g_machine->mmu->translationTable->getAddrDisk(virtualPage) == -1) {
+			
+			// Fill with 0
+			memset(&(g_machine->mainMemory[phys_page_id * g_cfg->PageSize]), 0, g_cfg->PageSize);
+		
+		} else {
+
+			// Load the executive
+			if (!g_machine->mmu->ReadMem(virtualPage, g_cfg->PageSize, (int *)temporary_page, false)) {
+				DEBUG('d', (char *)"Page fault on a virtual page that doesn't allow read");
+				return PAGEFAULT_EXCEPTION;
+			}
+
+		}
 
 	}
+
+	// Copy the temporary page into the real page
+	memcpy(&g_machine->mainMemory[phys_page_id * g_cfg->PageSize], temporary_page, g_cfg->PageSize);
+
+	// Put this physical page as the one for this virtual page
+	g_machine->mmu->translationTable->setPhysicalPage(virtualPage, phys_page_id);
 
 	// If everything's fine
 	return NO_EXCEPTION;
