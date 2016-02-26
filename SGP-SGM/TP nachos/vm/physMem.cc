@@ -144,7 +144,7 @@ int PhysicalMemManager::AddPhysicalToVirtualMapping(AddrSpace* owner, int virtua
 	tpr[pp].free = false;
 
 	// Unlock the new physical page
-	tpr[pp].locked = false;
+	UnlockPage(pp);
 
 	// Return the index of the physical page
 	return pp;
@@ -203,9 +203,67 @@ int PhysicalMemManager::EvictPage() {
 
 #ifdef ETUDIANTS_TP
 int PhysicalMemManager::EvictPage() {
-	printf("**** Warning: page replacement algorithm is not implemented yet\n");
-	exit(-1);
-	return 0;
+
+	// Get the global i_clock and put it into our system
+	int local_i_clock = i_clock, beginning = local_i_clock;
+
+	// Search a page that isn't locked or used recently
+	while ((tpr[local_i_clock].owner->translationTable->getBitU(tpr[local_i_clock].virtualPage) == 1) || (tpr[local_i_clock].locked)) {
+
+		// Put the U bit to 0 only if the page is locked
+		if (tpr[local_i_clock].locked)
+			tpr[local_i_clock].owner->translationTable->clearBitU(tpr[local_i_clock].virtualPage);
+
+		// Go to the next physical page in circular way
+		local_i_clock = (local_i_clock + 1) % g_cfg->NumPhysPages;
+
+		// If we got back to the beginning, we didn't found a page
+		if (local_i_clock == beginning) {
+			// Put the current thread at the end of the active thread lists
+			// Run all the other active threads until going back to this one
+			g_current_thread->Yield();
+		}
+	}
+
+	// Here, lock this page
+	tpr[local_i_clock].locked = true;
+
+	// If the physical page was modified
+	if (tpr[local_i_clock].owner->translationTable->getBitM(tpr[local_i_clock].virtualPage)) {
+
+		// Put this page into the swap
+		int swap_sector = g_swap_manager->PutPageSwap(-1, (char *)&g_machine->mainMemory[local_i_clock * g_cfg->PageSize]);
+
+		// If there was an error
+		if (swap_sector == -1) {
+			DEBUG('h', (char *)"Tryed to put a swap page in EvistPage() method but failed, return code is -1\n");
+			g_machine->interrupt->Halt(-1);
+		}
+
+		// Update virtual page state as stored into swap
+		tpr[local_i_clock].owner->translationTable->setAddrDisk(tpr[local_i_clock].virtualPage, swap_sector);
+		tpr[local_i_clock].owner->translationTable->setBitSwap(tpr[local_i_clock].virtualPage);
+		tpr[local_i_clock].owner->translationTable->clearBitM(tpr[local_i_clock].virtualPage);
+
+	} else {
+
+		// Update virtual page state
+		/*tpr[local_i_clock].owner->translationTable->setPhysicalPage(tpr[local_i_clock].virtualPage, -1);
+		tpr[local_i_clock].owner->translationTable->clearBitValid(tpr[local_i_clock].virtualPage);*/
+
+		// Remove physical to virtual mapping
+		RemovePhysicalToVirtualMapping(local_i_clock);
+
+	}
+
+	// Update virtual page state
+	tpr[local_i_clock].owner->translationTable->clearBitM(tpr[local_i_clock].virtualPage);
+
+	// Update the global clock and unlock this page
+	i_clock = local_i_clock;
+
+	// Return the free physical page
+	return local_i_clock;
 }
 #endif
 
