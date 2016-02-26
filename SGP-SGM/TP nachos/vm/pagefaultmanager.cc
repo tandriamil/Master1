@@ -51,6 +51,20 @@ ExceptionType PageFaultManager::PageFault(int virtualPage)
 #ifdef ETUDIANTS_TP
 ExceptionType PageFaultManager::PageFault(int virtualPage) {
 
+	// Here, the thread is trying to take care of a page fault
+	// which another thread is already taking care
+	// This thread then should wait till the other one finished
+	while (g_machine->mmu->translationTable->getBitIo(virtualPage)) {
+
+		// Put the current thread at the end of the active thread lists
+		// Run all the other active threads until going back to this one
+		g_current_thread->Yield();
+
+	}
+
+	// Block this virtual page from getting resolved by other processes
+	g_machine->mmu->translationTable->setBitIo(virtualPage);
+
 	// Assert that the page is not yet valid
 	ASSERT(!g_machine->mmu->translationTable->getBitValid(virtualPage));
 
@@ -61,7 +75,7 @@ ExceptionType PageFaultManager::PageFault(int virtualPage) {
 	int phys_page_id = g_physical_mem_manager->AddPhysicalToVirtualMapping(g_current_thread->GetProcessOwner()->addrspace, virtualPage);
 
 	// If it's stored in the swap (swap bit = 1)
-	if (g_machine->mmu->translationTable->getBitSwap(virtualPage) == 1) {
+	if (g_machine->mmu->translationTable->getBitSwap(virtualPage)) {
 
 		// A page stealer is dealing with the current page
 		while (g_machine->mmu->translationTable->getAddrDisk(virtualPage) == -1) {
@@ -92,13 +106,6 @@ ExceptionType PageFaultManager::PageFault(int virtualPage) {
 				g_machine->mmu->translationTable->getAddrDisk(virtualPage)
 			);
 
-			/*printf("Read at %d and its content:\n", g_machine->mmu->translationTable->getAddrDisk(virtualPage));
-
-			int i;
-			for (i = 0; i < g_cfg->PageSize; ++i) {
-				printf("%d ", g_machine->mainMemory[g_machine->mmu->translationTable->getPhysicalPage(virtualPage) * g_cfg->PageSize + i]);
-			}*/
-
 		}
 
 	}
@@ -109,8 +116,9 @@ ExceptionType PageFaultManager::PageFault(int virtualPage) {
 	// Put this physical page as the one for this virtual page
 	g_machine->mmu->translationTable->setPhysicalPage(virtualPage, phys_page_id);
 
-	// Put the valid bit to 1
+	// Put the valid bit to 1 and the io bit to 0 (unlock the page)
 	g_machine->mmu->translationTable->setBitValid(virtualPage);
+	g_machine->mmu->translationTable->clearBitIo(virtualPage);
 
 	// If everything's fine
 	return NO_EXCEPTION;

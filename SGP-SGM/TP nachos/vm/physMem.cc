@@ -130,6 +130,9 @@ int PhysicalMemManager::AddPhysicalToVirtualMapping(AddrSpace* owner,int virtual
 #ifdef ETUDIANTS_TP
 int PhysicalMemManager::AddPhysicalToVirtualMapping(AddrSpace* owner, int virtualPage) {
 
+	// Assert that the virtual page is locked for the page fault process
+	ASSERT(g_machine->mmu->translationTable->getBitIo(virtualPage));
+
 	// Get a page in physical memory, evict one if none free
 	int pp = FindFreePage();
 	if (pp == -1) pp = EvictPage();
