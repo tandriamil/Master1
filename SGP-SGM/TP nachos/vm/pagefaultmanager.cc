@@ -85,14 +85,19 @@ ExceptionType PageFaultManager::PageFault(int virtualPage) {
 		
 		} else {
 
-			// Load the executive
-			/*if (!g_machine->mmu->ReadMem(virtualPage, g_cfg->PageSize, (int *)temporary_page, false)) {
-				DEBUG('d', (char *)"Page fault on a virtual page that doesn't allow read");
-				return PAGEFAULT_EXCEPTION;
-			}*/
-
 			// Read it from the disk
-			g_current_thread->GetProcessOwner()->exec_file->ReadAt((char *)&(g_machine->mainMemory[g_machine->mmu->translationTable->getPhysicalPage(virtualPage) * g_cfg->PageSize]), g_cfg->PageSize, g_machine->mmu->translationTable->getAddrDisk(virtualPage));
+			g_current_thread->GetProcessOwner()->exec_file->ReadAt(
+				temporary_page,
+				g_cfg->PageSize,
+				g_machine->mmu->translationTable->getAddrDisk(virtualPage)
+			);
+
+			/*printf("Read at %d and its content:\n", g_machine->mmu->translationTable->getAddrDisk(virtualPage));
+
+			int i;
+			for (i = 0; i < g_cfg->PageSize; ++i) {
+				printf("%d ", g_machine->mainMemory[g_machine->mmu->translationTable->getPhysicalPage(virtualPage) * g_cfg->PageSize + i]);
+			}*/
 
 		}
 

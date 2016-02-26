@@ -135,9 +135,9 @@ int PhysicalMemManager::AddPhysicalToVirtualMapping(AddrSpace* owner, int virtua
 	if (pp == -1) pp = EvictPage();
 
 	// Link this page to the given virtual page
+	tpr[pp].locked = true;
 	tpr[pp].virtualPage = virtualPage;
 	tpr[pp].owner = owner;
-	tpr[pp].locked = true;
 	tpr[pp].free = false;
 
 	// Unlock the new physical page
