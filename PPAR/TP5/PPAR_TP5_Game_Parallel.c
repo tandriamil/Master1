@@ -517,19 +517,19 @@ int main(int argc, char **argv) {
 		fprintf(stderr, "Processor n°%d on iteration n°%d is just before the sendings\n", proc_id, it);
 
 		// Send its first row to the previous processor
-		MPI_Isend((void *)&world1[code(start, 0, 0, 0)], N, MPI_INT, prev, 0, MPI_COMM_WORLD, &requests[1]);
+		MPI_Isend((void *)&world1[code(start, 0, 0, 0)], N, MPI_INT, prev, 0, MPI_COMM_WORLD, &requests[0]);
 		fprintf(stderr, "Processor n°%d on iteration n°%d sent row to its previous processor n°%d\n", proc_id, it, prev);
 
 		// Send its last row to the next processor
-		MPI_Isend((void *)&world1[code(end, 0, 0, 0)], N, MPI_INT, next, 0, MPI_COMM_WORLD, &requests[2]);
+		MPI_Isend((void *)&world1[code(end, 0, 0, 0)], N, MPI_INT, next, 0, MPI_COMM_WORLD, &requests[1]);
 		fprintf(stderr, "Processor n°%d on iteration n°%d sent row to its next processor n°%d\n", proc_id, it, next);
 
 		// Receive from its previous processor
-		MPI_Irecv((void *)&world1[code(start, 0, -1, 0)], N, MPI_INT, prev, 0, MPI_COMM_WORLD, &requests[3]);
+		MPI_Irecv((void *)&world1[code(start, 0, -1, 0)], N, MPI_INT, prev, 0, MPI_COMM_WORLD, &requests[2]);
 		fprintf(stderr, "Processor n°%d on iteration n°%d received row from its previous processor n°%d\n", proc_id, it, prev);
 
 		// Receive from its next processor
-		MPI_Irecv((void *)&world1[code(end, 0, +1, 0)], N, MPI_INT, next, 0, MPI_COMM_WORLD, &requests[4]);
+		MPI_Irecv((void *)&world1[code(end, 0, +1, 0)], N, MPI_INT, next, 0, MPI_COMM_WORLD, &requests[3]);
 		fprintf(stderr, "Processor n°%d on iteration n°%d received row from its next processor n°%d\n", proc_id, it, next);
 
 		// Wait for the requests
