@@ -436,7 +436,7 @@ int main(int argc, char **argv) {
 
 	// Variables used here
 	//int it = 0, change = 1;
-	int it = 0, start, end;
+	int it = 0, start, end, prev, next;
 	unsigned int *world1, *world2;
 	unsigned int *worldaux;
 
@@ -475,13 +475,17 @@ int main(int argc, char **argv) {
 		world1 = initialize_small_exploder();
 
 		// Sends this world to all the other processors by using broadcast
-		MPI_Bcast((void *)&world1, N*N, MPI_INT, 0, MPI_COMM_WORLD);
+		MPI_Bcast((void *)world1, N*N, MPI_INT, 0, MPI_COMM_WORLD);
 
 		// Prints the initial world
 		print(world1);
 
 	} else {  // The other processors just wait to receive the datas
-		MPI_Recv((void *)&world1, N*N, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+
+		// But first, allocate the first world
+		world1 = allocate();
+
+		MPI_Recv((void *)world1, N*N, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 	}
 
 	// Get the beginning and end
@@ -500,19 +504,22 @@ int main(int argc, char **argv) {
 		world1 = world2;
 		world2 = worldaux;
 
-		
+		// Its two neighbours id
+		next = (proc_id+1)%nb_processes;
+		prev = proc_id - 1;
+		if (prev == -1) prev = nb_processes - 1;
 
 		// Send its first row to the previous processor
-		MPI_Send((void *)&world1[code(start, 0, 0, 0)], N, MPI_INT, (proc_id-1)%nb_processes, 0, MPI_COMM_WORLD);
+		MPI_Send((void *)&world1[code(start, 0, 0, 0)], N, MPI_INT, prev, 0, MPI_COMM_WORLD);
 
 		// Send its last row to the next processor
-		MPI_Send((void *)&world1[code(end, 0, 0, 0)], N, MPI_INT, (proc_id+1)%nb_processes, 0, MPI_COMM_WORLD);
+		MPI_Send((void *)&world1[code(end, 0, 0, 0)], N, MPI_INT, next, 0, MPI_COMM_WORLD);
 
 		// Receive from its previous processor
-		MPI_Recv((void *)&world1[code(start, 0, -1, 0)], N, MPI_INT, (proc_id-1)%nb_processes, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+		MPI_Recv((void *)&world1[code(start, 0, -1, 0)], N, MPI_INT, prev, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
 		// Receive from its next processor
-		MPI_Recv((void *)&world1[code(end, 0, +1, 0)], N, MPI_INT, (proc_id+1)%nb_processes, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+		MPI_Recv((void *)&world1[code(end, 0, +1, 0)], N, MPI_INT, next, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
 		// Increment the iteration counter
 		++it;
@@ -538,12 +545,13 @@ int main(int argc, char **argv) {
 		print(world1);
 	}
 
+	// Everyone free the two worlds
+	free(world2);
+	free(world1);
+
 	// Close MPI
 	ierr = MPI_Finalize();
 	if (ierr != 0) fprintf(stderr, "MPI_Finalize() caught an error, return code %d", ierr);
-
-	// Free the global memory allocated
-	free(world1);
 
 	// Correct execution
 	return 0;
