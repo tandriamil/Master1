@@ -468,6 +468,8 @@ int main(int argc, char **argv) {
 		exit(ERROR_ENCOUNTERED);
 	}
 
+	fprintf(stderr, "Processor n°%d started\n", proc_id);
+
 	// All the processors allocate their temporary world
 	world2 = allocate();
 
@@ -592,8 +594,8 @@ int main(int argc, char **argv) {
 				fprintf(stderr, "Processor n°%d on iteration n°%d received row from its next processor n°%d\n", proc_id, it, next);
 
 				// Free the requests
-				MPI_Request_free(&request1);
-				MPI_Request_free(&request2);
+				MPI_Wait(&request1, &status[0]);
+				MPI_Wait(&request2, &status[1]);
 				fprintf(stderr, "Processor n°%d on iteration n°%d just freed its requests\n", proc_id, it);
 				break;
 			}
