@@ -443,7 +443,7 @@ int main(int argc, char **argv) {
 
 
 	/* ############### MPI part ############### */
-	int ierr, nb_processes, proc_id, beginning, tmp_letter, ending;
+	int ierr, nb_processes, proc_id, beginning, ending;
 
 	// Initialize MPI.
 	ierr = MPI_Init(&argc, &argv);
@@ -463,10 +463,8 @@ int main(int argc, char **argv) {
 		exit(ERROR_ENCOUNTERED);
 	}
 
-
 	// All the processors allocate their temporary world
 	world2 = allocate();
-
 
 	// The master create the world, sends it and prints it
 	if (proc_id == 0) {
@@ -477,17 +475,14 @@ int main(int argc, char **argv) {
 		//world1 = initialize_glider();
 		world1 = initialize_small_exploder();
 
-		// Sends this world to all the other processors
-		int i;
-		for (i = 1; i < nb_processes; ++i) {
-			MPI_Send((void *)world1, N*N, MPI_INT, i, 0, MPI_COMM_WORLD);
-		}
+		// Sends this world to all the other processors by using broadcast
+		MPI_Bcast((void *)&world1, N*N, MPI_INT, 0, MPI_COMM_WORLD);
 
 		// Prints the initial world
 		print(world1);
 
 	} else {  // The other processors just wait to receive the datas
-		MPI_Recv((void *)world1, N*N, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+		MPI_Recv((void *)&world1, N*N, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 	}
 
 	// Get the beginning and end
