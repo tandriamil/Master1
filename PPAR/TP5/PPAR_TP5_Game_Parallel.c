@@ -328,7 +328,6 @@ short newgeneration(unsigned int *world1, unsigned int *world2, int xstart, int 
 	
 	// Variables used here
 	int x, y, nn, n1, n2;
-	unsigned int cell;
 	short change = 0;
 
 	// Fill the world with emptyness
@@ -443,7 +442,7 @@ int main(int argc, char **argv) {
 
 
 	/* ############### MPI part ############### */
-	int ierr, nb_processes, proc_id, beginning, ending;
+	int ierr, nb_processes, proc_id;
 
 	// Initialize MPI.
 	ierr = MPI_Init(&argc, &argv);
@@ -501,6 +500,8 @@ int main(int argc, char **argv) {
 		world1 = world2;
 		world2 = worldaux;
 
+		
+
 		// Send its first row to the previous processor
 		MPI_Send((void *)&world1[code(start, 0, 0, 0)], N, MPI_INT, (proc_id-1)%nb_processes, 0, MPI_COMM_WORLD);
 
@@ -520,12 +521,22 @@ int main(int argc, char **argv) {
 	// Free the temporary world for each processor
 	free(world2);
 
-	// We wait for everyone to finish
-	ierr = MPI_Barrier(MPI_COMM_WORLD);
-	if (ierr != 0) fprintf(stderr, "MPI_Barrier() caught an error, return code %d", ierr);
+	// All processors exept master send their rows to master
+	if (proc_id != 0) {
+		MPI_Send((void *)&world1[code(start, 0, 0, 0)], (N/nb_processes)*N, MPI_INT, 0, 0, MPI_COMM_WORLD);
+	}
 
-	// The master display the final state of the world
-	if (proc_id == 0) print(world1);
+	// Master receive the rows for each processor
+	else {
+
+		// Receive each row
+		for (it = 1; it < nb_processes; ++it) {
+			MPI_Recv((void *)&world1[code((N/nb_processes)*it, 0, 0, 0)], (N/nb_processes)*N, MPI_INT, it, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+		}
+
+		// And prints it
+		print(world1);
+	}
 
 	// Close MPI
 	ierr = MPI_Finalize();
