@@ -11,7 +11,7 @@
 #define ERROR_ENCOUNTERED -1
 #define EXECUTION_OK 0
 #define N 32
-#define MAX_ITERATIONS 20
+#define MAX_ITERATIONS 1
 
 
 /*!
@@ -436,13 +436,18 @@ int main(int argc, char **argv) {
 
 	// Variables used here
 	//int it = 0, change = 1;
-	int it = 0, start, end, prev, next;
+	int mode = 0, it = 0, start, end, prev, next;
 	unsigned int *world1, *world2;
 	unsigned int *worldaux;
+
+	// If we have an argument, put it as the mode
+	if (argc == 2) mode = atoi(argv[1]);
 
 
 	/* ############### MPI part ############### */
 	int ierr, nb_processes, proc_id;
+	MPI_Request request1, request2, request3, request4;
+	MPI_Status status;
 
 	// Initialize MPI.
 	ierr = MPI_Init(&argc, &argv);
@@ -492,9 +497,13 @@ int main(int argc, char **argv) {
 	start = (N/nb_processes) * proc_id;
 	end = start + N/nb_processes -1;
 
+	fprintf(stderr, "Initialization done for processor n°%d\n", proc_id);
+
 	// The iterations into the world
 	//while (change && (it < MAX_ITERATIONS)) {
 	while (it < MAX_ITERATIONS) {
+
+		fprintf(stderr, "Processor n°%d entered iteration n°%d\n", proc_id, it);
 
 		// Get the new generation
 		newgeneration(world1, world2, start, end);
@@ -509,24 +518,121 @@ int main(int argc, char **argv) {
 		prev = proc_id - 1;
 		if (prev == -1) prev = nb_processes - 1;
 
-		// Send its first row to the previous processor
-		MPI_Send((void *)&world1[code(start, 0, 0, 0)], N, MPI_INT, prev, 0, MPI_COMM_WORLD);
+		fprintf(stderr, "Processor n°%d on iteration n°%d is just before the sendings\n", proc_id, it);
 
-		// Send its last row to the next processor
-		MPI_Send((void *)&world1[code(end, 0, 0, 0)], N, MPI_INT, next, 0, MPI_COMM_WORLD);
 
-		// Receive from its previous processor
-		MPI_Recv((void *)&world1[code(start, 0, -1, 0)], N, MPI_INT, prev, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
-		// Receive from its next processor
-		MPI_Recv((void *)&world1[code(end, 0, +1, 0)], N, MPI_INT, next, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+		// In function of the mode
+		switch(mode) {
+
+			// ############################## All in synchronous mode ##############################
+			case 0: {
+
+				// Send its last row to the next processor
+				MPI_Send((void *)&world1[code(end, 0, 0, 0)], N, MPI_INT, next, 0, MPI_COMM_WORLD);
+				fprintf(stderr, "Processor n°%d on iteration n°%d sent row to its next processor n°%d\n", proc_id, it, next);
+
+				// Receive from its previous processor
+				MPI_Recv((void *)&world1[code(start, 0, -1, 0)], N, MPI_INT, prev, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+				fprintf(stderr, "Processor n°%d on iteration n°%d received row from its previous processor n°%d\n", proc_id, it, prev);
+
+				// Send its first row to the previous processor
+				MPI_Send((void *)&world1[code(start, 0, 0, 0)], N, MPI_INT, prev, 0, MPI_COMM_WORLD);
+				fprintf(stderr, "Processor n°%d on iteration n°%d sent row to its previous processor n°%d\n", proc_id, it, prev);
+
+				// Receive from its next processor
+				MPI_Recv((void *)&world1[code(end, 0, +1, 0)], N, MPI_INT, next, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+				fprintf(stderr, "Processor n°%d on iteration n°%d received row from its next processor n°%d\n", proc_id, it, next);
+				break;
+			}
+
+			// ############################## Send in asynchronous mode ##############################
+			case 1: {
+
+				// Send its last row to the next processor
+				MPI_Isend((void *)&world1[code(end, 0, 0, 0)], N, MPI_INT, next, 0, MPI_COMM_WORLD, &request1);
+				fprintf(stderr, "Processor n°%d on iteration n°%d sent row to its next processor n°%d\n", proc_id, it, next);
+
+				// Send its first row to the previous processor
+				MPI_Isend((void *)&world1[code(start, 0, 0, 0)], N, MPI_INT, prev, 0, MPI_COMM_WORLD, &request2);
+				fprintf(stderr, "Processor n°%d on iteration n°%d sent row to its previous processor n°%d\n", proc_id, it, prev);
+
+				// Receive from its previous processor
+				MPI_Recv((void *)&world1[code(start, 0, -1, 0)], N, MPI_INT, prev, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+				fprintf(stderr, "Processor n°%d on iteration n°%d received row from its previous processor n°%d\n", proc_id, it, prev);
+
+				// Receive from its next processor
+				MPI_Recv((void *)&world1[code(end, 0, +1, 0)], N, MPI_INT, next, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+				fprintf(stderr, "Processor n°%d on iteration n°%d received row from its next processor n°%d\n", proc_id, it, next);
+
+				// Free the requests
+				MPI_Request_free(&request1);
+				MPI_Request_free(&request2);
+				fprintf(stderr, "Processor n°%d on iteration n°%d just freed its requests\n", proc_id, it);
+				break;
+			}
+
+			// ############################## Recv in asynchronous mode ##############################
+			case 2: {
+
+				// Send its last row to the next processor
+				MPI_Send((void *)&world1[code(end, 0, 0, 0)], N, MPI_INT, next, 0, MPI_COMM_WORLD);
+				fprintf(stderr, "Processor n°%d on iteration n°%d sent row to its next processor n°%d\n", proc_id, it, next);
+
+				// Receive from its previous processor
+				MPI_Irecv((void *)&world1[code(start, 0, -1, 0)], N, MPI_INT, prev, 0, MPI_COMM_WORLD, &request3);
+				fprintf(stderr, "Processor n°%d on iteration n°%d received row from its previous processor n°%d\n", proc_id, it, prev);
+
+				// Receive from its previous processor
+				MPI_Recv((void *)&world1[code(start, 0, -1, 0)], N, MPI_INT, prev, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+				fprintf(stderr, "Processor n°%d on iteration n°%d received row from its previous processor n°%d\n", proc_id, it, prev);
+
+				// Receive from its next processor
+				MPI_Irecv((void *)&world1[code(end, 0, +1, 0)], N, MPI_INT, next, 0, MPI_COMM_WORLD, &request4);
+				fprintf(stderr, "Processor n°%d on iteration n°%d received row from its next processor n°%d\n", proc_id, it, next);
+
+				// Free the requests
+				MPI_Request_free(&request3);
+				MPI_Request_free(&request4);
+				fprintf(stderr, "Processor n°%d on iteration n°%d just freed its requests\n", proc_id, it);
+				break;
+			}
+
+			// ############################## Both in asynchronous mode ##############################
+			case 3: {
+
+				// Send its last row to the next processor
+				MPI_Isend((void *)&world1[code(end, 0, 0, 0)], N, MPI_INT, next, 0, MPI_COMM_WORLD, &request1);
+				fprintf(stderr, "Processor n°%d on iteration n°%d sent row to its next processor n°%d\n", proc_id, it, next);
+
+				// Receive from its previous processor
+				MPI_Irecv((void *)&world1[code(start, 0, -1, 0)], N, MPI_INT, prev, 0, MPI_COMM_WORLD, &request3);
+				fprintf(stderr, "Processor n°%d on iteration n°%d received row from its previous processor n°%d\n", proc_id, it, prev);
+
+				// Send its first row to the previous processor
+				MPI_Isend((void *)&world1[code(start, 0, 0, 0)], N, MPI_INT, prev, 0, MPI_COMM_WORLD, &request2);
+				fprintf(stderr, "Processor n°%d on iteration n°%d sent row to its previous processor n°%d\n", proc_id, it, prev);
+
+				// Receive from its next processor
+				MPI_Irecv((void *)&world1[code(end, 0, +1, 0)], N, MPI_INT, next, 0, MPI_COMM_WORLD, &request4);
+				fprintf(stderr, "Processor n°%d on iteration n°%d received row from its next processor n°%d\n", proc_id, it, next);
+
+				// Free the requests
+				MPI_Request_free(&request1);
+				MPI_Request_free(&request2);
+				MPI_Request_free(&request3);
+				MPI_Request_free(&request4);
+				fprintf(stderr, "Processor n°%d on iteration n°%d just freed its requests\n", proc_id, it);
+				break;
+			}
+
+		}
+
+
 
 		// Increment the iteration counter
 		++it;
 	}
-
-	// Free the temporary world for each processor
-	free(world2);
 
 	// All processors exept master send their rows to master
 	if (proc_id != 0) {
