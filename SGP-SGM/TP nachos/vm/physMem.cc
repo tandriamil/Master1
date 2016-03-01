@@ -138,13 +138,10 @@ int PhysicalMemManager::AddPhysicalToVirtualMapping(AddrSpace* owner, int virtua
 	if (pp == -1) pp = EvictPage();
 
 	// Link this page to the given virtual page
-	tpr[pp].locked = true;
+	//tpr[pp].locked = false;
 	tpr[pp].virtualPage = virtualPage;
 	tpr[pp].owner = owner;
 	tpr[pp].free = false;
-
-	// Unlock the new physical page
-	UnlockPage(pp);
 
 	// Return the index of the physical page
 	return pp;
@@ -204,14 +201,17 @@ int PhysicalMemManager::EvictPage() {
 #ifdef ETUDIANTS_TP
 int PhysicalMemManager::EvictPage() {
 
+	DEBUG('h', (char *)"Entering EvictPage() with iClock = %d", i_clock);
+
 	// Get the global i_clock and put it into our system
-	int local_i_clock = i_clock, beginning = local_i_clock;
+	int local_i_clock = (i_clock + 1) % g_cfg->NumPhysPages,
+	beginning = (local_i_clock - 1) % g_cfg->NumPhysPages;
 
 	// Search a page that isn't locked or used recently
 	while ((tpr[local_i_clock].owner->translationTable->getBitU(tpr[local_i_clock].virtualPage) == 1) || (tpr[local_i_clock].locked)) {
 
 		// Put the U bit to 0 only if the page is locked
-		if (tpr[local_i_clock].locked)
+		if (!tpr[local_i_clock].locked)
 			tpr[local_i_clock].owner->translationTable->clearBitU(tpr[local_i_clock].virtualPage);
 
 		// Go to the next physical page in circular way
@@ -219,9 +219,13 @@ int PhysicalMemManager::EvictPage() {
 
 		// If we got back to the beginning, we didn't found a page
 		if (local_i_clock == beginning) {
+
 			// Put the current thread at the end of the active thread lists
 			// Run all the other active threads until going back to this one
 			g_current_thread->Yield();
+
+			//DEBUG('h', (char *)"No page found in EvictPage() after one clock turn, iClock = %d, localIClock = %d, flag = %d", i_clock, local_i_clock, beginning);
+
 		}
 	}
 
@@ -236,7 +240,7 @@ int PhysicalMemManager::EvictPage() {
 
 		// If there was an error
 		if (swap_sector == -1) {
-			DEBUG('h', (char *)"Tryed to put a swap page in EvistPage() method but failed, return code is -1\n");
+			DEBUG('h', (char *)"Tryed to put a swap page in EvictPage() method but failed, return code is %d\n", swap_sector);
 			g_machine->interrupt->Halt(-1);
 		}
 
@@ -245,7 +249,7 @@ int PhysicalMemManager::EvictPage() {
 		tpr[local_i_clock].owner->translationTable->setBitSwap(tpr[local_i_clock].virtualPage);
 		tpr[local_i_clock].owner->translationTable->clearBitM(tpr[local_i_clock].virtualPage);
 
-	} else {
+	} else {  // If it wasn't modified, evict it
 
 		// Update virtual page state
 		/*tpr[local_i_clock].owner->translationTable->setPhysicalPage(tpr[local_i_clock].virtualPage, -1);
@@ -257,10 +261,13 @@ int PhysicalMemManager::EvictPage() {
 	}
 
 	// Update virtual page state
-	tpr[local_i_clock].owner->translationTable->clearBitM(tpr[local_i_clock].virtualPage);
+	//tpr[local_i_clock].owner->translationTable->clearBitM(tpr[local_i_clock].virtualPage);
 
 	// Update the global clock and unlock this page
 	i_clock = local_i_clock;
+
+	// Unlock the new physical page
+	UnlockPage(local_i_clock);
 
 	// Return the free physical page
 	return local_i_clock;
