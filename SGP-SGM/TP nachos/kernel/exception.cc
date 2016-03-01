@@ -248,8 +248,8 @@ void ExceptionHandler(ExceptionType exceptiontype, int vaddr)
 	    // that is sot a thread
 	    // Exit with no error code
 	    {
-	      g_syscall_error->SetMsg((char*)"",NoError);
-	      g_machine->WriteIntRegister(2,0);      
+	      g_syscall_error->SetMsg((char*)"",InvalidThreadId);
+	      g_machine->WriteIntRegister(2,-1);      
 	    }
 	  DEBUG('e',(char*)"Fin Join");
 	  break;	   
