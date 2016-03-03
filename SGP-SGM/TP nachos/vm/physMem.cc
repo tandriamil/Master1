@@ -137,11 +137,13 @@ int PhysicalMemManager::AddPhysicalToVirtualMapping(AddrSpace* owner, int virtua
 	int pp = FindFreePage();
 	if (pp == -1) pp = EvictPage();
 
+	// Lock the page
+	tpr[pp].locked = true;
+
 	// Link this page to the given virtual page
-	//tpr[pp].locked = false;
 	tpr[pp].virtualPage = virtualPage;
 	tpr[pp].owner = owner;
-	tpr[pp].free = false;
+	//tpr[pp].free = false;
 
 	// Return the index of the physical page
 	return pp;
@@ -208,11 +210,11 @@ int PhysicalMemManager::EvictPage() {
 	beginning = (local_i_clock - 1) % g_cfg->NumPhysPages;
 
 	// Search a page that isn't locked or used recently
-	while ((tpr[local_i_clock].owner->translationTable->getBitU(tpr[local_i_clock].virtualPage) == 1) || (tpr[local_i_clock].locked)) {
+	while ((tpr[local_i_clock].owner->translationTable->getBitU(tpr[local_i_clock].virtualPage)) || (tpr[local_i_clock].locked)) {
 
 		// Put the U bit to 0 only if the page is locked
-		if (!tpr[local_i_clock].locked)
-			tpr[local_i_clock].owner->translationTable->clearBitU(tpr[local_i_clock].virtualPage);
+		//if (!tpr[local_i_clock].locked)
+		tpr[local_i_clock].owner->translationTable->clearBitU(tpr[local_i_clock].virtualPage);
 
 		// Go to the next physical page in circular way
 		local_i_clock = (local_i_clock + 1) % g_cfg->NumPhysPages;
@@ -224,50 +226,41 @@ int PhysicalMemManager::EvictPage() {
 			// Run all the other active threads until going back to this one
 			g_current_thread->Yield();
 
-			//DEBUG('h', (char *)"No page found in EvictPage() after one clock turn, iClock = %d, localIClock = %d, flag = %d", i_clock, local_i_clock, beginning);
-
 		}
 	}
 
-	// Here, lock this page
-	tpr[local_i_clock].locked = true;
+	// Update the global clock
+	i_clock = local_i_clock;
 
 	// If the physical page was modified
 	if (tpr[local_i_clock].owner->translationTable->getBitM(tpr[local_i_clock].virtualPage)) {
 
-		// Put this page into the swap
-		int swap_sector = g_swap_manager->PutPageSwap(-1, (char *)&g_machine->mainMemory[local_i_clock * g_cfg->PageSize]);
+		// If this page is already in the swap
+		if (tpr[local_i_clock].owner->translationTable->getBitSwap(tpr[local_i_clock].virtualPage)) {
 
-		// If there was an error
-		if (swap_sector == -1) {
-			DEBUG('h', (char *)"Tryed to put a swap page in EvictPage() method but failed, return code is %d\n", swap_sector);
-			g_machine->interrupt->Halt(-1);
+			// Change the swap page index
+			g_swap_manager->PutPageSwap(tpr[local_i_clock].owner->translationTable->getAddrDisk(tpr[local_i_clock].virtualPage), (char *)&g_machine->mainMemory[local_i_clock * g_cfg->PageSize]);
 		}
 
-		// Update virtual page state as stored into swap
-		tpr[local_i_clock].owner->translationTable->setAddrDisk(tpr[local_i_clock].virtualPage, swap_sector);
-		tpr[local_i_clock].owner->translationTable->setBitSwap(tpr[local_i_clock].virtualPage);
-		tpr[local_i_clock].owner->translationTable->clearBitM(tpr[local_i_clock].virtualPage);
+		// If not, put it in then
+		else {
 
-	} else {  // If it wasn't modified, evict it
+			// Put this page into the swap
+			int swap_sector = g_swap_manager->PutPageSwap(-1, (char *)&g_machine->mainMemory[local_i_clock * g_cfg->PageSize]);
 
-		// Update virtual page state
-		/*tpr[local_i_clock].owner->translationTable->setPhysicalPage(tpr[local_i_clock].virtualPage, -1);
-		tpr[local_i_clock].owner->translationTable->clearBitValid(tpr[local_i_clock].virtualPage);*/
+			// If there was an error
+			if (swap_sector == -1) {
+				DEBUG('h', (char *)"Tryed to put a swap page in EvictPage() method but failed, return code is %d\n", swap_sector);
+				g_machine->interrupt->Halt(-1);
+			}
 
-		// Remove physical to virtual mapping
-		RemovePhysicalToVirtualMapping(local_i_clock);
+			// Update virtual page state as stored into swap
+			tpr[local_i_clock].owner->translationTable->setAddrDisk(tpr[local_i_clock].virtualPage, swap_sector);
+			tpr[local_i_clock].owner->translationTable->setBitSwap(tpr[local_i_clock].virtualPage);
+			tpr[local_i_clock].owner->translationTable->clearBitM(tpr[local_i_clock].virtualPage);
+		}
 
 	}
-
-	// Update virtual page state
-	//tpr[local_i_clock].owner->translationTable->clearBitM(tpr[local_i_clock].virtualPage);
-
-	// Update the global clock and unlock this page
-	i_clock = local_i_clock;
-
-	// Unlock the new physical page
-	UnlockPage(local_i_clock);
 
 	// Return the free physical page
 	return local_i_clock;

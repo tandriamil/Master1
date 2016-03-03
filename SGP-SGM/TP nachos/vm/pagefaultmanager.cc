@@ -70,7 +70,7 @@ ExceptionType PageFaultManager::PageFault(int virtualPage) {
 
 	// Get a physical page
 	int phys_page_id = g_physical_mem_manager->AddPhysicalToVirtualMapping(g_current_thread->GetProcessOwner()->addrspace, virtualPage);
-
+	
 	// If it's stored in the swap (swap bit = 1)
 	if (g_machine->mmu->translationTable->getBitSwap(virtualPage)) {
 
@@ -116,6 +116,9 @@ ExceptionType PageFaultManager::PageFault(int virtualPage) {
 	// Put the valid bit to 1 and the io bit to 0 (unlock the page)
 	g_machine->mmu->translationTable->setBitValid(virtualPage);
 	g_machine->mmu->translationTable->clearBitIo(virtualPage);
+
+	// Unlock the physical page
+	g_physical_mem_manager->UnlockPage(phys_page_id);
 
 	// If everything's fine
 	return NO_EXCEPTION;
