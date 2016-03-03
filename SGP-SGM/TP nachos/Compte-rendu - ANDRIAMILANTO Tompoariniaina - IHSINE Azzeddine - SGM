@@ -1,0 +1,10 @@
+ANDRIAMILANTO Tompoariniaina
+IHSINE Azzeddine
+
+############################## Compte-rendu TP SGM ##############################
+
+Notre programme nachos fonctionne lorsqu'on a suffisamment de pages réelles 
+sans devoir en réquisitionner. (environ 20aines pour ./testall)
+
+Lorsqu'on a peu de pages réelles, il doit donc en réquisitionner certaines
+et nous avons un ASSERT (physMem.cc ligne 59) qui n'est pas satisfait.
