@@ -137,13 +137,12 @@ int PhysicalMemManager::AddPhysicalToVirtualMapping(AddrSpace* owner, int virtua
 	int pp = FindFreePage();
 	if (pp == -1) pp = EvictPage();
 
-	// Lock the page
+	// Lock the page for us
 	tpr[pp].locked = true;
 
 	// Link this page to the given virtual page
 	tpr[pp].virtualPage = virtualPage;
 	tpr[pp].owner = owner;
-	//tpr[pp].free = false;
 
 	// Return the index of the physical page
 	return pp;
@@ -203,7 +202,7 @@ int PhysicalMemManager::EvictPage() {
 #ifdef ETUDIANTS_TP
 int PhysicalMemManager::EvictPage() {
 
-	DEBUG('h', (char *)"Entering EvictPage() with iClock = %d", i_clock);
+	DEBUG('m', (char *)"Entering EvictPage() with iClock = %d\n", i_clock);
 
 	// Get the global i_clock and put it into our system
 	int local_i_clock = (i_clock + 1) % g_cfg->NumPhysPages,
@@ -212,8 +211,7 @@ int PhysicalMemManager::EvictPage() {
 	// Search a page that isn't locked or used recently
 	while ((tpr[local_i_clock].owner->translationTable->getBitU(tpr[local_i_clock].virtualPage)) || (tpr[local_i_clock].locked)) {
 
-		// Put the U bit to 0 only if the page is locked
-		//if (!tpr[local_i_clock].locked)
+		// Put the U bit back to 0
 		tpr[local_i_clock].owner->translationTable->clearBitU(tpr[local_i_clock].virtualPage);
 
 		// Go to the next physical page in circular way
@@ -228,6 +226,10 @@ int PhysicalMemManager::EvictPage() {
 
 		}
 	}
+
+	// Invalid the virtual page associated to it and lock the page for us
+	tpr[local_i_clock].owner->translationTable->clearBitValid(tpr[local_i_clock].virtualPage);
+	tpr[local_i_clock].locked = true;
 
 	// Update the global clock
 	i_clock = local_i_clock;
