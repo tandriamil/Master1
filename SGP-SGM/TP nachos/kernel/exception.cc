@@ -1038,6 +1038,43 @@ void ExceptionHandler(ExceptionType exceptiontype, int vaddr)
 			break;
 		}
 
+
+		// ############### MMap files managment ###############
+
+		// Manage the exception call to take care of a mapped file
+		case SC_MMAP: {
+			DEBUG('e', (char*)"SC_MMAP syscall called\n");
+
+			// Get parameters from registers
+			int size = g_machine->ReadIntRegister(4);
+
+			// Get the current process
+			Process *current_process = g_current_thread->GetProcessOwner();
+			ASSERT(current_process != NULL);
+
+			// Check the exec file
+			if (current_process->exec_file == NULL) {
+
+				// Return an error if not correct
+				g_machine->WriteIntRegister(2, -1);
+				g_syscall_error->SetMsg((char*)"Get of an exec file into the MMap exception failed\n", ExecFileFormatError);
+			}
+
+			// Launch the method call
+			int result = current_process->addrspace->Mmap(current_process->exec_file, size);
+			if (result < 0) {
+
+				// Return an error if not correct
+				g_machine->WriteIntRegister(2, -1);
+				g_syscall_error->SetMsg((char*)"Call of MMap() method in MMap exception failed\n", OutOfMemory);
+			}
+
+			// Return ok and no error message
+			g_machine->WriteIntRegister(2, result);  // Not sure if result or 0
+			g_syscall_error->SetMsg((char*)"", NoError);
+			break;
+		}
+
 #endif
 
 

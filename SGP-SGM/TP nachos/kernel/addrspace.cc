@@ -397,6 +397,7 @@ int AddrSpace::Alloc(int numPages)
   return result;
 }
 
+
 //----------------------------------------------------------------------
 /** Map an open file in memory
  *
@@ -405,11 +406,42 @@ int AddrSpace::Alloc(int numPages)
  * \return the virtual address at which the file is mapped
  */
 // ----------------------------------------------------------------------
+#ifndef ETUDIANTS_TP
 int AddrSpace::Mmap(OpenFile *f, int size)
 {
   printf("**** Warning: method AddrSpace::Mmap is not implemented yet\n");
   exit(-1);
 }
+#endif
+
+#ifdef ETUDIANTS_TP
+int AddrSpace::Mmap(OpenFile *f, int size) {
+
+	// Allocate consecutive address space
+	// divRoundUp() give a round number of wanted pages
+	int addr_allocated = Alloc(divRoundUp(size, g_cfg->PageSize));
+	if (addr_allocated == 0) {
+		fprintf(stderr, "Alloc() in Mmap didn't manage to allocate %d bytes\n", size);
+		g_machine->interrupt->Halt(-1);
+	}
+
+	// 
+
+	// Add the informations about this mapped file into a struct element
+	s_mapped_file element;
+	element.first_address = addr_allocated;
+	element.size = size;
+	element.file = f;
+
+	// Add the element to the mapped file
+	mapped_files[nb_mapped_files] = element;
+
+	// Increment number of mapped files
+	nb_mapped_files++;
+
+}
+#endif
+
 
 //----------------------------------------------------------------------
 /*! Search if the address is in a memory-mapped file
