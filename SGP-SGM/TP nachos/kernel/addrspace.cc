@@ -435,7 +435,7 @@ int AddrSpace::Mmap(OpenFile *f, int size) {
 	mapped_files[nb_mapped_files] = element;
 
 	// Increment number of mapped files
-	nb_mapped_files++;
+	++nb_mapped_files;
 
 }
 #endif
@@ -448,11 +448,33 @@ int AddrSpace::Mmap(OpenFile *f, int size) {
  * \return address of file descriptor if found, NULL otherwise
  */
 //----------------------------------------------------------------------
+#ifndef ETUDIANTS_TP
 OpenFile *AddrSpace::findMappedFile(int32_t addr) {
   printf("**** Warning: method AddrSpace::findMappedFile is not implemented yet\n");
   exit(-1);
 
 }
+#endif
+
+#ifdef ETUDIANTS_TP
+OpenFile *AddrSpace::findMappedFile(int32_t addr) {
+
+	// Check in the list of mapped files
+	int i, j, nb_pages, addresses;
+	for (i = 0; i < nb_mapped_files; ++i) {
+
+		// Get the number of pages
+		nb_pages = divRoundUp(mapped_files[i].size, g_cfg->PageSize);
+
+		// Check that the virtual address is contained into the range of this mapped file
+		if ((addr >= mapped_files[i].first_address) && (addr < (mapped_files[i].first_address + nb_pages * g_cfg->PageSize)))
+			return mapped_files[i].file;
+	}
+
+	return NULL;
+
+}
+#endif
 
 //----------------------------------------------------------------------
 // SwapELFHeader
