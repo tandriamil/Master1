@@ -1046,22 +1046,17 @@ void ExceptionHandler(ExceptionType exceptiontype, int vaddr)
 			DEBUG('e', (char*)"SC_MMAP syscall called\n");
 
 			// Get parameters from registers
-			int size = g_machine->ReadIntRegister(4);
+			OpenFile *file = (OpenFile *)g_machine->ReadIntRegister(4);
+			int size = g_machine->ReadIntRegister(5);
+			ASSERT(file != NULL);
+			ASSERT(size > 0);
 
 			// Get the current process
 			Process *current_process = g_current_thread->GetProcessOwner();
 			ASSERT(current_process != NULL);
 
-			// Check the exec file
-			if (current_process->exec_file == NULL) {
-
-				// Return an error if not correct
-				g_machine->WriteIntRegister(2, -1);
-				g_syscall_error->SetMsg((char*)"Get of an exec file into the MMap exception failed\n", ExecFileFormatError);
-			}
-
 			// Launch the method call
-			int result = current_process->addrspace->Mmap(current_process->exec_file, size);
+			int result = current_process->addrspace->Mmap(file, size);
 			if (result < 0) {
 
 				// Return an error if not correct
@@ -1070,7 +1065,7 @@ void ExceptionHandler(ExceptionType exceptiontype, int vaddr)
 			}
 
 			// Return ok and no error message
-			g_machine->WriteIntRegister(2, result);  // Not sure if result or 0
+			g_machine->WriteIntRegister(2, result);
 			g_syscall_error->SetMsg((char*)"", NoError);
 			break;
 		}

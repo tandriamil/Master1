@@ -425,8 +425,6 @@ int AddrSpace::Mmap(OpenFile *f, int size) {
 		g_machine->interrupt->Halt(-1);
 	}
 
-	// 
-
 	// Add the informations about this mapped file into a struct element
 	s_mapped_file element;
 	element.first_address = addr_allocated;
