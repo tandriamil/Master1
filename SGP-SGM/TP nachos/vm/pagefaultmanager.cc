@@ -70,7 +70,7 @@ ExceptionType PageFaultManager::PageFault(int virtualPage) {
 
 	// Get a physical page
 	int phys_page_id = g_physical_mem_manager->AddPhysicalToVirtualMapping(g_current_thread->GetProcessOwner()->addrspace, virtualPage);
-	
+
 	// If it's stored in the swap (swap bit = 1)
 	if (g_machine->mmu->translationTable->getBitSwap(virtualPage)) {
 
@@ -93,18 +93,34 @@ ExceptionType PageFaultManager::PageFault(int virtualPage) {
 
 			// Fill with 0
 			memset(&(g_machine->mainMemory[phys_page_id * g_cfg->PageSize]), 0, g_cfg->PageSize);
-		
+
 		} else {
 
-			// Read it from the disk
-			g_current_thread->GetProcessOwner()->exec_file->ReadAt(
-				temporary_page,
-				g_cfg->PageSize,
-				g_machine->mmu->translationTable->getAddrDisk(virtualPage)
-			);
+			// Check if mapped file
+			OpenFile *mapped_file = g_current_thread->GetProcessOwner()->addrspace->findMappedFile(virtualPage);
 
+			// If in a mapped file
+			if (mapped_file != NULL) {
+
+				// Read it from the mapped file
+				mapped_file->ReadAt(
+					temporary_page,
+					g_cfg->PageSize,
+					g_machine->mmu->translationTable->getAddrDisk(virtualPage)
+				);
+			}
+
+			// If an executable read from the disk
+			else {
+
+				// Read it from the disk
+				g_current_thread->GetProcessOwner()->exec_file->ReadAt(
+					temporary_page,
+					g_cfg->PageSize,
+					g_machine->mmu->translationTable->getAddrDisk(virtualPage)
+				);
+			}
 		}
-
 	}
 
 	// Copy the temporary page into the real page

@@ -417,9 +417,12 @@ int AddrSpace::Mmap(OpenFile *f, int size)
 #ifdef ETUDIANTS_TP
 int AddrSpace::Mmap(OpenFile *f, int size) {
 
-	// Allocate consecutive address space
+	// Get the number of pages
 	// divRoundUp() give a round number of wanted pages
-	int addr_allocated = Alloc(divRoundUp(size, g_cfg->PageSize));
+	int nb_pages = divRoundUp(size, g_cfg->PageSize);
+
+	// Allocate consecutive address space
+	int addr_allocated = Alloc(nb_pages);
 	if (addr_allocated == 0) {
 		fprintf(stderr, "Alloc() in Mmap didn't manage to allocate %d bytes\n", size);
 		g_machine->interrupt->Halt(-1);
@@ -437,6 +440,27 @@ int AddrSpace::Mmap(OpenFile *f, int size) {
 	// Increment number of mapped files
 	++nb_mapped_files;
 
+	// Parse all the virtual adresses corresponding to this space
+	int i, virtualPage, byte_offset;
+	for (i = 0; i < nb_pages; ++i) {
+
+		// Calculate the virtual address
+		byte_offset = i * g_cfg->PageSize;
+		virtualPage = addr_allocated + byte_offset;
+
+		// Put the values into the translation table
+		translationTable->setAddrDisk(virtualPage, byte_offset);
+		translationTable->clearBitIo(virtualPage);
+		translationTable->setBitValid(virtualPage);
+		translationTable->clearBitSwap(virtualPage);
+		translationTable->setBitReadAllowed(virtualPage);
+		translationTable->setBitWriteAllowed(virtualPage);
+		translationTable->clearBitU(virtualPage);
+		translationTable->clearBitM(virtualPage);
+	}
+
+	// Return the virtual page where the file is mapped
+	return addr_allocated;
 }
 #endif
 
@@ -460,7 +484,7 @@ OpenFile *AddrSpace::findMappedFile(int32_t addr) {
 OpenFile *AddrSpace::findMappedFile(int32_t addr) {
 
 	// Check in the list of mapped files
-	int i, j, nb_pages, addresses;
+	int i, nb_pages;
 	for (i = 0; i < nb_mapped_files; ++i) {
 
 		// Get the number of pages
