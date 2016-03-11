@@ -301,13 +301,19 @@ AddrSpace::~AddrSpace() {
 
 		// For every virtual page
 		int i;
-		for (i = 0 ; i <  freePageId ; i++) {
+		for (i = 0; i < freePageId; ++i) {
 
 			// Check if in mapped file
-			OpenFile *mapped_file = findMappedFile(i);
+			OpenFile *mapped_file = findMappedFile(i * g_cfg->PageSize);
 
 			// If in a modified mapped file
-			if ((mapped_file != NULL) && (translationTable->getBitM(i)))
+			if (mapped_file != NULL) {
+
+				DEBUG('p', "Destruction of an addr space found a mapped file with virtual @ = %d\n", i);
+
+				//if (translationTable->getBitM(i)) {
+
+				DEBUG('p', "Modification of a mapped file with virtual @ = %d found with physical @ = %d\n", i, translationTable->getPhysicalPage(i));
 
 				// Write the datas into the mapped file
 				mapped_file->WriteAt(
@@ -315,14 +321,20 @@ AddrSpace::~AddrSpace() {
 					g_cfg->PageSize,
 					translationTable->getAddrDisk(i)
 				);
+				//}
+			}
 
-			// If it is in physical memory, free the physical page
-			if (translationTable->getBitValid(i))
-				g_physical_mem_manager->RemovePhysicalToVirtualMapping(translationTable->getPhysicalPage(i));
-			
-			// If it is in the swap disk, free the corresponding disk sector
-			if ((translationTable->getBitSwap(i)) && (translationTable->getAddrDisk(i) >= 0))
-				g_swap_manager->ReleasePageSwap(translationTable->getAddrDisk(i));
+			// If not in a mapped file
+			else {
+
+				// If it is in physical memory, free the physical page
+				if (translationTable->getBitValid(i))
+					g_physical_mem_manager->RemovePhysicalToVirtualMapping(translationTable->getPhysicalPage(i));
+
+				// If it is in the swap disk, free the corresponding disk sector
+				if ((translationTable->getBitSwap(i)) && (translationTable->getAddrDisk(i) >= 0))
+					g_swap_manager->ReleasePageSwap(translationTable->getAddrDisk(i));
+			}
 
 		}
 
@@ -533,8 +545,10 @@ OpenFile *AddrSpace::findMappedFile(int32_t addr) {
 		nb_pages = divRoundUp(mapped_files[i].size, g_cfg->PageSize);
 
 		// Check that the virtual address is contained into the range of this mapped file
-		if ((addr >= mapped_files[i].first_address) && (addr < (mapped_files[i].first_address + nb_pages * g_cfg->PageSize)))
+		if ((addr >= mapped_files[i].first_address) && (addr < (mapped_files[i].first_address + nb_pages * g_cfg->PageSize))) {
+			DEBUG('p', "Found a mapped file at @=%d with nb_mapped_files=%d and file pointer is %d\n", addr, nb_mapped_files, mapped_files[i].file);
 			return mapped_files[i].file;
+		}
 	}
 
 	return NULL;

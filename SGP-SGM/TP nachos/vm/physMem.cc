@@ -248,7 +248,7 @@ int PhysicalMemManager::EvictPage() {
 		else {
 
 			// Check if this page is in a mapped file
-			OpenFile *mapped_file = tpr[local_i_clock].owner->findMappedFile(tpr[local_i_clock].virtualPage);
+			OpenFile *mapped_file = tpr[local_i_clock].owner->findMappedFile(tpr[local_i_clock].virtualPage * g_cfg->PageSize);
 
 			// If in a mapped file
 			if (mapped_file != NULL) {
