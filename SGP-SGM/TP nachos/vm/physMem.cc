@@ -247,19 +247,40 @@ int PhysicalMemManager::EvictPage() {
 		// If not, put it in then
 		else {
 
-			// Put this page into the swap
-			int swap_sector = g_swap_manager->PutPageSwap(-1, (char *)&g_machine->mainMemory[local_i_clock * g_cfg->PageSize]);
+			// Check if this page is in a mapped file
+			OpenFile *mapped_file = tpr[local_i_clock].owner->findMappedFile(tpr[local_i_clock].virtualPage);
 
-			// If there was an error
-			if (swap_sector == -1) {
-				DEBUG('h', (char *)"Tryed to put a swap page in EvictPage() method but failed, return code is %d\n", swap_sector);
-				g_machine->interrupt->Halt(-1);
+			// If in a mapped file
+			if (mapped_file != NULL) {
+
+				// Write the datas into the mapped file
+				mapped_file->WriteAt(
+					(char *)&g_machine->mainMemory[local_i_clock * g_cfg->PageSize],
+					g_cfg->PageSize,
+					tpr[local_i_clock].owner->translationTable->getAddrDisk(tpr[local_i_clock].virtualPage)
+				);
+
+				// Update virtual page state as stored into swap
+				tpr[local_i_clock].owner->translationTable->clearBitM(tpr[local_i_clock].virtualPage);
 			}
 
-			// Update virtual page state as stored into swap
-			tpr[local_i_clock].owner->translationTable->setAddrDisk(tpr[local_i_clock].virtualPage, swap_sector);
-			tpr[local_i_clock].owner->translationTable->setBitSwap(tpr[local_i_clock].virtualPage);
-			tpr[local_i_clock].owner->translationTable->clearBitM(tpr[local_i_clock].virtualPage);
+			// If not in mapped file
+			else {
+
+				// Put this page into the swap
+				int swap_sector = g_swap_manager->PutPageSwap(-1, (char *)&g_machine->mainMemory[local_i_clock * g_cfg->PageSize]);
+
+				// If there was an error
+				if (swap_sector == -1) {
+					DEBUG('h', (char *)"Tryed to put a swap page in EvictPage() method but failed, return code is %d\n", swap_sector);
+					g_machine->interrupt->Halt(-1);
+				}
+
+				// Update virtual page state as stored into swap
+				tpr[local_i_clock].owner->translationTable->setAddrDisk(tpr[local_i_clock].virtualPage, swap_sector);
+				tpr[local_i_clock].owner->translationTable->setBitSwap(tpr[local_i_clock].virtualPage);
+				tpr[local_i_clock].owner->translationTable->clearBitM(tpr[local_i_clock].virtualPage);
+			}
 		}
 
 	}

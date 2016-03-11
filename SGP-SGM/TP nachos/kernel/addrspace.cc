@@ -267,6 +267,7 @@ AddrSpace::AddrSpace(OpenFile * exec_file, Process *p, int *err)
  *   all memory it uses (RAM and swap area).
  */
 //----------------------------------------------------------------------
+#ifndef ETUDIANTS_TP
 AddrSpace::~AddrSpace()
 {
   int i;
@@ -290,6 +291,47 @@ AddrSpace::~AddrSpace()
     delete translationTable;
   }
 }
+#endif
+
+#ifdef ETUDIANTS_TP
+AddrSpace::~AddrSpace() {
+
+	// Check that we have a translation table
+	if (translationTable != NULL) {
+
+		// For every virtual page
+		int i;
+		for (i = 0 ; i <  freePageId ; i++) {
+
+			// Check if in mapped file
+			OpenFile *mapped_file = findMappedFile(i);
+
+			// If in a modified mapped file
+			if ((mapped_file != NULL) && (translationTable->getBitM(i)))
+
+				// Write the datas into the mapped file
+				mapped_file->WriteAt(
+					(char *)&g_machine->mainMemory[translationTable->getPhysicalPage(i) * g_cfg->PageSize],
+					g_cfg->PageSize,
+					translationTable->getAddrDisk(i)
+				);
+
+			// If it is in physical memory, free the physical page
+			if (translationTable->getBitValid(i))
+				g_physical_mem_manager->RemovePhysicalToVirtualMapping(translationTable->getPhysicalPage(i));
+			
+			// If it is in the swap disk, free the corresponding disk sector
+			if ((translationTable->getBitSwap(i)) && (translationTable->getAddrDisk(i) >= 0))
+				g_swap_manager->ReleasePageSwap(translationTable->getAddrDisk(i));
+
+		}
+
+		// In the end, delete this translation table
+		delete translationTable;
+	}
+}
+#endif
+
 
 //----------------------------------------------------------------------
 /**	Allocates a new stack of size g_cfg->UserStackSize
