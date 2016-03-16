@@ -96,13 +96,14 @@ ExceptionType PageFaultManager::PageFault(int virtualPage) {
 
 		} else {
 
-			// Check if mapped file
-			OpenFile *mapped_file = g_current_thread->GetProcessOwner()->addrspace->findMappedFile(virtualPage * g_cfg->PageSize);
+			DEBUG('p', (char *)"Searching @%d in the page fault from disk management\n", virtualPage);
+			// Check if mapped file  (OR MAYBE HERE IT IS virtualPage * g_cfg->PageSize)
+			OpenFile *mapped_file = g_current_thread->GetProcessOwner()->addrspace->findMappedFile(virtualPage);
 
 			// If in a mapped file
 			if (mapped_file != NULL) {
 
-				DEBUG('p', "Entered in the mapped file read at\n");
+				DEBUG('p', (char *)"Entered in the mapped file read at\n");
 
 				// Read it from the mapped file
 				mapped_file->ReadAt(

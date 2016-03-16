@@ -309,11 +309,11 @@ AddrSpace::~AddrSpace() {
 			// If in a modified mapped file
 			if (mapped_file != NULL) {
 
-				DEBUG('p', "Destruction of an addr space found a mapped file with virtual @ = %d\n", i);
+				DEBUG('p', "Destruction of an addr space, found a mapped file with virtual @ = %d\n", i);
 
 				//if (translationTable->getBitM(i)) {
 
-				DEBUG('p', "Modification of a mapped file with virtual @ = %d found with physical @ = %d\n", i, translationTable->getPhysicalPage(i));
+				DEBUG('p', "Modification of a mapped file with virtual @ = %d linked to physical @ = %d\n", i, translationTable->getPhysicalPage(i));
 
 				// Write the datas into the mapped file
 				mapped_file->WriteAt(
@@ -542,10 +542,11 @@ OpenFile *AddrSpace::findMappedFile(int32_t addr) {
 	for (i = 0; i < nb_mapped_files; ++i) {
 
 		// Get the number of pages
-		nb_pages = divRoundUp(mapped_files[i].size, g_cfg->PageSize);
+		//nb_pages = divRoundUp(mapped_files[i].size, g_cfg->PageSize);
 
 		// Check that the virtual address is contained into the range of this mapped file
-		if ((addr >= mapped_files[i].first_address) && (addr < (mapped_files[i].first_address + nb_pages * g_cfg->PageSize))) {
+		//if ((addr >= mapped_files[i].first_address) && (addr < (mapped_files[i].first_address + nb_pages * g_cfg->PageSize))) {
+		if ((addr >= mapped_files[i].first_address) && (addr < (mapped_files[i].first_address + mapped_files[i].size))) {
 			DEBUG('p', "Found a mapped file at @=%d with nb_mapped_files=%d and file pointer is %d\n", addr, nb_mapped_files, mapped_files[i].file);
 			return mapped_files[i].file;
 		}
