@@ -93,18 +93,37 @@ ExceptionType PageFaultManager::PageFault(int virtualPage) {
 
 			// Fill with 0
 			memset(&(g_machine->mainMemory[phys_page_id * g_cfg->PageSize]), 0, g_cfg->PageSize);
-		
+
 		} else {
 
-			// Read it from the disk
-			g_current_thread->GetProcessOwner()->exec_file->ReadAt(
-				temporary_page,
-				g_cfg->PageSize,
-				g_machine->mmu->translationTable->getAddrDisk(virtualPage)
-			);
+			DEBUG('p', (char *)"Searching @%d in the page fault from disk management\n", virtualPage);
+			// Check if mapped file  (OR MAYBE HERE IT IS virtualPage * g_cfg->PageSize)
+			OpenFile *mapped_file = g_current_thread->GetProcessOwner()->addrspace->findMappedFile(virtualPage);
 
+			// If in a mapped file
+			if (mapped_file != NULL) {
+
+				DEBUG('p', (char *)"Entered in the mapped file read at\n");
+
+				// Read it from the mapped file
+				mapped_file->ReadAt(
+					temporary_page,
+					g_cfg->PageSize,
+					g_machine->mmu->translationTable->getAddrDisk(virtualPage)
+				);
+			}
+
+			// If an executable read from the disk
+			else {
+
+				// Read it from the disk
+				g_current_thread->GetProcessOwner()->exec_file->ReadAt(
+					temporary_page,
+					g_cfg->PageSize,
+					g_machine->mmu->translationTable->getAddrDisk(virtualPage)
+				);
+			}
 		}
-
 	}
 
 	// Copy the temporary page into the real page
@@ -116,6 +135,9 @@ ExceptionType PageFaultManager::PageFault(int virtualPage) {
 	// Put the valid bit to 1 and the io bit to 0 (unlock the page)
 	g_machine->mmu->translationTable->setBitValid(virtualPage);
 	g_machine->mmu->translationTable->clearBitIo(virtualPage);
+
+	// Unlock the physical page
+	g_physical_mem_manager->UnlockPage(phys_page_id);
 
 	// If everything's fine
 	return NO_EXCEPTION;

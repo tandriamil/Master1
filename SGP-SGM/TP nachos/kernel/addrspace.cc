@@ -267,6 +267,7 @@ AddrSpace::AddrSpace(OpenFile * exec_file, Process *p, int *err)
  *   all memory it uses (RAM and swap area).
  */
 //----------------------------------------------------------------------
+#ifndef ETUDIANTS_TP
 AddrSpace::~AddrSpace()
 {
   int i;
@@ -290,6 +291,59 @@ AddrSpace::~AddrSpace()
     delete translationTable;
   }
 }
+#endif
+
+#ifdef ETUDIANTS_TP
+AddrSpace::~AddrSpace() {
+
+	// Check that we have a translation table
+	if (translationTable != NULL) {
+
+		// For every virtual page
+		int i;
+		for (i = 0; i < freePageId; ++i) {
+
+			// Check if in mapped file
+			OpenFile *mapped_file = findMappedFile(i * g_cfg->PageSize);
+
+			// If in a modified mapped file
+			if (mapped_file != NULL) {
+
+				DEBUG('p', "Destruction of an addr space, found a mapped file with virtual @ = %d\n", i);
+
+				//if (translationTable->getBitM(i)) {
+
+				DEBUG('p', "Modification of a mapped file with virtual @ = %d linked to physical @ = %d\n", i, translationTable->getPhysicalPage(i));
+
+				// Write the datas into the mapped file
+				mapped_file->WriteAt(
+					(char *)&g_machine->mainMemory[translationTable->getPhysicalPage(i) * g_cfg->PageSize],
+					g_cfg->PageSize,
+					translationTable->getAddrDisk(i)
+				);
+				//}
+			}
+
+			// If not in a mapped file
+			else {
+
+				// If it is in physical memory, free the physical page
+				if (translationTable->getBitValid(i))
+					g_physical_mem_manager->RemovePhysicalToVirtualMapping(translationTable->getPhysicalPage(i));
+
+				// If it is in the swap disk, free the corresponding disk sector
+				if ((translationTable->getBitSwap(i)) && (translationTable->getAddrDisk(i) >= 0))
+					g_swap_manager->ReleasePageSwap(translationTable->getAddrDisk(i));
+			}
+
+		}
+
+		// In the end, delete this translation table
+		delete translationTable;
+	}
+}
+#endif
+
 
 //----------------------------------------------------------------------
 /**	Allocates a new stack of size g_cfg->UserStackSize
@@ -397,6 +451,7 @@ int AddrSpace::Alloc(int numPages)
   return result;
 }
 
+
 //----------------------------------------------------------------------
 /** Map an open file in memory
  *
@@ -405,11 +460,64 @@ int AddrSpace::Alloc(int numPages)
  * \return the virtual address at which the file is mapped
  */
 // ----------------------------------------------------------------------
+#ifndef ETUDIANTS_TP
 int AddrSpace::Mmap(OpenFile *f, int size)
 {
   printf("**** Warning: method AddrSpace::Mmap is not implemented yet\n");
   exit(-1);
 }
+#endif
+
+#ifdef ETUDIANTS_TP
+int AddrSpace::Mmap(OpenFile *f, int size) {
+
+	// Get the number of pages
+	// divRoundUp() give a round number of wanted pages
+	int nb_pages = divRoundUp(size, g_cfg->PageSize);
+
+	// Allocate consecutive address space
+	int addr_allocated = Alloc(nb_pages);
+	if (addr_allocated == 0) {
+		fprintf(stderr, "Alloc() in Mmap didn't manage to allocate %d bytes\n", size);
+		g_machine->interrupt->Halt(-1);
+	}
+
+	// Add the informations about this mapped file into a struct element
+	s_mapped_file element;
+	element.first_address = addr_allocated;
+	element.size = size;
+	element.file = f;
+
+	// Add the element to the mapped file
+	mapped_files[nb_mapped_files] = element;
+
+	// Increment number of mapped files
+	++nb_mapped_files;
+
+	// Parse all the virtual adresses corresponding to this space
+	int i, virtualPage, byte_offset;
+	for (i = 0; i < nb_pages; ++i) {
+
+		// Calculate the virtual address
+		byte_offset = i * g_cfg->PageSize;
+		virtualPage = addr_allocated + byte_offset;
+
+		// Put the values into the translation table
+		translationTable->setAddrDisk(virtualPage, byte_offset);
+		translationTable->clearBitIo(virtualPage);
+		translationTable->setBitValid(virtualPage);
+		translationTable->clearBitSwap(virtualPage);
+		translationTable->setBitReadAllowed(virtualPage);
+		translationTable->setBitWriteAllowed(virtualPage);
+		translationTable->clearBitU(virtualPage);
+		translationTable->clearBitM(virtualPage);
+	}
+
+	// Return the virtual page where the file is mapped
+	return addr_allocated;
+}
+#endif
+
 
 //----------------------------------------------------------------------
 /*! Search if the address is in a memory-mapped file
@@ -418,11 +526,36 @@ int AddrSpace::Mmap(OpenFile *f, int size)
  * \return address of file descriptor if found, NULL otherwise
  */
 //----------------------------------------------------------------------
+#ifndef ETUDIANTS_TP
 OpenFile *AddrSpace::findMappedFile(int32_t addr) {
   printf("**** Warning: method AddrSpace::findMappedFile is not implemented yet\n");
   exit(-1);
 
 }
+#endif
+
+#ifdef ETUDIANTS_TP
+OpenFile *AddrSpace::findMappedFile(int32_t addr) {
+
+	// Check in the list of mapped files
+	int i, nb_pages;
+	for (i = 0; i < nb_mapped_files; ++i) {
+
+		// Get the number of pages
+		//nb_pages = divRoundUp(mapped_files[i].size, g_cfg->PageSize);
+
+		// Check that the virtual address is contained into the range of this mapped file
+		//if ((addr >= mapped_files[i].first_address) && (addr < (mapped_files[i].first_address + nb_pages * g_cfg->PageSize))) {
+		if ((addr >= mapped_files[i].first_address) && (addr < (mapped_files[i].first_address + mapped_files[i].size))) {
+			DEBUG('p', "Found a mapped file at @=%d with nb_mapped_files=%d and file pointer is %d\n", addr, nb_mapped_files, mapped_files[i].file);
+			return mapped_files[i].file;
+		}
+	}
+
+	return NULL;
+
+}
+#endif
 
 //----------------------------------------------------------------------
 // SwapELFHeader
