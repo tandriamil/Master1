@@ -7,7 +7,7 @@ CFLAGS = -g -Wall
 
 
 # Compilations
-all: emetteur recepteur
+all: emetteur recepteur prod_cons
 
 emetteur: emetteur.c
 	gcc $(CFLAGS) -o emetteur emetteur.c
@@ -15,9 +15,12 @@ emetteur: emetteur.c
 recepteur: recepteur.c
 	gcc $(CFLAGS) -o recepteur recepteur.c
 
+prod_cons: prod_cons.c
+	gcc $(CFLAGS) -o prod_cons prod_cons.c
+
 
 # Clean the workspace
 clean: mrproper
 
 mrproper:
-	rm emetteur recepteur
+	rm emetteur recepteur prod_cons
