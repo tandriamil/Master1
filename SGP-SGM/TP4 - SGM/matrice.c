@@ -101,13 +101,21 @@ void init_matrix() {
 }
 
 
-void new_sigsev_action(int i, siginfo_t * st, void * v) {
+void new_sigsev_action(int sig, siginfo_t *siginfo, void *context) {
+
+	// Check the signal got
+	if (sig != SIGSEGV) fprintf(stderr, "Wrong signal caught! Problem...\n");
 
 	// Put each new accessed page into an array
 
+	fprintf(stderr, "New signal handler launched with signal %d and access_tries = %d and @%p\n", sig, access_tries, siginfo->si_addr);
 
 	// Increment the access tries counter
 	++access_tries;
+
+	//if (sigrelse(SIGSEGV) == -1) fprintf(stderr, "Error during the release of SIGSEGV\n");
+
+	sleep(3);
 }
 
 
@@ -168,14 +176,15 @@ int main() {
 					struct sigaction action_to_connect;
 					action_to_connect.sa_flags = SA_SIGINFO;
 					action_to_connect.sa_sigaction = new_sigsev_action;
+					sigemptyset(&action_to_connect.sa_mask);
 
 					// Redirect the SIGSEGV signal
-					if (sigaction(SIGSEGV, &action_to_connect, &old_action) == -1) fprintf(stderr, "Error during the branchment of the new SIGSEGV action\n");
+					if (sigaction(SIGSEGV, &action_to_connect, NULL) < 0) fprintf(stderr, "Error during the branchment of the new SIGSEGV action\n");
 
 					// Correct execution
 					else {
 
-						fprintf(stderr, "SIGSEGV signal correctly redirected\n");
+						fprintf(stderr, "SIGSEGV signal's handler correctly put\n");
 
 						// Try to access to the unrighted memory
 						int i, never_used = 0;
@@ -183,8 +192,7 @@ int main() {
 
 							fprintf(stderr, "Access try n°%d\n", i);
 
-							never_used = *(cell(mapped_file, random_int(), random_int()));
-							never_used += i;  // Just to remove warning
+							*(cell(mapped_file, random_int(), random_int())) = i;
 						}
 
 						// Calculate the percentage number of access tries
