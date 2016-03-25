@@ -1,0 +1,10 @@
+ANDRIAMILANTO Tompoariniaina
+IHSINE Azzeddine
+
+Notre émetteur/récepteur fonctionne
+mais on a mis un temps d'attente entre chaque actions.
+
+
+Notre producteur/consommateur a un problème d'accès mémoire (segfault).
+L'émetteur s'arrête après le 3è envoi et le récepteur est bloqué au premier,
+ce dernier a l'air d'être celui qui fait le segfault.
