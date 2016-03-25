@@ -3,7 +3,7 @@
 # IHSINE Azzeddine
 
 # Global vars
-CFLAGS = -g -Wall
+CFLAGS = -Wall
 
 
 # Compilations
