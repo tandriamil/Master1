@@ -55,27 +55,6 @@ int * cell(int * beginning, int x, int y) {
 
 
 /*!
- * Initialize the matrix by using threads
- *
- * \param arg A pointer to convert into integer to know the id of the current thread
- */
-void * threaded_init_matrix(void * arg) {
-
-	// Get the id of the thread
-	int id = *((int *)arg);
-
-	// Init its part of the matrix
-	int i, block_per_thread = (ROW_SIZE * ROW_SIZE) / NB_THREADS;
-	for (i = id * block_per_thread; i < (id+1) * block_per_thread; ++i) {
-		matrix[i] = random_int();
-	}
-
-	// End
-	pthread_exit(0);
-}
-
-
-/*!
  * Initialize the matrix
  */
 void init_matrix() {
@@ -83,21 +62,9 @@ void init_matrix() {
 	// Allocate the matrix
 	matrix = malloc(ROW_SIZE * ROW_SIZE * sizeof(int));
 
-	// Create 8 threads to populate it
-	pthread_t threads[NB_THREADS];
-	int thread_ids[NB_THREADS];  // To avoid passing our increment value
-
-	// Create the eight processes
-	int id;
-	for (id = 0; id < NB_THREADS; ++id) {
-		thread_ids[id] = id;
-		if (pthread_create(&threads[id], NULL, threaded_init_matrix, &thread_ids[id]) != 0) fprintf(stderr, "Error during the creation of the thread n°%d\n", id);
-	}
-
-	// Wait them to terminate
-	for (id = 0; id < NB_THREADS; ++id) {
-		if (pthread_join(threads[id], NULL) != 0) fprintf(stderr, "Error during the join of the thread n°%d\n", id);
-	}
+	// Initialize it
+	int i;
+	for (i = 0; i < (ROW_SIZE * ROW_SIZE); ++i) matrix[i] = random_int();
 }
 
 
@@ -106,16 +73,16 @@ void new_sigsev_action(int sig, siginfo_t *siginfo, void *context) {
 	// Check the signal got
 	if (sig != SIGSEGV) fprintf(stderr, "Wrong signal caught! Problem...\n");
 
-	// Put each new accessed page into an array
-
 	fprintf(stderr, "New signal handler launched with signal %d and access_tries = %d and @%p\n", sig, access_tries, siginfo->si_addr);
 
 	// Increment the access tries counter
 	++access_tries;
 
-	//if (sigrelse(SIGSEGV) == -1) fprintf(stderr, "Error during the release of SIGSEGV\n");
+	// Put back the write rights for this memory zone
+	if (mprotect(siginfo->si_addr, sizeof(int), PROT_READ|PROT_WRITE) == -1) fprintf(stderr, "Error during the restablissment of the rights over the @%p\n", siginfo->si_addr);
 
-	sleep(3);
+	// Wait a little before leaving
+	sleep(1);
 }
 
 
@@ -187,13 +154,18 @@ int main() {
 						fprintf(stderr, "SIGSEGV signal's handler correctly put\n");
 
 						// Try to access to the unrighted memory
-						int i, never_used = 0;
-						for (i = 0; i < NB_ACCESS_TRIES; ++i) {
+						int x = random_int(), y = random_int(), i = 0, never_used;
+						do {
 
-							fprintf(stderr, "Access try n°%d\n", i);
+							fprintf(stderr, "Access try n°%d to @%p\n", i, cell(mapped_file, x, y));
 
-							*(cell(mapped_file, random_int(), random_int())) = i;
-						}
+							never_used = *(cell(mapped_file, x, y));
+
+							x = random_int();
+							y = random_int();
+
+							++i;
+						} while (i < NB_ACCESS_TRIES);
 
 						// Calculate the percentage number of access tries
 						int access_tries_percentage = (int)((access_tries / ROW_SIZE) * 100);  // Because ROW_SIZE * ROW_SIZE pages
