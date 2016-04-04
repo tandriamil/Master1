@@ -11,7 +11,6 @@
 #include <unistd.h>
 #include <string.h>
 #include <fcntl.h>
-#include <pthread.h>
 #include <signal.h>
 #include <sys/mman.h>
 
@@ -146,7 +145,7 @@ int main() {
 					sigemptyset(&action_to_connect.sa_mask);
 
 					// Redirect the SIGSEGV signal
-					if (sigaction(SIGSEGV, &action_to_connect, NULL) < 0) fprintf(stderr, "Error during the branchment of the new SIGSEGV action\n");
+					if (sigaction(SIGSEGV, &action_to_connect, &old_action) < 0) fprintf(stderr, "Error during the branchment of the new SIGSEGV action\n");
 
 					// Correct execution
 					else {
@@ -160,6 +159,8 @@ int main() {
 							fprintf(stderr, "Access try n°%d to @%p\n", i, cell(mapped_file, x, y));
 
 							never_used = *(cell(mapped_file, x, y));
+
+							fprintf(stderr, "Normally, we never go here but it's just to avoid unused variable warning for never_used = %d\n", never_used);
 
 							x = random_int();
 							y = random_int();

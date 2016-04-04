@@ -1,0 +1,8 @@
+ANDRIAMILANTO Tompoariniaina
+IHSINE Azzeddine
+
+Notre programme reste boqué dans une boucle infinie
+parceque le bit signalant l'exception reste tout le
+temps actif et nous n'avions pas trouvé de moyen de
+signaler qu'on l'a déjà traité dans notre handler
+personnalisé.
