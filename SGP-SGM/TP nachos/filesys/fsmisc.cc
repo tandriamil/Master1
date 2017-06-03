@@ -1,12 +1,12 @@
-/*! \file fsmisc.cc 
+/*! \file fsmisc.cc
 //  \brief Miscellaneous routines for the Nachos file system
 //
 //	We implement:
 //	   Copy -- copy a file from UNIX to Nachos
-//	   Print -- cat the contents of a Nachos file 
+//	   Print -- cat the contents of a Nachos file
 //
 // Copyright (c) 1992-1993 The Regents of the University of California.
-// All rights reserved.  See copyright.h for copyright notice and limitation 
+// All rights reserved.  See copyright.h for copyright notice and limitation
 // of liability and disclaimer of warranty provisions.
 */
 
@@ -31,20 +31,20 @@ Copy(char *from, char *to)
     OpenFile* openFile=NULL;
     int amountRead, fileLength;
     // Open UNIX file
-    if ((fp = fopen(from, "r")) == NULL) {	 
+    if ((fp = fopen(from, "r")) == NULL) {
 	printf("Copy: couldn't open Unix file %s\n", from);
 	exit(-1);
 	return;
     }
 
     // Figure out length of UNIX file
-    fseek(fp, 0, 2);		
+    fseek(fp, 0, 2);
     fileLength = ftell(fp);
     fseek(fp, 0, 0);
 
     // Create a Nachos file of the same length
     printf("Copying Unix file %s to Nachos file %s\n",
-	   from, to);    
+	   from, to);
     if (g_file_system->Create(to, fileLength) != NoError) { // Create Nachos file
 	printf("Copy: couldn't create Nachos file %s\n", to);
 	fclose(fp);
@@ -53,11 +53,11 @@ Copy(char *from, char *to)
     }
     openFile = g_file_system->Open(to);
     ASSERT(openFile != NULL);
-    
+
     // Copy the data in TransferSize chunks
     char buffer[TransferSize];
     while ((amountRead = fread(buffer, sizeof(char), TransferSize, fp)) > 0)
-	openFile->Write(buffer, amountRead);	
+	openFile->Write(buffer, amountRead);
 
     // Close the UNIX and the Nachos files
     delete openFile;
@@ -72,14 +72,14 @@ Copy(char *from, char *to)
 void
 Print(char *name)
 {
-    OpenFile *openFile;    
+    OpenFile *openFile;
     int i, amountRead;
 
     if ((openFile = g_file_system->Open(name)) == NULL) {
 	printf("Print: unable to open Nachos file %s\n", name);
 	return;
     }
-    
+
     char buffer[TransferSize];
     while ((amountRead = openFile->Read(buffer, TransferSize)) > 0)
 	for (i = 0; i < amountRead; i++)

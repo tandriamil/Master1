@@ -1,10 +1,10 @@
 /*! \file config.h
     \brief Data structures for setting up the Nachos hardware and
 	software configuration
-  
+
     Copyright (c) 1999-2000 INSA de Rennes.
-    All rights reserved.  
-    See copyright_insa.h for copyright notice and limitation 
+    All rights reserved.
+    See copyright_insa.h for copyright notice and limitation
     of liability and disclaimer of warranty provisions.
 */
 #ifndef CONFIG_H
@@ -22,7 +22,7 @@
 #define ACIA_BUSY_WAITING 1
 #define ACIA_INTERRUPT 2
 
-/*! \brief Defines Nachos hardware and software configuration 
+/*! \brief Defines Nachos hardware and software configuration
 *
 * Used to avoid recompiling Nachos when a change in the configuration
 * is needed (turning on/of debug flags, changing memory size, etc.).
@@ -55,7 +55,7 @@ class Config {
   int MaxVirtPages;        //!< Maximum number of virtual pages in each address space (used to allocate the page table)
   bool TimeSharing;        //!< Use the time sharing mode if true (1) - not implemented in the base code
   int MagicNumber;         //!< 0x456789ab
-  int MagicSize;           //!< Size of an integer 
+  int MagicSize;           //!< Size of an integer
   int UserStackSize;       //!< Stack size of user threads in bytes
 
   // Configuration of actions to be done when Nachos is started and exited
@@ -87,9 +87,9 @@ class Config {
    * Destructor
    */
   ~Config(){;}
-  
+
  private:
-  
+
   /** File descriptor of the configuration file */
   FILE *cfg;
 

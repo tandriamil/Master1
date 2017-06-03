@@ -51,7 +51,7 @@ public class TestBuffer {
 
 	@Test
 	public void testGetSelection() {
-		
+
 		// Put the selection
 		buffer.setSelection(selection);
 

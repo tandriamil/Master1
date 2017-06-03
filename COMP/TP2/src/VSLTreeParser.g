@@ -80,7 +80,7 @@ proto [SymbolTable symTab] returns [Code3a code]
 			// No code, just a prototype added to the tabSymb
 			$code = new Code3a();
 		}
-	)	
+	)
 ;
 
 
@@ -278,7 +278,7 @@ array_elem [SymbolTable symTab] returns [Code3a code]
 			// check the INDEX's type
 			if(!($expression.expAtt.type.isCompatible(Type.INT))) Errors.incompatibleTypes($ARELEM, Type.INT, $expression.expAtt.type, null);
 
-			// Return The code 
+			// Return The code
 			$code = Code3aGenerator.genArrayElem(id , $expression.expAtt);
 		}
 ;
@@ -306,7 +306,7 @@ expression [SymbolTable symTab] returns [ExpAttribute expAtt]
 		}
 
 	| ^(MINUS e1=expression[symTab] e2=expression[symTab])
-		{ 
+		{
 			// We get the result of check type
 			Type ty = TypeCheck.checkBinOp($e1.expAtt.type, $e2.expAtt.type);
 
@@ -338,11 +338,11 @@ factor [SymbolTable symTab] returns [ExpAttribute expAtt]
 
 			// Get a new temporary var for the 3ad code
 			VarSymbol temp = SymbDistrib.newTemp();
-		
+
 			// Return the Expression attribute
 			$expAtt = new ExpAttribute(ty, Code3aGenerator.genBinOp(Inst3a.TAC.MUL, temp, $f1.expAtt, $f2.expAtt), temp);
 		}
-	
+
 	| ^(DIV f1=factor[symTab] f2=factor[symTab])
 		{
 			// We get the result of check type
@@ -388,7 +388,7 @@ primary [SymbolTable symTab] returns [ExpAttribute expAtt]
 	| array_elem[symTab]
 		{
 
-					
+
 
 		}
 
@@ -473,7 +473,7 @@ read_item [SymbolTable symTab] returns [Code3a code]
 
 
 declaration [SymbolTable symTab] returns [Code3a code]
-	: ^(DECL { Code3a code1 = new Code3a(); }  ( decl_item[symTab]  { code1.append($decl_item.code); } )+  { $code = code1; } ) 
+	: ^(DECL { Code3a code1 = new Code3a(); }  ( decl_item[symTab]  { code1.append($decl_item.code); } )+  { $code = code1; } )
 ;
 
 

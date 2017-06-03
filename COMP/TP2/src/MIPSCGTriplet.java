@@ -1,6 +1,6 @@
 /**
  * For MIPS code generator. Don't care.
- * 
+ *
  * @param <T>
  */
 public class MIPSCGTriplet<T> {

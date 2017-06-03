@@ -2,8 +2,8 @@
 //  shell.c: a very simple shell running on Nachos
 //
 //  Copyright (c) 1999-2000 INSA de Rennes.
-//  All rights reserved.  
-//  See copyright_insa.h for copyright notice and limitation 
+//  All rights reserved.
+//  See copyright_insa.h for copyright notice and limitation
 //  of liability and disclaimer of warranty provisions.
 */
 
@@ -30,30 +30,30 @@ main()
 
       // Write the prompt
       Write(prompt, 2, output);
- 
+
       // Wait for a command
-      Read(buffer, 60, input); 
-      
+      Read(buffer, 60, input);
+
 	i=0;
 	bg=0;
 	while(buffer[i++] != '\n' ) {};
 	buffer[--i]=' ';
-	
-	
-	
+
+
+
 	while(buffer[--i] == ' ') {};
-	
-	
+
+
 	// Background execution
 	if (buffer[i]=='&') {
 	    bg=1;
 	    buffer[i]=' ';
 	    while(buffer[--i] == ' ') {};
 	    buffer[++i]='\0';
-	    
+
 	} else {buffer[++i] = '\0';}
-	
-		
+
+
 	// Execute the command
 	// In the case it is a background command, don't wait for its completion
 	if( i > 0 ) {
@@ -66,4 +66,3 @@ main()
 	}
     }
 }
-

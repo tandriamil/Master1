@@ -27,7 +27,7 @@ public class ExprLexer extends Lexer {
 		return new Lexer[] {};
 	}
 
-	public ExprLexer() {} 
+	public ExprLexer() {}
 	public ExprLexer(CharStream input) {
 		this(input, new RecognizerSharedState());
 	}
@@ -44,7 +44,7 @@ public class ExprLexer extends Lexer {
 			// ../src/Expr.g:2:6: ( '(' )
 			// ../src/Expr.g:2:8: '('
 			{
-			match('('); 
+			match('(');
 			}
 
 			state.type = _type;
@@ -64,7 +64,7 @@ public class ExprLexer extends Lexer {
 			// ../src/Expr.g:3:6: ( ')' )
 			// ../src/Expr.g:3:8: ')'
 			{
-			match(')'); 
+			match(')');
 			}
 
 			state.type = _type;
@@ -84,7 +84,7 @@ public class ExprLexer extends Lexer {
 			// ../src/Expr.g:4:7: ( '*' )
 			// ../src/Expr.g:4:9: '*'
 			{
-			match('*'); 
+			match('*');
 			}
 
 			state.type = _type;
@@ -104,7 +104,7 @@ public class ExprLexer extends Lexer {
 			// ../src/Expr.g:5:7: ( '+' )
 			// ../src/Expr.g:5:9: '+'
 			{
-			match('+'); 
+			match('+');
 			}
 
 			state.type = _type;
@@ -124,7 +124,7 @@ public class ExprLexer extends Lexer {
 			// ../src/Expr.g:6:7: ( '-' )
 			// ../src/Expr.g:6:9: '-'
 			{
-			match('-'); 
+			match('-');
 			}
 
 			state.type = _type;
@@ -144,7 +144,7 @@ public class ExprLexer extends Lexer {
 			// ../src/Expr.g:7:7: ( '/' )
 			// ../src/Expr.g:7:9: '/'
 			{
-			match('/'); 
+			match('/');
 			}
 
 			state.type = _type;
@@ -164,7 +164,7 @@ public class ExprLexer extends Lexer {
 			// ../src/Expr.g:8:7: ( '=' )
 			// ../src/Expr.g:8:9: '='
 			{
-			match('='); 
+			match('=');
 			}
 
 			state.type = _type;
@@ -184,7 +184,7 @@ public class ExprLexer extends Lexer {
 			// ../src/Expr.g:9:7: ( '^' )
 			// ../src/Expr.g:9:9: '^'
 			{
-			match('^'); 
+			match('^');
 			}
 
 			state.type = _type;
@@ -318,13 +318,13 @@ public class ExprLexer extends Lexer {
 				case 1 :
 					// ../src/Expr.g:60:9: '\\r'
 					{
-					match('\r'); 
+					match('\r');
 					}
 					break;
 
 			}
 
-			match('\n'); 
+			match('\n');
 			}
 
 			state.type = _type;
@@ -525,84 +525,84 @@ public class ExprLexer extends Lexer {
 			case 1 :
 				// ../src/Expr.g:1:10: T__8
 				{
-				mT__8(); 
+				mT__8();
 
 				}
 				break;
 			case 2 :
 				// ../src/Expr.g:1:15: T__9
 				{
-				mT__9(); 
+				mT__9();
 
 				}
 				break;
 			case 3 :
 				// ../src/Expr.g:1:20: T__10
 				{
-				mT__10(); 
+				mT__10();
 
 				}
 				break;
 			case 4 :
 				// ../src/Expr.g:1:26: T__11
 				{
-				mT__11(); 
+				mT__11();
 
 				}
 				break;
 			case 5 :
 				// ../src/Expr.g:1:32: T__12
 				{
-				mT__12(); 
+				mT__12();
 
 				}
 				break;
 			case 6 :
 				// ../src/Expr.g:1:38: T__13
 				{
-				mT__13(); 
+				mT__13();
 
 				}
 				break;
 			case 7 :
 				// ../src/Expr.g:1:44: T__14
 				{
-				mT__14(); 
+				mT__14();
 
 				}
 				break;
 			case 8 :
 				// ../src/Expr.g:1:50: T__15
 				{
-				mT__15(); 
+				mT__15();
 
 				}
 				break;
 			case 9 :
 				// ../src/Expr.g:1:56: ID
 				{
-				mID(); 
+				mID();
 
 				}
 				break;
 			case 10 :
 				// ../src/Expr.g:1:59: INT
 				{
-				mINT(); 
+				mINT();
 
 				}
 				break;
 			case 11 :
 				// ../src/Expr.g:1:63: NEWLINE
 				{
-				mNEWLINE(); 
+				mNEWLINE();
 
 				}
 				break;
 			case 12 :
 				// ../src/Expr.g:1:71: WS
 				{
-				mWS(); 
+				mWS();
 
 				}
 				break;

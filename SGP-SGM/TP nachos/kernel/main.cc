@@ -1,9 +1,9 @@
-/*! \file  main.cc 
+/*! \file  main.cc
 //  \brief Bootstrap code to initialize the operating system kernel.
 //
 // Usage: nachos -d <debugflags>
 //		-s -x <nachos file>
-//              -z -f <configfile> 
+//              -z -f <configfile>
 //
 //    -d causes certain debugging messages to be printed (cf. utility.h)
 //    -s causes user programs to be executed in single-step mode
@@ -13,7 +13,7 @@
 //
 */
 // Copyright (c) 1992-1993 The Regents of the University of California.
-// All rights reserved.  See copyright.h for copyright notice and limitation 
+// All rights reserved.  See copyright.h for copyright notice and limitation
 // of liability and disclaimer of warranty provisions.
 
 #define MAIN
@@ -34,14 +34,14 @@ extern void StartProcess(char *file);
 
 //----------------------------------------------------------------------
 // main
-/*! 	Bootstrap the operating system kernel.  
-//	
+/*! 	Bootstrap the operating system kernel.
+//
 //	Check command line arguments
 //	Initialize data structures
 //	(optionally) Call test procedure
 //
 //	\param argc is the number of command line arguments (including the name
-//		of the command) -- ex: "nachos -d +" -> argc = 3 
+//		of the command) -- ex: "nachos -d +" -> argc = 3
 //	\param argv is an array of strings, one for each command line argument
 //		ex: "nachos -d +" -> argv = {"nachos", "-d", "+"}
 */
@@ -65,7 +65,7 @@ main(int argc, char **argv)
       printf ("%s",copyright);
       exit(0);
     }
-    
+
     if (!strcmp(*argv, "-h")) {              // give commande line arguments
       printf ("Usage: %s [opts]\n",argv[0]);
       printf ("   -d <debugflags> : turn on debug flags specified in <debugflags>\n");
@@ -82,7 +82,7 @@ main(int argc, char **argv)
       startfilename = argv[1];
     }
   }
-  
+
   if (g_cfg->Remove) {	// remove Nachos file
     g_file_system->Remove(g_cfg->FileToRemove);
   }
@@ -93,7 +93,7 @@ main(int argc, char **argv)
     g_file_system->Rmdir(g_cfg->DirToRemove);
   }
   if (g_cfg->NbCopy!=0) {// copy from UNIX to Nachos
-    
+
     for(int i=0;i<g_cfg->NbCopy;i++) {
       if ((strlen(g_cfg->ToCopyUnix[i])!=0)
 	  && (strlen(g_cfg->ToCopyNachos[i])!=0))
@@ -109,7 +109,7 @@ main(int argc, char **argv)
   if (g_cfg->PrintFileSyst) {	// print entire filesystem
     g_file_system->Print();
   }
-  
+
   if (! strcmp(startfilename,"")) {
     printf("Warning: No program to start\n");
   }
@@ -124,8 +124,8 @@ main(int argc, char **argv)
     g_object_ids->AddObject(t);
     err = t->Start(p, p->addrspace->getCodeStartAddress(), -1);
   }
-    
-  g_current_thread->Finish();	// NOTE: if the procedure "main" 
+
+  g_current_thread->Finish();	// NOTE: if the procedure "main"
 				// returns, then the program "nachos"
 				// will exit (as any other normal program
 				// would).  But there may be other
@@ -135,14 +135,3 @@ main(int argc, char **argv)
 				// it from returning.
   return(0);			// Not reached...
 }
-
-
-
-
-
-
-
-
-
-
-

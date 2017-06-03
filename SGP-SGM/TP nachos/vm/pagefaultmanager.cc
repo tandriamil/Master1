@@ -3,8 +3,8 @@ Routines for the page fault managerPage Fault Manager
 */
 //
 //  Copyright (c) 1999-2000 INSA de Rennes.
-//  All rights reserved.  
-//  See copyright_insa.h for copyright notice and limitation 
+//  All rights reserved.
+//  See copyright_insa.h for copyright notice and limitation
 //  of liability and disclaimer of warranty provisions.
 //
 
@@ -23,8 +23,8 @@ PageFaultManager::~PageFaultManager() {
 }
 
 // ExceptionType PageFault(int virtualPage)
-/*! 	
-//	This method is called by the Memory Management Unit when there is a 
+/*!
+//	This method is called by the Memory Management Unit when there is a
 //      page fault. This method loads the page from :
 //      - read-only sections (text,rodata) $\Rightarrow$ executive
 //        file
@@ -40,7 +40,7 @@ PageFaultManager::~PageFaultManager() {
 //	\return the exception (generally the NO_EXCEPTION constant)
 */
 #ifndef ETUDIANTS_TP
-ExceptionType PageFaultManager::PageFault(int virtualPage) 
+ExceptionType PageFaultManager::PageFault(int virtualPage)
 {
   printf("**** Warning: page fault manager is not implemented yet\n");
     exit(-1);

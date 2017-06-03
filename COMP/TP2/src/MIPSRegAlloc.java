@@ -2,9 +2,9 @@ import java.io.PrintStream;
 
 /**
  * Manages register allocation during assembler code generation.
- * 
+ *
  * @author Bennet, MLB and others
- * 
+ *
  */
 
 public class MIPSRegAlloc implements MIPSCGConstants {

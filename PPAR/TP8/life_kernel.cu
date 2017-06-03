@@ -29,12 +29,12 @@ __global__ void life_kernel(int * source_domain, int * dest_domain,
     block_row[threadIdx.y * shared_x + threadIdx.x] = source_domain[];
     __syncthreads();
 
-    
+
     // Read cell
     int myself = read_cell(block_row, tx, ty, 0, 0,
 	                       domain_x, domain_y);
 
-    
+
     //Read the 8 neighbors and count number of blue and red
     int i, j, tmp, value, nbRed = 0, nbBlue = 0;
     for (i = -1 ; i <= 1 ; i++){
@@ -68,7 +68,7 @@ __global__ void life_kernel(int * source_domain, int * dest_domain,
         value = (nbBlue > nbRed) ? 2 : 1;
 
     }
-	
+
 	//Write it in dest_domain
     dest_domain[ty * domain_x + tx] = value;
 }

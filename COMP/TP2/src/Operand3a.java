@@ -8,9 +8,9 @@
  * The offset attribute is set and used by the machine code generator. It
  * represents the address of the operand relative to the top of the function
  * frame in the execution stack. You don't need it in the frontend.
- * 
+ *
  * @author MLB
- * 
+ *
  */
 abstract public class Operand3a implements CGInterface {
 
@@ -20,7 +20,7 @@ abstract public class Operand3a implements CGInterface {
 
 	/**
 	 * set the address of the operand
-	 * 
+	 *
 	 * @param off
 	 *            int
 	 */
@@ -30,7 +30,7 @@ abstract public class Operand3a implements CGInterface {
 
 	/**
 	 * returns the address of the operand.
-	 * 
+	 *
 	 * @return the address
 	 */
 	public int getOffset() {

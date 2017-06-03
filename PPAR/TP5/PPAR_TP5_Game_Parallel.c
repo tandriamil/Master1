@@ -249,7 +249,7 @@ int read_cell(int x, int y, int dx, int dy, unsigned int *world) {
  * \param *n2 The pointer where to write the number of living neighbours of 'o' type
  */
 void update(int x, int y, int dx, int dy, unsigned int *world, int *nn, int *n1, int *n2) {
-	
+
 	// Get the value of the cell
 	unsigned int cell = read_cell(x, y, dx, dy, world);
 
@@ -273,7 +273,7 @@ void update(int x, int y, int dx, int dy, unsigned int *world, int *nn, int *n1,
  * \param *n2 The pointer where to write the number of living neighbours of 'o' type
  */
 void neighbors(int x, int y, unsigned int *world, int *nn, int *n1, int *n2) {
-	
+
 	// The variables used here
 	int dx, dy;
 
@@ -325,7 +325,7 @@ void neighbors(int x, int y, unsigned int *world, int *nn, int *n1, int *n2) {
  * \param *n2 The pointer where to write the number of living neighbours of 'o' type
  */
 short newgeneration(unsigned int *world1, unsigned int *world2, int xstart, int xend) {
-	
+
 	// Variables used here
 	int x, y, nn, n1, n2;
 	short change = 0;
@@ -391,7 +391,7 @@ void cls() {
  * \param *world The world to display
  */
 void print(unsigned int *world) {
-	
+
 	// Clean the screen
 	cls();
 
@@ -418,7 +418,7 @@ void print(unsigned int *world) {
 	printf("\n");
 
 	// Display the bottom line
-	for (i = 0; i < N; i++) printf("-");  
+	for (i = 0; i < N; i++) printf("-");
 	printf("\n");
 
 	// Sleep one second until displaying again
@@ -428,7 +428,7 @@ void print(unsigned int *world) {
 
 /**
  * Main function to compute the game of life
- * 
+ *
  * \param *argc The number of aguments
  * \param **argv The arguments provided to the program
  */

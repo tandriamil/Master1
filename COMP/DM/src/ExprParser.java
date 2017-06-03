@@ -12,7 +12,7 @@ import java.util.ArrayList;
 @SuppressWarnings("all")
 public class ExprParser extends Parser {
 	public static final String[] tokenNames = new String[] {
-		"<invalid>", "<EOR>", "<DOWN>", "<UP>", "ID", "INT", "NEWLINE", "WS", 
+		"<invalid>", "<EOR>", "<DOWN>", "<UP>", "ID", "INT", "NEWLINE", "WS",
 		"'('", "')'", "'*'", "'+'", "'-'", "'/'", "'='", "'^'"
 	};
 	public static final int EOF=-1;
@@ -163,27 +163,27 @@ public class ExprParser extends Parser {
 					expr1=expr();
 					state._fsp--;
 
-					match(input,NEWLINE,FOLLOW_NEWLINE_in_stat52); 
-					 if (expr1 < 2147483647) System.out.println(expr1); else System.out.println("Out of boundaries (> 2147483647)"); 
+					match(input,NEWLINE,FOLLOW_NEWLINE_in_stat52);
+					 if (expr1 < 2147483647) System.out.println(expr1); else System.out.println("Out of boundaries (> 2147483647)");
 					}
 					break;
 				case 2 :
 					// ../src/Expr.g:16:9: ID '=' expr NEWLINE
 					{
-					ID2=(Token)match(input,ID,FOLLOW_ID_in_stat64); 
-					match(input,14,FOLLOW_14_in_stat66); 
+					ID2=(Token)match(input,ID,FOLLOW_ID_in_stat64);
+					match(input,14,FOLLOW_14_in_stat66);
 					pushFollow(FOLLOW_expr_in_stat68);
 					expr3=expr();
 					state._fsp--;
 
-					match(input,NEWLINE,FOLLOW_NEWLINE_in_stat70); 
+					match(input,NEWLINE,FOLLOW_NEWLINE_in_stat70);
 					memory.put((ID2!=null?ID2.getText():null), new Integer(expr3));
 					}
 					break;
 				case 3 :
 					// ../src/Expr.g:18:9: NEWLINE
 					{
-					match(input,NEWLINE,FOLLOW_NEWLINE_in_stat90); 
+					match(input,NEWLINE,FOLLOW_NEWLINE_in_stat90);
 					}
 					break;
 
@@ -234,7 +234,7 @@ public class ExprParser extends Parser {
 				case 1 :
 					// ../src/Expr.g:23:13: '+' e= multExpr
 					{
-					match(input,11,FOLLOW_11_in_expr131); 
+					match(input,11,FOLLOW_11_in_expr131);
 					pushFollow(FOLLOW_multExpr_in_expr135);
 					e=multExpr();
 					state._fsp--;
@@ -245,7 +245,7 @@ public class ExprParser extends Parser {
 				case 2 :
 					// ../src/Expr.g:24:13: '-' e= multExpr
 					{
-					match(input,12,FOLLOW_12_in_expr151); 
+					match(input,12,FOLLOW_12_in_expr151);
 					pushFollow(FOLLOW_multExpr_in_expr155);
 					e=multExpr();
 					state._fsp--;
@@ -308,7 +308,7 @@ public class ExprParser extends Parser {
 				case 1 :
 					// ../src/Expr.g:30:13: '*' e= puissance
 					{
-					match(input,10,FOLLOW_10_in_multExpr209); 
+					match(input,10,FOLLOW_10_in_multExpr209);
 					pushFollow(FOLLOW_puissance_in_multExpr213);
 					e=puissance();
 					state._fsp--;
@@ -319,7 +319,7 @@ public class ExprParser extends Parser {
 				case 2 :
 					// ../src/Expr.g:31:13: '/' e= puissance
 					{
-					match(input,13,FOLLOW_13_in_multExpr229); 
+					match(input,13,FOLLOW_13_in_multExpr229);
 					pushFollow(FOLLOW_puissance_in_multExpr233);
 					e=puissance();
 					state._fsp--;
@@ -327,7 +327,7 @@ public class ExprParser extends Parser {
 
 					            if (e > 0) value = (int)(value / e);
 					            else { System.err.println("Can't divide by 0"); System.exit(1); }
-					            
+
 					}
 					break;
 
@@ -419,7 +419,7 @@ public class ExprParser extends Parser {
 				case 1 :
 					// ../src/Expr.g:44:9: '^' e= puissance
 					{
-					match(input,15,FOLLOW_15_in_puissance_prime314); 
+					match(input,15,FOLLOW_15_in_puissance_prime314);
 					pushFollow(FOLLOW_puissance_in_puissance_prime318);
 					e=puissance();
 					state._fsp--;
@@ -428,7 +428,7 @@ public class ExprParser extends Parser {
 					}
 					break;
 				case 2 :
-					// ../src/Expr.g:44:48: 
+					// ../src/Expr.g:44:48:
 					{
 					value = 1;
 					}
@@ -487,30 +487,30 @@ public class ExprParser extends Parser {
 				case 1 :
 					// ../src/Expr.g:48:9: INT
 					{
-					INT4=(Token)match(input,INT,FOLLOW_INT_in_atom347); 
+					INT4=(Token)match(input,INT,FOLLOW_INT_in_atom347);
 					value = Integer.parseInt((INT4!=null?INT4.getText():null));
 					}
 					break;
 				case 2 :
 					// ../src/Expr.g:49:9: ID
 					{
-					ID5=(Token)match(input,ID,FOLLOW_ID_in_atom359); 
+					ID5=(Token)match(input,ID,FOLLOW_ID_in_atom359);
 
 					        Integer v = (Integer)memory.get((ID5!=null?ID5.getText():null));
 					        if ( v!=null ) value = v.intValue();
 					        else System.err.println("undefined variable "+(ID5!=null?ID5.getText():null));
-					        
+
 					}
 					break;
 				case 3 :
 					// ../src/Expr.g:55:9: '(' expr ')'
 					{
-					match(input,8,FOLLOW_8_in_atom379); 
+					match(input,8,FOLLOW_8_in_atom379);
 					pushFollow(FOLLOW_expr_in_atom381);
 					expr6=expr();
 					state._fsp--;
 
-					match(input,9,FOLLOW_9_in_atom383); 
+					match(input,9,FOLLOW_9_in_atom383);
 					value = expr6;
 					}
 					break;

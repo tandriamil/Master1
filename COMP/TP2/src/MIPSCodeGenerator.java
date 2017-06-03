@@ -113,7 +113,7 @@ public class MIPSCodeGenerator implements MIPSCGConstants {
 	/**
 	 * This method generates code for a whole three address code fragment. The
 	 * resulting assembly code is emitted on the data output stream.
-	 * 
+	 *
 	 * @param c
 	 *            : Code 3a to be translated
 	 */
@@ -150,7 +150,7 @@ public class MIPSCodeGenerator implements MIPSCGConstants {
 	 * words, acts as if the given code had been written inside of the main
 	 * function. To be used until functions are implemented in the VSL+
 	 * compiler.
-	 * 
+	 *
 	 * @param c
 	 *            code to be inserted as the body of the main function.
 	 * @return a new code with the surrounding instructions to encapsulate it in
@@ -174,7 +174,7 @@ public class MIPSCodeGenerator implements MIPSCGConstants {
 	/**
 	 * This method generates code for a simple instruction. The resulting
 	 * assembly code is emitted on the data output stream.
-	 * 
+	 *
 	 * @param inst
 	 */
 	private void genCodeMIPS(Inst3a inst) throws IOException {
@@ -564,7 +564,7 @@ public class MIPSCodeGenerator implements MIPSCGConstants {
 
 	/**
 	 * generate code for unary neg operator a := - b.
-	 * 
+	 *
 	 * MIPS: neg $dest,$src
 	 */
 	private void cg_negMIPS(Operand3a a, Operand3a b) {
@@ -585,7 +585,7 @@ public class MIPSCodeGenerator implements MIPSCGConstants {
 	 * Generate code for a copy instruction a := b We load b into an register,
 	 * then update the descriptors to indicate that a is also in that register.
 	 * We need not do the store until the register is spilled or flushed.
-	 * 
+	 *
 	 * @param a
 	 * @param b
 	 */

@@ -28,7 +28,7 @@ void fillThread(int c) {
 
 	tab[0] = 0;
 	tab[1] = 1;
-	
+
 	int i;
 	int j;
 	for (i = 2; i < NUM; i++) {
@@ -58,7 +58,7 @@ void readThread(int c) {
 	// Wait our condition
 	if (CondWait(cond) < 0)
 		n_printf("Error condition wait");
-	
+
 	int i;
 	for (i = 0; i < NUM; i++) {
 		n_printf("Tab[%d] = %d\n", i, tab[i]);
@@ -83,12 +83,12 @@ int main() {
 	// Wait the two threads before returning
 	if (Join(thread_fill) < 0)
 		n_printf("Error joining first thread");
-	
+
 	n_printf("Thread fill just finished");
 
 	if (Join(thread_read) < 0)
 		n_printf("Error joining second thread");
-	
+
 	n_printf("Thread read just finished");
 
 	// Delete the condition

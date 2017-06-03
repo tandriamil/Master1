@@ -35,7 +35,7 @@ public interface MoteurEditeurInterface {
 	 * Execute the selection command
 	 * @param d The beginning of the selection
 	 * @param l The length of the selection
-	 * @throws InputMismatchException If we're trying to select 
+	 * @throws InputMismatchException If we're trying to select
 	 */
 	void selectionner(int d, int l);
 

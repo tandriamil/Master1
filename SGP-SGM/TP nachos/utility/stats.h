@@ -1,11 +1,11 @@
-/*! \file stats.h 
+/*! \file stats.h
     \brief Data structures for gathering statistics about
 	Nachos performance.
 
  DO NOT CHANGE -- these stats are maintained by the machine emulation
-  
+
  Copyright (c) 1992-1993 The Regents of the University of California.
- All rights reserved.  See copyright.h for copyright notice and limitation 
+ All rights reserved.  See copyright.h for copyright notice and limitation
    of liability and disclaimer of warranty provisions.
 */
 
@@ -28,15 +28,15 @@ class Statistics {
   Listint *allStatistics;      //!< enables to keep  statistics of all processes when they are finished.
   Time totalTicks;	   //!< Total time spent running Nachos
   Time idleTicks;           //!< Time spent idle (no thread to run)
-                          
+
  public:
   Statistics();            // initialyses everything to zero
   ~Statistics();           // de-allocate the list
-  ProcessStat *NewProcStat(char *name); /* create a new ProcessStat, link it to allStatistics 
-			        and return a pointer on it. It is called by the 
-			        method which create a new process */        
+  ProcessStat *NewProcStat(char *name); /* create a new ProcessStat, link it to allStatistics
+			        and return a pointer on it. It is called by the
+			        method which create a new process */
 
-  void Print();            /* prints collected statistics, including 
+  void Print();            /* prints collected statistics, including
                                process statistics
                            */
   void incrTotalTicks (Time val) {totalTicks+=val;}
@@ -49,7 +49,7 @@ class Statistics {
 
 /*! \brief Defines statistics that concern a particular process
 //
-// Each thread fom a same process will modify the same ProcessState 
+// Each thread fom a same process will modify the same ProcessState
 //
 // The fields in this class are public to make it easier to update.
 */
@@ -64,11 +64,11 @@ private:
   int numDiskWrites;            //!< number of disk write requests
   int numConsoleCharsRead;      //!< number of characters read from the keyboard
   int numConsoleCharsWritten;   //!< number of characters written to the display
-  
+
   int numMemoryAccess;          //!< number of Memory accesses
   int numPageFaults;            //!< number of virtual memory page faults
 public:
-  ProcessStat(char *name);      /* initialises everything to zero and 
+  ProcessStat(char *name);      /* initialises everything to zero and
                                      initialises the name of the process */
   void incrSystemTicks(Time val);
   void incrUserTicks(Time val);
@@ -96,10 +96,8 @@ public:
 #define ROTATION_TIME  1000  //!< time disk takes to rotate one sector
 #define SEEK_TIME      1000  //!< time disk takes to seek past one track
 #define CONSOLE_TIME   1000  //!< time to read or write one character
-#define CHECK_TIME     1000  //!< time between two checks of the reception register 
+#define CHECK_TIME     1000  //!< time between two checks of the reception register
 #define SEND_TIME      1000  //!< time to send a char via the ACIA object
-#define TIMER_TIME    10000 //!< interval between time interrupts 
+#define TIMER_TIME    10000 //!< interval between time interrupts
 
 #endif // STATS_H
-
-

@@ -2,9 +2,9 @@
  * Type for arrays (currently, only integer arrays). Includes the underlying
  * array type and the length of the array (necessary to compute its size in
  * memory).
- * 
+ *
  * @author MLB
- * 
+ *
  */
 
 class ArrayType extends Type {

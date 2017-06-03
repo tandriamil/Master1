@@ -9,4 +9,3 @@ FUNC INT main() {
   i := f()
 	RETURN 0
 }
-

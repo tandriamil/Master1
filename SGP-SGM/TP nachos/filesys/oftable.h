@@ -1,16 +1,16 @@
 /*! \file oftable.h
    \brief Data structure used to synchronize operations on files.
-  
-   This data structure maintain a list of all the files open in the 
-   system. It keep track of all of the files currently open. When a 
+
+   This data structure maintain a list of all the files open in the
+   system. It keep track of all of the files currently open. When a
    new thread opens a file, the open table would be checked to see
-   if any other thread already has it open. The processes still 
+   if any other thread already has it open. The processes still
    maintain a private copy of the openfile objects. The file table
    is only used to synchronise accesses to these files.
-  
+
     Copyright (c) 1999-2000 INSA de Rennes.
-    All rights reserved.  
-    See copyright_insa.h for copyright notice and limitation 
+    All rights reserved.
+    See copyright_insa.h for copyright notice and limitation
     of liability and disclaimer of warranty provisions.
 */
 
@@ -33,7 +33,7 @@ public:
   OpenFile *file;      //!< open file descriptor
   int numthread;       //!< number of thread that has this file open
   Lock *lock;          //!< used to synchronize file access
-  bool ToBeDeleted;    /*!< true if the file has to be deleted 
+  bool ToBeDeleted;    /*!< true if the file has to be deleted
                          when every thread will close it.
                        */
   int sector;          //!< the disc sector where is located the fileheader
@@ -49,20 +49,20 @@ public:
 class OpenFileTable {
 public :
   OpenFileTable();             // initialize the open file table
-  ~OpenFileTable();           
+  ~OpenFileTable();
 
- OpenFile * Open(char *name); /*!< check if the file is already open 
-                                   and if not creates a new entry in 
+ OpenFile * Open(char *name); /*!< check if the file is already open
+                                   and if not creates a new entry in
                                    the table
                                */
   void Close(char *name);      /*!< decrease numthread and if numthread
 			         is 0 then remove the file from
 				 the open file table
 			       */
-  void FileLock(char *name);    /*!< lock the file name to implement 
+  void FileLock(char *name);    /*!< lock the file name to implement
                                  atomic write
                                */
-  void FileRelease(char *name);    //!< release the lock after the disk operation. 
+  void FileRelease(char *name);    //!< release the lock after the disk operation.
 
   int Remove(char *name);     //!< remove the file from the file system
 

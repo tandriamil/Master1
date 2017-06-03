@@ -1,4 +1,4 @@
-/*! \file  addrspace.cc 
+/*! \file  addrspace.cc
 //  \brief Routines to manage address spaces (executing user programs).
 //
 //	In order to run a user program, you must:
@@ -15,7 +15,7 @@
 //
 */
 // Copyright (c) 1992-1993 The Regents of the University of California.
-// All rights reserved.  See copyright.h for copyright notice and limitation 
+// All rights reserved.  See copyright.h for copyright notice and limitation
 // of liability and disclaimer of warranty provisions.
 
 #include "machine/machine.h"
@@ -54,16 +54,16 @@ static void SwapELFSectionHeader (Elf32_Shdr *shdr);
  //      Don't look at this code right now. You may get lost. You will
  //      have plenty of time to do so in the virtual memory assignment
  //
- //	\param exec_file is the file containing the object code 
+ //	\param exec_file is the file containing the object code
  //             to load into memory, or NULL when the address space
  //             should be empty
  //   \param process: process to be executed
- //   \param err: error code 0 if OK, -1 otherwise 
+ //   \param err: error code 0 if OK, -1 otherwise
  */
 //----------------------------------------------------------------------
 AddrSpace::AddrSpace(OpenFile * exec_file, Process *p, int *err)
 {
-  Elf32_Ehdr elfHdr;      // Header du fichier exécutable
+  Elf32_Ehdr elfHdr;      // Header du fichier exï¿½cutable
 
   *err  = 0;
   translationTable = NULL;
@@ -167,7 +167,7 @@ AddrSpace::AddrSpace(OpenFile * exec_file, Process *p, int *err)
 
 #ifndef ETUDIANTS_TP
 	  /* Without demand paging */
-	  
+
 	  // Set up default values for the page table entry
 	  translationTable->clearBitSwap(virt_page);
 	  translationTable->setBitReadAllowed(virt_page);
@@ -178,7 +178,7 @@ AddrSpace::AddrSpace(OpenFile * exec_file, Process *p, int *err)
 
 	  // Get a page in physical memory, halt of there is not sufficient space
 	  int pp = g_physical_mem_manager->FindFreePage();
-	  if (pp == -1) { 
+	  if (pp == -1) {
 	    printf("Not enough free space to load program %s\n",
 		   exec_file->GetName());
 	    g_machine->interrupt->Halt(-1);
@@ -187,9 +187,9 @@ AddrSpace::AddrSpace(OpenFile * exec_file, Process *p, int *err)
 	  g_physical_mem_manager->tpr[pp].owner = this;
 	  g_physical_mem_manager->tpr[pp].locked=true;
 	  translationTable->setPhysicalPage(virt_page,pp);
-	  
+
 	  // The SHT_NOBITS flag indicates if the section has an image
-	  // in the executable file (text or data section) or not 
+	  // in the executable file (text or data section) or not
 	  // (bss section)
 	  if (section_table[i].sh_type != SHT_NOBITS) {
 	    // The section has an image in the executable file
@@ -204,7 +204,7 @@ AddrSpace::AddrSpace(OpenFile * exec_file, Process *p, int *err)
 	    memset(&(g_machine->mainMemory[translationTable->getPhysicalPage(virt_page)*g_cfg->PageSize]),
 		   0, g_cfg->PageSize);
 	  }
-	  
+
 	  // The page has been loded in physical memory but
 	  // later-on will be saved in the swap disk. We have to indicate this
 	  // in the translation table
@@ -212,7 +212,7 @@ AddrSpace::AddrSpace(OpenFile * exec_file, Process *p, int *err)
 
 	  // The entry is valid
 	  translationTable->setBitValid(virt_page);
-	  
+
 	  /* End of code without demand paging */
 #endif
 
@@ -228,7 +228,7 @@ AddrSpace::AddrSpace(OpenFile * exec_file, Process *p, int *err)
 	else translationTable->clearBitWriteAllowed(virt_page);
 
 	// The SHT_NOBITS flag indicates if the section has an image
-	// in the executable file (text or data section) or not 
+	// in the executable file (text or data section) or not
 	// (bss section)
 	if (section_table[i].sh_type != SHT_NOBITS) {  // The section has an image in the executable file
 
@@ -273,10 +273,10 @@ AddrSpace::~AddrSpace()
   int i;
 
   if (translationTable != NULL) {
-    
+
     // For every virtual page
     for (i = 0 ; i <  freePageId ; i++) {
-      
+
       // If it is in physical memory, free the physical page
       if (translationTable->getBitValid(i))
 	g_physical_mem_manager->RemovePhysicalToVirtualMapping(translationTable->getPhysicalPage(i));
@@ -285,7 +285,7 @@ AddrSpace::~AddrSpace()
 	int addrDisk = translationTable->getAddrDisk(i);
 	if (addrDisk >= 0) {
 	  g_swap_manager->ReleasePageSwap(translationTable->getAddrDisk(i));
-	}  
+	}
       }
     }
     delete translationTable;
@@ -381,7 +381,7 @@ int AddrSpace::StackAllocate(void)
 
     // Allocate a new physical page for the stack, halt if not page availabke
     int pp = g_physical_mem_manager->FindFreePage();
-    if (pp == -1) { 
+    if (pp == -1) {
       printf("Not enough free space to load stack\n");
       g_machine->interrupt->Halt(-1);
     }
@@ -431,7 +431,7 @@ int AddrSpace::StackAllocate(void)
 //      area, or -1 when not enough virtual space is available
 */
 //----------------------------------------------------------------------
-int AddrSpace::Alloc(int numPages) 
+int AddrSpace::Alloc(int numPages)
 {
   int result = freePageId;
 
@@ -559,13 +559,13 @@ OpenFile *AddrSpace::findMappedFile(int32_t addr) {
 
 //----------------------------------------------------------------------
 // SwapELFHeader
-/*! 	Do little endian to big endian conversion on the bytes in the 
+/*! 	Do little endian to big endian conversion on the bytes in the
 //	object file header, in case the file was generated on a little
 //	endian machine, and we're now running on a big endian machine.
 //
 */
 //----------------------------------------------------------------------
-static void 
+static void
 SwapELFHeader (Elf32_Ehdr *ehdr)
 {
   SHORT2HOST(ehdr->e_type);
@@ -587,7 +587,7 @@ SwapELFHeader (Elf32_Ehdr *ehdr)
 
 //----------------------------------------------------------------------
 // SwapELFSectionHeader
-/*! 	Do little endian to big endian conversion on the bytes in the 
+/*! 	Do little endian to big endian conversion on the bytes in the
 //	section header, in case the file was generated on a little
 //	endian machine, and we're now running on a big endian machine.
 //
@@ -615,7 +615,7 @@ static void SwapELFSectionHeader (Elf32_Shdr *shdr)
 // \param err error code (NoError if everything is correct)
 */
 //----------------------------------------------------------------------
-static void 
+static void
 CheckELFHeader (Elf32_Ehdr *elfHdr, int *err)
 {
   /* Make sure it is an ELF file by looking at its header (see elf32.h) */
@@ -636,7 +636,7 @@ CheckELFHeader (Elf32_Ehdr *elfHdr, int *err)
     }
 
   /* Check the endianess of the generated code */
-  if (elfHdr->e_ident[EI_DATA] == ELFDATA2MSB) {   
+  if (elfHdr->e_ident[EI_DATA] == ELFDATA2MSB) {
     mips_endianess = IS_BIG_ENDIAN;
   }
   else {
@@ -645,7 +645,7 @@ CheckELFHeader (Elf32_Ehdr *elfHdr, int *err)
 
   /* Transpose the header so that it can be interpreted by the kernel */
   SwapELFHeader(elfHdr);
-      
+
   /* Make sure ELF binary code a MIPS executable */
   if (elfHdr->e_machine != EM_MIPS ||
       elfHdr->e_type != ET_EXEC) {
@@ -668,7 +668,7 @@ CheckELFHeader (Elf32_Ehdr *elfHdr, int *err)
       *err = ExecFileFormatError;
       return;
     }
-  
+
   /* Make sure there is a string section name section */
   if (elfHdr->e_shstrndx >= elfHdr->e_shnum)
     {

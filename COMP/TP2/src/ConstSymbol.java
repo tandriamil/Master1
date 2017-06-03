@@ -1,9 +1,9 @@
 /**
  * Symbol for an integer constant. It could be a string since we never use the
  * value in integer operations.
- * 
+ *
  * @author MLB
- * 
+ *
  */
 public class ConstSymbol extends Operand3a {
 	public int value;

@@ -6,4 +6,3 @@ FUNC INT main() {
   i := t
 	RETURN 0
 }
-

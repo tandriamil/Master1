@@ -11,15 +11,15 @@ import org.antlr.runtime.tree.CommonTreeNodeStream;
 
 /**
  * Entry point of the compiler, containing the <code>main</code> function.
- * 
+ *
  * By default, the compiler uses the first argument as the filename of the VSL+
  * file to be compiled.
- * 
+ *
  * An optional '-debug' flag can be given as second argument. In this case, some
  * extra debugging messages will be printed during compilation.
- * 
+ *
  * @author MLB
- * 
+ *
  */
 public class VslComp {
 
@@ -88,13 +88,13 @@ public class VslComp {
 				// the three-address code into MIPS assembly.
 				PrintStream fos = new PrintStream("nachos/test/file.s");
 				MIPSCodeGenerator cg = new MIPSCodeGenerator(fos); // NOT NEEDED AT THE BEGINNING
-					
+
 				// NOTE: if necessary, uncomment the call to addStubMain
 				// to add the header and footer for the main function.
 				// This allows the program to be run using the NachOS
 				// emulator.
 				code = cg.addStubMain(code);  // NOT NEEDED AT THE BEGINNING
-					
+
 				// Generates the actual MIPS code, printing it to the
 				// stream chosen previously (by default, System.out).
 				cg.genCode(code);  // NOT NEEDED AT THE BEGINNING

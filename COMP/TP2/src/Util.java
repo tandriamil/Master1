@@ -6,7 +6,7 @@ import java.util.logging.*;
  * debugging settings. This class contains a status field which is set in the
  * presence of errors and warnings. It also contains a field indicating the
  * current debugging level.
- * 
+ *
  * All messages here are emitted using the standard error (stderr) or a logger
  * (if the -debug option is used).
  */

@@ -2,8 +2,8 @@
 // \brief Data structure to store the last syscall error message.
 //
 //  Copyright (c) 1999-2000 INSA de Rennes.
-//  All rights reserved.  
-//  See copyright_insa.h for copyright notice and limitation 
+//  All rights reserved.
+//  See copyright_insa.h for copyright notice and limitation
 //  of liability and disclaimer of warranty provisions.
 */
 
@@ -52,7 +52,7 @@ SyscallError::SyscallError() {
 /*!      Destructor. De-allocate the structures
 */
 //-----------------------------------------------------------------
-SyscallError::~SyscallError() { 
+SyscallError::~SyscallError() {
   if (errorAbout != NULL) delete[] errorAbout;
 }
 
@@ -94,7 +94,7 @@ void SyscallError::SetMsg(char *about,int num) {
 //
 // \param num error number
 // \return error message
-//       
+//
 */
 //-----------------------------------------------------------------
 const char *SyscallError::GetFormat(int num)
@@ -112,7 +112,7 @@ const char *SyscallError::GetFormat(int num)
 //
 //  \param cons console on which the message should be printed
 //  \param ch heading string to be printed before the Nachos
-//         error message    
+//         error message
 */
 //-----------------------------------------------------------------
 void SyscallError::PrintLastMsg(DriverConsole *cons,char* ch){
@@ -120,7 +120,7 @@ void SyscallError::PrintLastMsg(DriverConsole *cons,char* ch){
   int size = strlen(msgs[lastError]) + strlen(errorAbout) + 1;
   char *msg = new char[size];
   sprintf(msg,msgs[lastError],errorAbout);
-  
+
   cons->PutString(ch,strlen(ch));
   cons->PutString((char*)" : ",3);
   cons->PutString(msg,strlen(msg));

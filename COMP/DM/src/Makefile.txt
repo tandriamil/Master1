@@ -3,7 +3,7 @@
 # use "G=" on the command line to override the grammar name (default: 'TP1').
 # example: make G=TP2 (without the ".g")
 
-# use "ARGS=" with the 'run' target to specify command-line 
+# use "ARGS=" with the 'run' target to specify command-line
 # arguments.
 # example : make run ARGS=tests/test1.ttl
 
@@ -11,13 +11,13 @@ ANTLR_JAR=/share/m1info/COMP/antlr/antlr-3.5.jar
 # If "G" is not specified, it defaults to "TP1".
 G?=TP1
 
-# This is the first rule in the file. It is therefore the default if 
+# This is the first rule in the file. It is therefore the default if
 # none are specified.
 # Running 'make' without arguments is equivalent to running 'make parser'.
 # This rule depends on the compiled Java files for the lexer and the parser.
 parser: $(G)Lexer.class $(G)Parser.class
 
-# This is the rule to run the compiled parser. 
+# This is the rule to run the compiled parser.
 # It depends on the file with the main function (TP1.java) and on the parser.
 run: parser $(G).class
 	java -cp $(ANTLR_JAR):. $(G) $(ARGS)
@@ -46,4 +46,3 @@ clean:
 # A special Makefile syntax to indicate that these rules must always be
 # executed when invoked even if their files are "up-to-date".
 .PHONY: run clean
-

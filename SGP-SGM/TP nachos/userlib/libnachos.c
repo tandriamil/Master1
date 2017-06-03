@@ -3,11 +3,11 @@
  *
  * This library only provides some  usefull functions for
  * programming.
- * 
+ *
 //
 //  Copyright (c) 1999-2000 INSA de Rennes.
 //  All rights reserved.  
-//  See copyright_insa.h for copyright notice and limitation 
+//  See copyright_insa.h for copyright notice and limitation
 //  of liability and disclaimer of warranty provisions.
  */
 
@@ -35,7 +35,7 @@ static void threadStart(int func)
     // Call the function that actually contains the thread code
     func2();
     // Call exit, such that there is no return using an empty stack
-    Exit(0);    
+    Exit(0);
 }
 
 //----------------------------------------------------------------------
@@ -52,8 +52,8 @@ static void threadStart(int func)
 //	\param func is the address of the function to execute.
 */
 //----------------------------------------------------------------------
-ThreadId threadCreate(char * debug_name, VoidNoArgFunctionPtr func) 
-{ 
+ThreadId threadCreate(char * debug_name, VoidNoArgFunctionPtr func)
+{
     return newThread(debug_name, (int)threadStart,(int)func);
 }
 
@@ -64,8 +64,8 @@ ThreadId threadCreate(char * debug_name, VoidNoArgFunctionPtr func)
 //	\param s1 is the first string,
 //	\param s2 is the second one.
 //	\return an integer greater than, equal to, or less than 0,
-//	  if the first string is greater than, equal to, or less than 
-//	  the the second string. 
+//	  if the first string is greater than, equal to, or less than
+//	  the the second string.
 */
 //----------------------------------------------------------------------
 int n_strcmp(const char *s1, const char *s2)
@@ -122,7 +122,7 @@ char *n_strcpy(char *dst, const char *src)
 
 //----------------------------------------------------------------------
 // n_strlen()
-/*!	Gives the number of bytes in a string, not including the 
+/*!	Gives the number of bytes in a string, not including the
 //	terminating null character.
 //
 //	\param c is a pointer onto a string.
@@ -153,7 +153,7 @@ char *n_strcat(char *dst, const char *src)
 {
   int i,j,k;
   i=(int)n_strlen(dst);
-  j=(int)n_strlen(src);  
+  j=(int)n_strlen(src);
   for(k=i;k<=j+i;k++) {
       dst[k]=src[k-i];
   }
@@ -167,7 +167,7 @@ char *n_strcat(char *dst, const char *src)
 //	letter passed as parameter.
 //
 //	\param c is the ASCII code of the letter to transform.
-//	\return the corresponding upper-case letter 
+//	\return the corresponding upper-case letter
 */
 //----------------------------------------------------------------------
 int n_toupper(int c)
@@ -183,7 +183,7 @@ int n_toupper(int c)
 //	letter passed as parameter
 //
 //	\param c is the ASCII code of the letter to transform.
-//	\return the corresponding lower-case letter 
+//	\return the corresponding lower-case letter
 */
 //----------------------------------------------------------------------
 int n_tolower(int c)
@@ -198,7 +198,7 @@ int n_tolower(int c)
 /*!	String to integer conversion.
 //
 //	\param c is a pointer onto a string.
-//	\return the corresponding value 
+//	\return the corresponding value
 */
 //----------------------------------------------------------------------
 int n_atoi(const char *str)
@@ -214,7 +214,7 @@ int n_atoi(const char *str)
     {
       if(str[i]==0 || str[i]<'0' || str[i]>'9')
 	fini=1;
-      else 
+      else
 	{
 	  val*=10;
 	  val+=str[i]-'0';
@@ -231,8 +231,8 @@ int n_atoi(const char *str)
 //	\param s1 is the first memory area,
 //	\param s2 is the second memory area.
 //      \param n size in bytes of the area to be compared.
-//	\return an integer less than, equal to, or greater than 0, 
-//	according as s1 is lexicographically less than, equal to, 
+//	\return an integer less than, equal to, or greater than 0,
+//	according as s1 is lexicographically less than, equal to,
 //	or greater than s2 when taken to be unsigned characters.
 //
 */
@@ -274,10 +274,10 @@ int n_memcmp(const void *s1, const void *s2, size_t n)
 //----------------------------------------------------------------------
 void *n_memcpy(void *s1, const void *s2, size_t n)
 {
- 
+
   unsigned char* c1=(unsigned char*)s1;
   unsigned char* c2=(unsigned char*)s2;
-  
+
   int i=0;
   if((c1!=0)&&(c2!=0))
     {
@@ -294,7 +294,7 @@ void *n_memcpy(void *s1, const void *s2, size_t n)
 
 //----------------------------------------------------------------------
 // n_memset()
-/*!	Sets the first n bytes of a memory area to a value (converted to 
+/*!	Sets the first n bytes of a memory area to a value (converted to
 //	an unsigned char).
 //
 //	\param s is the memory area to transform,
@@ -353,7 +353,7 @@ void n_dumpmem(char *addr, int len)
 //		%d, to print an integer,
 //		%x, to print a string in hexa
 //              %f, to print a floating point value
-//		
+//
 //      \param buff the destination buffer to generate the string to
 //      \param len the size of buff, determines the number max of
 //        characters copied to buff (taking the final \0 into account)
@@ -371,7 +371,7 @@ static int vsnprintf(char *buff, int len, const char *format, va_list ap)
 
   if (!buff || !format || (len < 0))
     return -1;
-  
+
 #define PUTCHAR(carac) \
   do { \
     if (result < len-1) \
@@ -411,17 +411,17 @@ static int vsnprintf(char *buff, int len, const char *format, va_list ap)
 
 	    for(cpt2 = cpt2 - 1 ; cpt2 >= 0 ; cpt2--)
 	      PUTCHAR(buff_int[cpt2]);
-	    
+
 	    break;
 	  }
-	  
+
 	case 'c':
 	  {
 	    int value = va_arg(ap,int);
 	    PUTCHAR((char)value);
 	    break;
 	  }
-	  
+
 	case 's':
 	  {
 	    char *string = va_arg(ap,char *);
@@ -431,7 +431,7 @@ static int vsnprintf(char *buff, int len, const char *format, va_list ap)
 	      PUTCHAR(*string);
 	    break;
 	  }
-	  
+
 	case 'x':
 	  {
 	    unsigned int hexa = va_arg(ap,int);
@@ -462,7 +462,7 @@ static int vsnprintf(char *buff, int len, const char *format, va_list ap)
 	  }
 
 	case 'f':
-	  { // Very simple routine to print floats as xxxx.yyyyy 
+	  { // Very simple routine to print floats as xxxx.yyyyy
 	    // Not very good (unable to print large numbers)
 	    // If anyone wants to re-write it, feel free ...
 	    double f = (double) va_arg(ap,double);
@@ -475,11 +475,11 @@ static int vsnprintf(char *buff, int len, const char *format, va_list ap)
 	      f = -f;
 	    }
 	    ient = (int)f;
-	    
+
 	    // 100000 = print 5 digits max
 	    idec = (int)((f - ((double)ient))*100000);
 
-	    // Round up 
+	    // Round up
 	    if ( f - ((double)ient) - ((double)idec)/100000.0 >= 0.5E-5)
 	      idec ++;
 
@@ -504,7 +504,7 @@ static int vsnprintf(char *buff, int len, const char *format, va_list ap)
 	    PUTCHAR(format[i]);
 	  }
       break;
-      
+
       default:
 	PUTCHAR(format[i]);
     }
@@ -524,7 +524,7 @@ static int vsnprintf(char *buff, int len, const char *format, va_list ap)
 //		%d, to print an integer,
 //		%x, to print a string in hexa
 //              %f, to print a floating point value
-//		
+//
 //      \param buff the destination buffer to generate the string to
 //      \param len the size of buff, determines the number max of
 //        characters copied to buff (taking the final \0 into account)
@@ -556,7 +556,7 @@ int n_snprintf(char * buff, int len, const char *format, ...){
 //		%d, to print an integer,
 //		%x, to print a string in hexa
 //              %f, to print a floating point value
-//		
+//
 //	\param parameters to print,
 //	\param type of print.
 */
@@ -578,7 +578,7 @@ void n_printf(const char *format, ...){
 
 //----------------------------------------------------------------------
 // n_read_int()
-/*!	
+/*!
 // Very basic minimalist read integer function, no error
 // checking...
 */

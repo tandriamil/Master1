@@ -1,2 +1,1 @@
 FUNC INT main() IF 1 THEN RETURN 1 FI
-

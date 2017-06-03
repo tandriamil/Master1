@@ -18,4 +18,3 @@ FUNC INT main() {
 FUNC VOID f(i, j, t[], k[], l[]) {
   PRINT i
 }
-

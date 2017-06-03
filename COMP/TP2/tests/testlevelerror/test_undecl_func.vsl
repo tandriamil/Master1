@@ -3,4 +3,3 @@ FUNC INT main() {
   j := func()
 	RETURN 0
 }
-

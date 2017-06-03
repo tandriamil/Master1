@@ -1,7 +1,7 @@
 /**
  * Symbol for program labels (mainly for function calls). Except for functions,
  * the name of a label must be provided by SymbDistrib via newLabel().
- * 
+ *
  * @author MLB
  */
 public class LabelSymbol extends Operand3a {

@@ -4,17 +4,17 @@ import org.antlr.runtime.tree.CommonTree;
  * Predefined messages for most semantic/typing errors. Helps providing
  * automatic error evaluation. Each method here emits an error corresponding to
  * the method name. Its parameters are useful for human readability.
- * 
+ *
  * Error codes are used by the test scripts and are chosen arbitrarily.
- * 
+ *
  * @author aoliveir
- * 
+ *
  */
 public class Errors {
 
 	/**
 	 * Auxiliary method to add extra information to the error message.
-	 * 
+	 *
 	 * @param extra
 	 *            extra information, or null if nothing should be added.
 	 * @return an empty String if null, "(" + extra + )" otherwise.
@@ -28,7 +28,7 @@ public class Errors {
 
 	/**
 	 * Error message for an unknown identifier (i.e., use before declaration).
-	 * 
+	 *
 	 * @param token
 	 *            ANTLR token (for line/column numbering). If null, no
 	 *            meaningful line/column information will be given.
@@ -46,7 +46,7 @@ public class Errors {
 	/**
 	 * Error message for a redefined identifier (e.g., two local variable
 	 * declarations with same name).
-	 * 
+	 *
 	 * @param token
 	 *            ANTLR token (for line/column numbering). If null, no
 	 *            meaningful line/column information will be given.
@@ -66,7 +66,7 @@ public class Errors {
 	 * POINTER variable). Note that this uses a very broad definition of type
 	 * incompatibility, i.e., several kinds of invalid operations can be mapped
 	 * to a type incompatibility issue.
-	 * 
+	 *
 	 * @param token
 	 *            ANTLR token (for line/column numbering). If null, no
 	 *            meaningful line/column information will be given.
@@ -90,7 +90,7 @@ public class Errors {
 	 * Miscellaneous error message (for errors which do not fit any other
 	 * method). Note: all "standard" errors should fit in one of the previous
 	 * categories.
-	 * 
+	 *
 	 * @param token
 	 *            ANTLR token (for line/column numbering). If null, no
 	 *            meaningful line/column information will be given.

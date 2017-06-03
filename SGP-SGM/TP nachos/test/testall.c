@@ -11,8 +11,8 @@
 // For nachos library functions
 #include "userlib/libnachos.h"
 
-#define Dim 	20	/* sum total of the arrays doesn't fit in 
-			 * physical memory 
+#define Dim 	20	/* sum total of the arrays doesn't fit in
+			 * physical memory
 			 */
 int A[Dim][Dim];
 int B[Dim][Dim];
@@ -57,7 +57,7 @@ void f(void)
 
   n_printf("   Thread %d started ... Yielding \n",k++);
   i = k;
-  Yield();	
+  Yield();
   n_printf("   Thread restarted %d \n",i);
 }
 
@@ -73,7 +73,7 @@ const int NbProd=9;
 int Producteur(int arg)
 {  int iVide=TAILLE-1;
    int i=0;
-   
+
    n_printf("   Beginning production\n");
    for (i=0; i<NbProd; i++)
    {
@@ -91,10 +91,10 @@ int Producteur(int arg)
 int Consommateur(int arg)
 {  int iPlein=TAILLE-1;
    int i=0;
-   
+
    n_printf("   Beginning consumption\n");
    for (i=0; i<NbProd; i++)
-   {   
+   {
      err("tst_sema(Pplein)",P(NbPlein));
      iPlein=(iPlein+1)%TAILLE;
      n_printf("   Consumming : %c\n",Info[iPlein]);
@@ -192,7 +192,7 @@ void test_lib_nachos(void)
   n_snprintf(str, sizeof(str), "Toto et %s sont sur un %s\n", "titi", "bateau");
   if (n_strcmp(str, "Toto et titi sont sur un bateau\n")) {
     n_printf("   String format NOK\n");
-  }  
+  }
   n_printf("%s\n","String to be copied");
   n_strcpy(str,"String to be copied");
   if (n_strcmp(str,"String to be copied")) {
@@ -252,7 +252,7 @@ void test_time(void)
 }
 
 void test_process(void)
-{  
+{
   ThreadId threadid;
 
   n_printf("4. Testing process exec/join\n");
@@ -269,11 +269,11 @@ void test_thread(void)
 {
   int i;
   ThreadId tid[10];
- 
+
   n_printf("Testing multithreading\n");
   n_printf("----------------------\n");
   for (i=0;i<10;i++) {
-    err("tst_thread(threadCreate)",tid[i] = 
+    err("tst_thread(threadCreate)",tid[i] =
 	threadCreate("mt_test", (VoidNoArgFunctionPtr)&f));
     n_printf("Id of thread number %d = %d\n",i,tid[i]);
   }
@@ -327,7 +327,7 @@ void test_mmap(void) {
   n_printf("   Contents OK\n");
 
   // Re-test from file itself
-  
+
   n_printf("   Test of file contents: writing file\n");
   err("tst_file(Open)",fid = Open("mmap"));
   n_printf("   Checking contents\n");
@@ -428,7 +428,7 @@ void test_sema(void)
     err("tst_sema(Create)",NbVide=SemCreate("NbVide", TAILLE));
     err("tst_sema(Create)",NbPlein=SemCreate("NbPlein", 0));
     err("tst_sema(Create)",FinFils=SemCreate("FinFils", 0));
-  
+
     err("tst_sema(Exec)",TProc1=threadCreate("prod", (VoidNoArgFunctionPtr)Producteur));
     err("tst_sema(Exec)",TProc2=threadCreate("cons", (VoidNoArgFunctionPtr)Consommateur));
     Yield();
@@ -514,7 +514,7 @@ void test_acia(void)
 
   n_printf("Testing the ACIA\n");
   n_printf("--------------------------\n");
-    
+
   /* Start the receiver */
   threadid = Exec("/testnewpss");
   if (threadid == -1) {
@@ -533,7 +533,7 @@ void test_acia(void)
   pause();
 }
 
-void test_console() 
+void test_console()
 {
   char s[128];
 
@@ -542,7 +542,7 @@ void test_console()
     n_printf("   Enter a string (end with <ENTER>) :\n> ");
     n_memset(s, 0, sizeof(s)); // To make sure the \0 will be present
     Read(s, sizeof(s)-1, ConsoleInput);
-    n_printf("   Your string was «%s»\n", s);
+    n_printf("   Your string was ï¿½%sï¿½\n", s);
     n_printf("   True ???\n");
     pause();
 }
@@ -553,7 +553,7 @@ void test_vm(void)
     n_printf("Stressing virtual memory management\n");
     n_printf("-----------------------------------\n");
     n_printf("   Starting matmult\n");
-    
+
       for (i = 0; i < Dim; i++)		/* first initialize the matrices */
 	for (j = 0; j < Dim; j++) {
 	  A[i][j] = i;
@@ -604,7 +604,7 @@ void test_perror(void)
   OpenFileId fid;
   n_printf(" Testing perror system call\n");
   n_printf("----------------------------\n");
-  
+
   n_printf("Should print \"No error\"\n");
   PError("Test PError");
   n_printf("Should print an error message\n");
@@ -617,7 +617,7 @@ void test_typeid(void)
 {
   n_printf("Testing the typeId syscall checks\n");
   n_printf("---------------------------------\n");
-    
+
   expect_err("syscall(Join invalid thread)", Join(0x424242));
   expect_err("syscall(Read invalid file)", Read((void*)0, 0, 0x424242));
   expect_err("syscall(Write invalid file)", Write((void*)0, 0, 0x424242));

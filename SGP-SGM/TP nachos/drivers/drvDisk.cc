@@ -1,7 +1,7 @@
-/*! \file drvDisk.cc 
+/*! \file drvDisk.cc
 //  \brief Routines to synchronously access the disk
 //
-//      The physical disk 
+//      The physical disk
 //	is an asynchronous device (disk requests return immediately, and
 //	an interrupt happens later on).  This is a layer on top of
 //	the disk providing a synchronous interface (requests wait until
@@ -20,7 +20,7 @@
 
 //----------------------------------------------------------------------
 // DiskRequestDone
-/*! 	Disk interrupt handler.  Need this to be a C routine, because 
+/*! 	Disk interrupt handler.  Need this to be a C routine, because
 //	C++ can't handle pointers to member functions.
 */
 //----------------------------------------------------------------------
@@ -32,7 +32,7 @@ void DiskRequestDone()
 
 //----------------------------------------------------------------------
 // DiskSwapRequestDone
-/*! 	Disk Swap interrupt handler.  Need this to be a C routine, because 
+/*! 	Disk Swap interrupt handler.  Need this to be a C routine, because
 //	C++ can't handle pointers to member functions.
 */
 //----------------------------------------------------------------------
@@ -123,7 +123,7 @@ DriverDisk::WriteSector(int sectorNumber, char* data)
 
 void
 DriverDisk::RequestDone()
-{ 
+{
   DEBUG('d', (char*)"[sdisk] req done\n");
   semaphore->V();
 }

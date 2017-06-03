@@ -2,9 +2,9 @@
  * Symbol for functions (declarations/calls). In addition to the name, this
  * class has a label attribute. The label associated to a function is the 3a
  * name in CALL and the address in 3a code function definition.
- * 
+ *
  * @author MLB
- * 
+ *
  */
 public class FunctionSymbol extends Operand3a {
 
@@ -12,7 +12,7 @@ public class FunctionSymbol extends Operand3a {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param lab
 	 *            LabelAttribute: the label associated
 	 * @param t

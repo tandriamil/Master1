@@ -4,8 +4,8 @@
 // DO NOT CHANGE -- part of the machine emulation
 //
 //  Copyright (c) 1999-2000 INSA de Rennes.
-//  All rights reserved.  
-//  See copyright_insa.h for copyright notice and limitation 
+//  All rights reserved.
+//  See copyright_insa.h for copyright notice and limitation
 //  of liability and disclaimer of warranty provisions.
 //
 */
@@ -24,7 +24,7 @@ TranslationTable::TranslationTable() {
 
   // Init private fields
   maxNumPages = g_cfg->MaxVirtPages;
-  
+
   DEBUG('h',(char *)"Allocationg translation table for %d pages (%ld kB)\n",
 	maxNumPages, ((long long)maxNumPages*g_cfg->PageSize) >> 10);
   pageTable = new PageTableEntry[maxNumPages];
@@ -39,7 +39,7 @@ TranslationTable::TranslationTable() {
 TranslationTable::~TranslationTable() {
  delete [] pageTable;
  DEBUG('h',(char *)"Translation table destroyed");
- 
+
 }
 
 //----------------------------------------------------------------------

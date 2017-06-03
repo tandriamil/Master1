@@ -1,7 +1,7 @@
 /*! \file  process.h
     \brief A process keeps track of the resources used by a running
            Nachos program
-  
+
         The resources considered are the memory (addrspace.h), the
         processor (thread.h), the open files, the statistics, ...
 */
@@ -30,16 +30,16 @@ public:
   Process(char *filename, int *err);
 
   /*! Process destructor */
-  ~Process();	
+  ~Process();
 
   /*! Pointer on the executable file (may be NULL) */
   OpenFile *exec_file;
-  
+
   AddrSpace * addrspace;              /*!< Pointer to the address space */
 
   int numThreads;                     /*!< Number of threads attached
                                         to this process */
-         
+
   ProcessStat *stat;                  /*!< Statistics concerning this
                                         process */
 

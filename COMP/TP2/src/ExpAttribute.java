@@ -1,9 +1,9 @@
 /**
  * Wrapper class for a triple (type, code, place) associated to an expression in
  * the parser.
- * 
+ *
  * @author MLB
- * 
+ *
  */
 class ExpAttribute {
 
@@ -13,7 +13,7 @@ class ExpAttribute {
 
 	/**
 	 * Constructor of ExpAttribute
-	 * 
+	 *
 	 * @param ty
 	 *            Type: the type associated with the expression
 	 * @param cod

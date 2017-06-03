@@ -1,7 +1,7 @@
-/*! \file  elf32.h 
+/*! \file  elf32.h
     \brief Data structures pertaining to the ELF32 1.1 file format
     specification
-  
+
 */
 #ifndef NACHOS_ELF32_H
 #define NACHOS_ELF32_H
@@ -32,13 +32,13 @@ typedef struct {
   Elf32_Addr          e_entry;            //!< Address of the entry point
   Elf32_Off           e_phoff;            //!< Offset of the program header table
   Elf32_Off           e_shoff;            //!< Offset of the section header table
-  Elf32_Word          e_flags;            
-  Elf32_Half          e_ehsize;           //!< Header size (bytes) 
-  Elf32_Half          e_phentsize;       
-  Elf32_Half          e_phnum;       
-  Elf32_Half          e_shentsize;  
-  Elf32_Half          e_shnum; 
-  Elf32_Half          e_shstrndx; 
+  Elf32_Word          e_flags;
+  Elf32_Half          e_ehsize;           //!< Header size (bytes)
+  Elf32_Half          e_phentsize;
+  Elf32_Half          e_phnum;
+  Elf32_Half          e_shentsize;
+  Elf32_Half          e_shnum;
+  Elf32_Half          e_shstrndx;
 } Elf32_Ehdr;
 
 /* e_ident offsets */
@@ -46,10 +46,10 @@ typedef struct {
 #define EI_MAG1         1
 #define EI_MAG2         2
 #define EI_MAG3         3
-#define EI_CLASS        4  
-#define EI_DATA         5  
-#define EI_VERSION      6  
-#define EI_PAD          7  
+#define EI_CLASS        4
+#define EI_DATA         5
+#define EI_VERSION      6
+#define EI_PAD          7
 
 /* e_ident[EI_CLASS] */
 #define ELFCLASSNONE    0

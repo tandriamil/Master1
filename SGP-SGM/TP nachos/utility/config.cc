@@ -2,8 +2,8 @@
     \brief Routines for setting up the Nachos hardware and software confuguration
 //
 //  Copyright (c) 1999-2000 INSA de Rennes.
-//  All rights reserved.  
-//  See copyright_insa.h for copyright notice and limitation 
+//  All rights reserved.
+//  See copyright_insa.h for copyright notice and limitation
 //  of liability and disclaimer of warranty provisions.
 */
 #ifndef CONFIG_CPP
@@ -63,16 +63,16 @@ Config::Config(char *configname) {
   DEBUG('u',(char *)"Reading the configuration file\n");
   char ligne[LINE_LENGTH];
   char commande[COMMAND_LENGTH];
-  
+
   cfg = fopen(configname,"r");
 
   if (cfg == (FILE *) NULL) {
     printf("Error: can't open file %s\n",configname);
     exit(-1);
   }
-  
+
   while (!feof(cfg)) {
-    
+
     fgets(ligne,LINE_LENGTH,cfg);
     nblignes++;
     if ((ligne[0] != '#')&&(strlen(ligne)!=0)) {
@@ -83,7 +83,7 @@ Config::Config(char *configname) {
 
       if (sscanf(ligne," %s ",commande) != 1) fail(nblignes,configname,ligne);
       if (strlen(commande)!= 0) {
-	
+
 	if (strcmp(commande,"ProcessorFrequency") == 0) {
 	  if(sscanf(ligne," %s = %i ",commande,&ProcessorFrequency)!=2)
 	    fail(nblignes,configname,ligne);
@@ -95,7 +95,7 @@ Config::Config(char *configname) {
 	    fail(nblignes,configname,ligne);
 	  continue;
 	}
-	
+
 	if (strcmp(commande,"MaxVirtPages") == 0) {
 	  if(sscanf(ligne," %s = %i ",commande,&MaxVirtPages)!=2)
 	    fail(nblignes,configname,ligne);
@@ -127,13 +127,13 @@ Config::Config(char *configname) {
 	    fail(nblignes,configname,ligne);
 	  continue;
 	}
-	
+
 	if (strcmp(commande,"ProgramToRun") == 0) {
 	  if(sscanf(ligne," %s = %s ",commande,ProgramToRun)!=2)
 	    fail(nblignes,configname,ligne);
 	  continue;
 	}
-	
+
 	if (strcmp(commande,"PrintStat") == 0){
 	  int v;
 	  if(sscanf(ligne," %s = %i ",commande,&v)==2)
@@ -141,7 +141,7 @@ Config::Config(char *configname) {
 	      PrintStat=(bool)v;
 	      if (v==0)
 		PrintStat = false;
-	      else 
+	      else
 		PrintStat = true;
 	    }
 	  else fail(nblignes,configname,ligne);
@@ -154,8 +154,8 @@ Config::Config(char *configname) {
 	    {
 	      if (v==0)
 		FormatDisk = false;
-	      else 
-		FormatDisk = true;	 
+	      else
+		FormatDisk = true;
 	    }
 	  else fail(nblignes,configname,ligne);
 	  continue;
@@ -167,20 +167,20 @@ Config::Config(char *configname) {
 	    {
 	      if (v==0)
 		ListDir = false;
-	      else 
+	      else
 		ListDir = true;
 	    }
 	  else fail(nblignes,configname,ligne);
 	  continue;
       }
-      
+
       if (strcmp(commande,"PrintFileSyst") == 0){
 	int v;
 	if(sscanf(ligne," %s = %i ",commande,&v)==2)
 	  {
 	    if (v==0)
 	      PrintFileSyst = false;
-	    else 
+	    else
 	      PrintFileSyst = true;
 	  }
 	  else fail(nblignes,configname,ligne);
@@ -193,18 +193,18 @@ Config::Config(char *configname) {
 	else fail(nblignes,configname,ligne);
 	continue;
       }
-      
+
       if (strcmp(commande,"FileToPrint") == 0){
 	if(sscanf(ligne," %s = %s ",commande,FileToPrint)==2)
 	  Print=true;
        	else fail(nblignes,configname,ligne);
 	continue;
       }
-	
-      if (strcmp(commande,"FileToRemove") == 0){	
+
+      if (strcmp(commande,"FileToRemove") == 0){
 	if(sscanf(ligne," %s = %s ",commande,FileToRemove)==2)
 	  Remove=true;
-	else fail(nblignes,configname,ligne);	
+	else fail(nblignes,configname,ligne);
 	continue;
       }
 
@@ -214,7 +214,7 @@ Config::Config(char *configname) {
 	  else fail(nblignes,configname,ligne);
 	  continue;
       }
-      
+
       if (strcmp(commande,"DirToRemove") == 0){
 
 	if(sscanf(ligne," %s = %s ",commande,DirToRemove)==2)
@@ -228,7 +228,7 @@ Config::Config(char *configname) {
 	  fail(nblignes,configname,ligne);
 	continue;
       }
-	
+
       if (strcmp(commande,"UseACIA") == 0){
 	char acia_mode[LINE_LENGTH];
 	if (sscanf(ligne," %s = %s ",commande,acia_mode)==2) {
@@ -239,17 +239,17 @@ Config::Config(char *configname) {
 	  else if (strcmp(acia_mode,"Interrupt")==0)
 	    ACIA = ACIA_INTERRUPT;
 	  else fail(nblignes,configname,ligne);
-	}	
+	}
 	else fail(nblignes,configname,ligne);
 	continue;
       }
-      
+
       if (strcmp(commande,"NumPortLoc") == 0){
 	if(sscanf(ligne," %s = %i ",commande,&NumPortLoc)!=2)
 	  fail(nblignes,configname,ligne);
 	continue;
       }
-      
+
       if (strcmp(commande,"NumPortDist") == 0){
 	if(sscanf(ligne," %s = %i ",commande,&NumPortDist)!=2)
 	  fail(nblignes,configname,ligne);
@@ -258,10 +258,10 @@ Config::Config(char *configname) {
 
       // Autres variables -> non reconnues
       fail(nblignes,configname,commande);
-	
+
       }
       strcpy(commande,"\0");
-      
+
     }
   }
 

@@ -1,4 +1,4 @@
-/* Start.s 
+/* Start.s
  *	Assembly language assist for user programs running on top of Nachos.
  *
  *	Since we don't want to pull in the entire C library, we define
@@ -6,7 +6,7 @@
  *	calls.
  *
  *  Copyright (c) 1992-1993 The Regents of the University of California.
- *  All rights reserved.  See copyright.h for copyright notice and limitation 
+ *  All rights reserved.  See copyright.h for copyright notice and limitation
  *  of liability and disclaimer of warranty provisions.
  */
 
@@ -16,12 +16,12 @@
 	 // Equivalent to ".text", but with a different name, in order
 	 // to be correctly handled by the ldscript
         .section .sys,"ax",@progbits
-	
+
         .align  2
 
 /* -------------------------------------------------------------
  * __start
- *	Initialize running a C program, by calling "main". 
+ *	Initialize running a C program, by calling "main".
  *
  * 	NOTE: This has to be first, so that it gets loaded at location 0.
  *	The Nachos kernel always starts a program by jumping to location 0.
@@ -34,7 +34,7 @@ __start:
 
 /* Call the program entry point */
 	jal	main
-	move	$4,$0		
+	move	$4,$0
 	jal	Exit	 /* if we return from main, exit(0) */
 	.end __start
 
@@ -43,7 +43,7 @@ __start:
  *	Assembly language assist to make system calls to the Nachos kernel.
  *	There is one stub per system call, that places the code for the
  *	system call into register r2, and leaves the arguments to the
- *	system call alone (in other words, arg1 is in r4, arg2 is 
+ *	system call alone (in other words, arg1 is in r4, arg2 is
  *	in r5, arg3 is in r6, arg4 is in r7)
  *
  * 	The return value is in r2. This follows the standard C calling
@@ -146,7 +146,7 @@ newThread:
 	syscall
 	j	$31
 	.end newThread
-	
+
 	.globl Remove
 	.ent	Remove
 Remove:
@@ -162,10 +162,10 @@ Yield:
 	syscall
 	j	$31
 	.end Yield
-	
+
 	.globl PError
 	.ent	PError
-PError:	
+PError:
 	addiu $2,$0,SC_PERROR
 	syscall
 	j	$31
@@ -179,18 +179,18 @@ P:
 	syscall
 	j	$31
 	.end P
-	
+
 	.globl V
 	.ent	V
-V:	
+V:
 	addiu $2,$0,SC_V
 	syscall
 	j	$31
 	.end V
-	
+
 	.globl SemCreate
 	.ent	SemCreate
-SemCreate:	
+SemCreate:
 	addiu $2,$0,SC_SEM_CREATE
 	syscall
 	j	$31
@@ -222,12 +222,12 @@ LockCreate:
 
 	.globl LockDestroy
 	.ent	LockDestroy
-LockDestroy:	
+LockDestroy:
 	addiu $2,$0,SC_LOCK_DESTROY
 	syscall
 	j	$31
 	.end LockDestroy
-		
+
 	.globl LockAcquire
 	.ent	LockAcquire
 LockAcquire:
@@ -254,7 +254,7 @@ CondCreate:
 
 	.globl CondDestroy
 	.ent	CondDestroy
-CondDestroy:	
+CondDestroy:
 	addiu $2,$0,SC_COND_DESTROY
 	syscall
 	j	$31
@@ -263,7 +263,7 @@ CondDestroy:
 
 	.globl CondWait
 	.ent	CondWait
-CondWait:	
+CondWait:
 	addiu $2,$0,SC_COND_WAIT
 	syscall
 	j	$31
@@ -271,7 +271,7 @@ CondWait:
 
 	.globl CondSignal
 	.ent	CondSignal
-CondSignal:	
+CondSignal:
 	addiu $2,$0,SC_COND_SIGNAL
 	syscall
 	j	$31
@@ -279,7 +279,7 @@ CondSignal:
 
 	.globl CondBroadcast
 	.ent	CondBroadcast
-CondBroadcast:	
+CondBroadcast:
 	addiu $2,$0,SC_COND_BROADCAST
 	syscall
 	j	$31
@@ -287,7 +287,7 @@ CondBroadcast:
 
 	.globl TtySend
 	.ent	TtySend
-TtySend:	
+TtySend:
 	addiu $2,$0,SC_TTY_SEND
 	syscall
 	j	$31
@@ -295,26 +295,26 @@ TtySend:
 
 	.globl TtyReceive
 	.ent	TtyReceive
-TtyReceive:	
+TtyReceive:
 	addiu $2,$0,SC_TTY_RECEIVE
 	syscall
 	j	$31
 	.end TtyReceive
-	
+
 	.globl Mkdir
 	.ent	Mkdir
 Mkdir:	addiu $2,$0,SC_MKDIR
 	syscall
 	j	$31
 	.end Mkdir
-	
+
 	.globl Rmdir
 	.ent	Rmdir
 Rmdir:	addiu $2,$0,SC_RMDIR
 	syscall
 	j	$31
 	.end Rmdir
-	
+
 	.globl Mmap
 	.ent	Mmap
 Mmap:	addiu $2,$0,SC_MMAP

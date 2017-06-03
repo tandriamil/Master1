@@ -1,9 +1,9 @@
-/*! \file mipssim.h 
+/*! \file mipssim.h
  \brief Internal data structures for simulating the MIPS instruction set.
  DO NOT CHANGE -- part of the machine emulation
-  
+
  Copyright (c) 1992-1993 The Regents of the University of California.
- All rights reserved.  See copyright.h for copyright notice and limitation 
+ All rights reserved.  See copyright.h for copyright notice and limitation
  of liability and disclaimer of warranty provisions.
 */
 
@@ -22,7 +22,7 @@
  *			supported by the architecture).
  *
  * Recent changes (I. Puaut, march 2002), addition of some
- *    COP1 floating point instructions (MIPS I only). 
+ *    COP1 floating point instructions (MIPS I only).
  *    No fixed-point supported,
  *    and no support neither for NaN values. No exception raised
  *    (behavior is unspecified in such cases).
@@ -239,22 +239,22 @@ static int specialTable[] = {
 
 /* !
  * The table below is used to convert the "function" field of COP1
- * instructions for RS=S (single precision floating point instructions) 
+ * instructions for RS=S (single precision floating point instructions)
  * into the "Opcode" field of a MemWord.
  */
 
 static int cop1STable [] = {
-    OP_ADD_S, OP_SUB_S, OP_MUL_S, OP_DIV_S, 
+    OP_ADD_S, OP_SUB_S, OP_MUL_S, OP_DIV_S,
     OP_SQRT_S, OP_ABS_S, OP_MOV_S, OP_NEG_S,
-    OP_RES, OP_RES, OP_RES, OP_RES, 
-    OP_ROUND_W_S, OP_TRUNC_W_S, OP_CEIL_W_S, OP_FLOOR_W_S,
-    OP_RES, OP_UNIMP, OP_UNIMP, OP_UNIMP, 
-    OP_RES, OP_RES, OP_RES, OP_RES, 
-    OP_RES, OP_RES, OP_RES, OP_RES, 
     OP_RES, OP_RES, OP_RES, OP_RES,
-    OP_RES, OP_CVT_D_S, OP_RES, OP_RES, 
+    OP_ROUND_W_S, OP_TRUNC_W_S, OP_CEIL_W_S, OP_FLOOR_W_S,
+    OP_RES, OP_UNIMP, OP_UNIMP, OP_UNIMP,
+    OP_RES, OP_RES, OP_RES, OP_RES,
+    OP_RES, OP_RES, OP_RES, OP_RES,
+    OP_RES, OP_RES, OP_RES, OP_RES,
+    OP_RES, OP_CVT_D_S, OP_RES, OP_RES,
     OP_CVT_W_S, OP_RES, OP_RES, OP_RES,
-    OP_RES, OP_RES, OP_RES, OP_RES, 
+    OP_RES, OP_RES, OP_RES, OP_RES,
     OP_RES, OP_RES, OP_RES, OP_RES,
     OP_C_F_S, OP_C_UN_S, OP_C_EQ_S, OP_C_UEQ_S,
     OP_C_OLT_S,  OP_C_ULT_S, OP_C_OLE_S,  OP_C_ULE_S,
@@ -269,17 +269,17 @@ static int cop1STable [] = {
  */
 
 static int cop1DTable [] = {
-    OP_ADD_D, OP_SUB_D, OP_MUL_D, OP_DIV_D, 
+    OP_ADD_D, OP_SUB_D, OP_MUL_D, OP_DIV_D,
     OP_SQRT_D, OP_ABS_D, OP_MOV_D, OP_NEG_D,
-    OP_RES, OP_RES, OP_RES, OP_RES, 
-    OP_ROUND_W_D, OP_TRUNC_W_D, OP_CEIL_W_D, OP_FLOOR_W_D,
-    OP_RES, OP_UNIMP, OP_UNIMP, OP_UNIMP, 
-    OP_RES, OP_RES, OP_RES, OP_RES, 
-    OP_RES, OP_RES, OP_RES, OP_RES, 
     OP_RES, OP_RES, OP_RES, OP_RES,
-    OP_CVT_S_D, OP_RES, OP_RES, OP_RES, 
+    OP_ROUND_W_D, OP_TRUNC_W_D, OP_CEIL_W_D, OP_FLOOR_W_D,
+    OP_RES, OP_UNIMP, OP_UNIMP, OP_UNIMP,
+    OP_RES, OP_RES, OP_RES, OP_RES,
+    OP_RES, OP_RES, OP_RES, OP_RES,
+    OP_RES, OP_RES, OP_RES, OP_RES,
+    OP_CVT_S_D, OP_RES, OP_RES, OP_RES,
     OP_CVT_W_D, OP_RES, OP_RES, OP_RES,
-    OP_RES, OP_RES, OP_RES, OP_RES, 
+    OP_RES, OP_RES, OP_RES, OP_RES,
     OP_RES, OP_RES, OP_RES, OP_RES,
     OP_C_F_D, OP_C_UN_D, OP_C_EQ_D, OP_C_UEQ_D,
     OP_C_OLT_D, OP_C_ULT_D, OP_C_OLE_D, OP_C_ULE_D,
@@ -288,7 +288,7 @@ static int cop1DTable [] = {
 };
 
 //! Stuff to help print out each instruction, for debugging
-enum RegType { NONE, RS, RT, RD, FS, FT, FD, EXTRA }; 
+enum RegType { NONE, RS, RT, RD, FS, FT, FD, EXTRA };
 
 //! Textual representation of Mips instructions and their operands
 struct OpString {

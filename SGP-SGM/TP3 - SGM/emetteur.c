@@ -51,7 +51,7 @@ int main() {
 			// Put the message into the buffer
 			snprintf(mess.msg, sizeof(mess.msg), "Je suis le message numéro %d", count);
 			fprintf(stderr, "%s\n", mess.msg);
-			
+
 			// Increment the counter
 			++count;
 
@@ -70,7 +70,7 @@ int main() {
 
 		// Delete the message queue
 		//if (msgctl(mq_id, IPC_RMID, 0) == -1) fprintf(stderr, "Error deleting the message queue with key %d and id %d\n", MQ_KEY, mq_id);
-		
+
 		// We let the receiver delete the queue
 	}
 

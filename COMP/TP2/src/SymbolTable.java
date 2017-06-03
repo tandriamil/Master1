@@ -5,16 +5,16 @@ import java.util.HashMap;
  * In order to manage scopes, the VSL symbol table is implemented as a stack of
  * tables, each of them being a 'map' data structure (from string identifiers to
  * symbols (Operand3a)).
- * 
+ *
  * Every insertion of a pair (key, value) is done in the table which is on top
  * of the stack.
- * 
+ *
  * The lookup method proceeds first with the top of stack, and if nothing is
  * found there, it recursively descends the stack. It ends the search at the
  * first occurrence of the key or when it reaches the bottom of the stack.
- * 
+ *
  * @author MLB
- * 
+ *
  */
 public class SymbolTable {
 
@@ -22,7 +22,7 @@ public class SymbolTable {
 	 * A SingleScopeTable is one of the possibly several tables representing the
 	 * different scopes in a program: one for the function level, then one scope
 	 * per nested block in a program.
-	 * 
+	 *
 	 * It is a simple wrapper on a Map, with standard lookup/insert functions.
 	 */
 	static private class SingleScopeTable {
@@ -73,7 +73,7 @@ public class SymbolTable {
 
 	/**
 	 * Creates a new symbol table. The current scope is zero.
-	 * 
+	 *
 	 */
 	public SymbolTable() {
 		currentTable = new SingleScopeTable(null);
@@ -101,7 +101,7 @@ public class SymbolTable {
 	/**
 	 * Lookup for a value associated with a key. Returns null if the key is not
 	 * found.
-	 * 
+	 *
 	 * @param name
 	 *            string - the key
 	 * @return Value with Operand3a type (which might be necessary to cast)
@@ -112,7 +112,7 @@ public class SymbolTable {
 
 	/**
 	 * Puts a pair (key, value) in the current table.
-	 * 
+	 *
 	 * @param name
 	 *            : name (String)
 	 * @param t

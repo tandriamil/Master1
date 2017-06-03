@@ -8,4 +8,3 @@ FUNC INT main() {
   PRINT i
 	RETURN 0
 }
-

@@ -3,9 +3,9 @@
  * character strings. A label must be associated to its textual content and is
  * used as the name of the text in three-address code. So the class is simple:
  * it contains the label and its text.
- * 
+ *
  * @author MLB
- * 
+ *
  */
 
 public class Data3a {

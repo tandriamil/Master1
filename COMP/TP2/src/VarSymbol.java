@@ -3,9 +3,9 @@
  * general - type is already an attribute of Operand3a. Notice the param
  * attribute, used to mark an ident as a function argument. The interface
  * methods isParam is necessary for MIPS code generation.
- * 
+ *
  * @author MLB
- * 
+ *
  */
 public class VarSymbol extends Operand3a {
 	public String name;
@@ -30,7 +30,7 @@ public class VarSymbol extends Operand3a {
 
 	/**
 	 * Constructor for temporary integer variables (scope is meaningless).
-	 * 
+	 *
 	 * @param n
 	 *            string: name of the id
 	 */

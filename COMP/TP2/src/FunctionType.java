@@ -6,9 +6,9 @@ import java.util.LinkedList;
  * its arguments (empty if none). It also has a field "prototype" indicating
  * whether this represents a prototype declaration (without body) or a function
  * definition (with body).
- * 
+ *
  * @author MLB
- * 
+ *
  */
 public class FunctionType extends Type {
 	/**
@@ -22,7 +22,7 @@ public class FunctionType extends Type {
 	/**
 	 * Creates a new function type with the given return type and whether it is
 	 * a prototype declaration or a function definition.
-	 * 
+	 *
 	 * @param returnType
 	 *            Return type of the function
 	 * @param prototype
@@ -38,7 +38,7 @@ public class FunctionType extends Type {
 	/**
 	 * Creates a new function type indifferent of prototype/function status
 	 * (used to check function calls).
-	 * 
+	 *
 	 * @param returnType
 	 *            Return type of the function
 	 */
@@ -50,7 +50,7 @@ public class FunctionType extends Type {
 
 	/**
 	 * Returns the return type of this function (it can be VOID).
-	 * 
+	 *
 	 * @return the return type of this function (it can be VOID).
 	 */
 	public Type getReturnType() {
@@ -60,7 +60,7 @@ public class FunctionType extends Type {
 	/**
 	 * Returns the list of argument types of this function (without the return
 	 * type).
-	 * 
+	 *
 	 * @return the list of argument types of this function.
 	 */
 	public List<Type> getArguments() {
@@ -71,10 +71,10 @@ public class FunctionType extends Type {
 	/**
 	 * Extend the arity of this function type, from f(t1, ..., tn) to f(t1, ...,
 	 * tn, t).
-	 * 
+	 *
 	 * Use this when iteratively constructing the entire type of a function
 	 * call.
-	 * 
+	 *
 	 * @param t
 	 *            the new argument type to be added.
 	 */

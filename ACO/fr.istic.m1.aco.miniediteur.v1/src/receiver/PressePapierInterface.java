@@ -11,7 +11,7 @@ public interface PressePapierInterface {
 	 * @return String The current content
 	 */
 	public String getContenu();
-	
+
 
 	/**
 	 * Set the content

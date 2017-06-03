@@ -1,8 +1,8 @@
-/*! \file system.h 
+/*! \file system.h
     \brief Global variables used in Nachos
 
    Copyright (c) 1992-1993 The Regents of the University of California.
-   All rights reserved.  See copyright.h for copyright notice and limitation 
+   All rights reserved.  See copyright.h for copyright notice and limitation
    of liability and disclaimer of warranty provisions.
 */
 
@@ -82,7 +82,7 @@ extern ObjId *g_object_ids;                        //!< list of system objects (
 extern Config *g_cfg;                             //!< Configuration of Nachos
 extern Statistics *g_stats;			  //!< performance metrics
 
-// Endianess of data in ELF file and host endianess 
+// Endianess of data in ELF file and host endianess
 //
 //Nachos supports both little and big-mips compilers, variable
 //mips_endianess is set when scanning the ELF header to detect the

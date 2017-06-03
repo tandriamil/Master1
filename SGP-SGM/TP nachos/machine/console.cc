@@ -1,4 +1,4 @@
-/*! \file console.cc 
+/*! \file console.cc
 //  \brief Routines to simulate a serial port to a console device.
 //
 //	A console has input (a keyboard) and output (a display).
@@ -11,7 +11,7 @@
 //  DO NOT CHANGE -- part of the machine emulation
 //
 // Copyright (c) 1992-1993 The Regents of the University of California.
-// All rights reserved.  See copyright.h for copyright notice and limitation 
+// All rights reserved.  See copyright.h for copyright notice and limitation
 // of liability and disclaimer of warranty provisions.
 
 #include "kernel/system.h"
@@ -19,7 +19,7 @@
 #include "machine/console.h"
 
 //! Dummy function because C++ is weird about pointers to member functions
-static void ConsoleReadPoll(int64_t c) 
+static void ConsoleReadPoll(int64_t c)
 { Console *console = (Console *)c; console->CheckCharAvail(); }
 static void ConsoleWriteDone(int64_t c)
 { Console *console = (Console *)c; console->WriteDone(); }
@@ -29,14 +29,14 @@ static void ConsoleWriteDone(int64_t c)
 //
 //	\param readFile UNIX file simulating the keyboard (NULL -> use stdin)
 //	\param writeFile UNIX file simulating the display (NULL -> use stdout)
-// 	\param readAvail is the interrupt handler called when a character 
+// 	\param readAvail is the interrupt handler called when a character
 //              arrives from the keyboard
 // 	\param writeDone is the interrupt handler called when a character has
 //		been output, so that it is ok to request the next char be
 //		output
 */
 //----------------------------------------------------------------------
-Console::Console(char *readFile, char *writeFile, VoidNoArgFunctionPtr readAvail, 
+Console::Console(char *readFile, char *writeFile, VoidNoArgFunctionPtr readAvail,
 		VoidNoArgFunctionPtr writeDone)
 {
     if (readFile == NULL)
@@ -75,8 +75,8 @@ Console::~Console()
 //
 //	Only read it in if there is buffer space for it (if the previous
 //	character has been grabbed out of the buffer by the Nachos kernel).
-//	Invoke the "read" interrupt handler, once the character has been 
-//	put into the buffer. 
+//	Invoke the "read" interrupt handler, once the character has been
+//	put into the buffer.
 */
 //----------------------------------------------------------------------
 
@@ -87,18 +87,18 @@ Console::CheckCharAvail()
 
     // schedule the next time to poll for a packet
     if (intState)
-      g_machine->interrupt->Schedule(ConsoleReadPoll, (int64_t)this, 
+      g_machine->interrupt->Schedule(ConsoleReadPoll, (int64_t)this,
 			  nano_to_cycles(CONSOLE_TIME,g_cfg->ProcessorFrequency),
 			  CONSOLE_READ_INT);
 
     // do nothing if character is already buffered, or none to be read
     if ((incoming != EOF) || !PollFile(readFileNo))
-	return;	  
+	return;
 
     // otherwise, read character and tell user about it
     Read(readFileNo, &c, sizeof(char));
     incoming = c ;
-    (*readHandler)();	
+    (*readHandler)();
 }
 
 //----------------------------------------------------------------------
@@ -132,7 +132,7 @@ Console::GetChar()
 }
 
 //----------------------------------------------------------------------
-/*! 	Write a character to the simulated display, schedule an interrupt 
+/*! 	Write a character to the simulated display, schedule an interrupt
 //	to occur in the future, and return.
 */
 //----------------------------------------------------------------------
@@ -143,32 +143,26 @@ Console::PutChar(char ch)
     ASSERT(putBusy == false);
     WriteFile(writeFileNo, &ch, sizeof(char));
     putBusy = true;
-    g_machine->interrupt->Schedule(ConsoleWriteDone, (int64_t)this, 
+    g_machine->interrupt->Schedule(ConsoleWriteDone, (int64_t)this,
 			nano_to_cycles(CONSOLE_TIME,g_cfg->ProcessorFrequency),
 			CONSOLE_WRITE_INT);
 }
 
 //----------------------------------------------------------------------
-/*!  Enable the console interrupt 
+/*!  Enable the console interrupt
 */
 //----------------------------------------------------------------------
 void Console::EnableInterrupt() {
   intState = true;
-  g_machine->interrupt->Schedule(ConsoleReadPoll, (int64_t)this, 
+  g_machine->interrupt->Schedule(ConsoleReadPoll, (int64_t)this,
 		      nano_to_cycles(CONSOLE_TIME,g_cfg->ProcessorFrequency),
 		      CONSOLE_READ_INT);
 }
 
 //----------------------------------------------------------------------
-/*! 	Disable the console interrupt 
+/*! 	Disable the console interrupt
 */
 //----------------------------------------------------------------------
 void Console::DisableInterrupt() {
   intState = false;
 }
-
-
-
-
-
-

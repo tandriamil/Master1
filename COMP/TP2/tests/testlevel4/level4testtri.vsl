@@ -70,7 +70,7 @@ FUNC INT plusgrandstrict(n,m )
   mm := m
   WHILE continue
     DO
-	{ 
+	{
 	  mm := mm-1
           nn := nn-1
           continue := nn*mm

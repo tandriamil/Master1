@@ -58,7 +58,7 @@ public class MoteurEditeur implements MoteurEditeurInterface {
 
 		// Put the content of the pastebin only if there's a selection
 		if (si.getLongueur() > 0) {
-			this.pressePapier.setContenu(sb.substring(si.getDebut(), (si.getDebut() + si.getLongueur())));	
+			this.pressePapier.setContenu(sb.substring(si.getDebut(), (si.getDebut() + si.getLongueur())));
 		}
 	}
 
@@ -110,7 +110,7 @@ public class MoteurEditeur implements MoteurEditeurInterface {
 	 * Execute the selection command
 	 * @param d The beginning of the selection
 	 * @param l The length of the selection
-	 * @throws InputMismatchException If we're trying to select 
+	 * @throws InputMismatchException If we're trying to select
 	 */
 	public void selectionner(int d, int l) throws InputMismatchException {
 
@@ -188,5 +188,5 @@ public class MoteurEditeur implements MoteurEditeurInterface {
 	public void setPressePapier(PressePapierInterface p) {
 		this.pressePapier = p;
 	}
-	
+
 }

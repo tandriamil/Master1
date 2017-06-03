@@ -66,8 +66,8 @@ FUNC VOID heapsort(t[], n ) // n: nombre d'elements a trier
            k := 2*j // indice du premier fils de t[~j]
        // on choisit le plus grand des deux
            IF plusgrandstrict(r,k)*plusgrandstrict(t[k], t[k-1]) THEN k:=k+1 FI
-       // si le plus grand des deux est plus grand que s on echange avec s    
-           IF plusgrandstrict(t[k-1],s) 
+       // si le plus grand des deux est plus grand que s on echange avec s
+           IF plusgrandstrict(t[k-1],s)
               THEN
                {
                 t[j-1] := t[k-1]
@@ -75,7 +75,7 @@ FUNC VOID heapsort(t[], n ) // n: nombre d'elements a trier
                 test := plusgrand(r, 2*j)
                }
               ELSE  test := 0  // une facon de faire un break
-           FI 
+           FI
           }
       DONE
       t[j-1] := s
@@ -94,7 +94,7 @@ FUNC INT plusgrandstrict(n,m )
   mm := m
   WHILE continue
     DO
-	{ 
+	{
 	  mm := mm-1
           nn := nn-1
           continue := nn*mm
@@ -112,7 +112,7 @@ FUNC INT plusgrand(n,m )
   mm := m
   WHILE continue
     DO
-	{ 
+	{
 	  mm := mm-1
           nn := nn-1
           continue := nn*mm

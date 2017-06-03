@@ -29,9 +29,9 @@ import java.io.IOException;
  * <p>
  * When an operand is missing, it must be replaced by the null object in the
  * constructor. For example: i = Inst3a(LABEL, a, null, null)
- * 
+ *
  * @author MLB
- * 
+ *
  */
 public class Inst3a {
 
@@ -63,7 +63,7 @@ public class Inst3a {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param op
 	 *            : TAC operator
 	 * @param a
@@ -83,7 +83,7 @@ public class Inst3a {
 
 	/**
 	 * Returns the operation code
-	 * 
+	 *
 	 * @return int
 	 */
 	public TAC getOp() {
@@ -92,7 +92,7 @@ public class Inst3a {
 
 	/**
 	 * Self explained
-	 * 
+	 *
 	 * @return Operand3a
 	 */
 	public Operand3a getA() {
@@ -101,7 +101,7 @@ public class Inst3a {
 
 	/**
 	 * Self explained
-	 * 
+	 *
 	 * @return Operand3a
 	 */
 	public Operand3a getB() {
@@ -110,7 +110,7 @@ public class Inst3a {
 
 	/**
 	 * Self explained
-	 * 
+	 *
 	 * @return Operand3a
 	 */
 	public Operand3a getC() {
@@ -121,7 +121,7 @@ public class Inst3a {
 	 * method for robustifying the toString method. If an operand is missing
 	 * (null) a "####" is returned in place of the name. Otherwise, the name, as
 	 * defined by the method getName3a is returned.
-	 * 
+	 *
 	 * @param x
 	 *            : the operand
 	 * @return : a printable string

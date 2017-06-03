@@ -11,7 +11,7 @@
 /*! 	Constructor. Create the environment to run a user program
 //      (address space, statistics, ...)
 //
-//	\param executable is the file containing the object code 
+//	\param executable is the file containing the object code
 //             to load into memory
 //      \param err: error code 0 if OK, -1 otherwise
 */
@@ -86,8 +86,8 @@ Process::~Process()
 
   if (exec_file != NULL) {
     if (exec_file)
-      delete exec_file;	
+      delete exec_file;
     // NB : don't delete the stat object, so that statistics can
     // be displayed after the end of the process
-  } 
+  }
 }

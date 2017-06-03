@@ -1,13 +1,13 @@
-/*! \file sysdep.h 
+/*! \file sysdep.h
    \brief System-dependent interface
-  
+
         Nachos uses the routines defined
   	here, rather than directly calling the UNIX library functions, to
   	simplify porting between versions of UNIX, and even to
   	other systems, such as MSDOS and the Macintosh.
 
  Copyright (c) 1992-1993 The Regents of the University of California.
- All rights reserved.  See copyright.h for copyright notice and limitation 
+ All rights reserved.  See copyright.h for copyright notice and limitation
  of liability and disclaimer of warranty provisions.
 */
 

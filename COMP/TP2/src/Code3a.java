@@ -10,7 +10,7 @@ import java.util.List;
  * other constants are integers which are operands in arithmetic expression and
  * have immediate addresses. Consequently, Code3a has two attributes: a list of
  * 3a instructions and a list of Data3a for storing the string constants.
- * 
+ *
  * @author MLB
  **/
 
@@ -63,7 +63,7 @@ public class Code3a {
 
 	/**
 	 * To be used by the (machine) code generator
-	 * 
+	 *
 	 * @return List<Inst3a> the 3a code
 	 */
 	public List<Inst3a> getCode() {
@@ -76,7 +76,7 @@ public class Code3a {
 
 	/**
 	 * Print the 3A code.
-	 * 
+	 *
 	 */
 	public void print() {
 		int i;

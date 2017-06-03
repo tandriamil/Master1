@@ -1,10 +1,10 @@
 //-----------------------------------------------------------------
-/*! \file mem.h 
+/*! \file mem.h
     \brief Data structures for the physical page management
-  
+
     Copyright (c) 1999-2000 INSA de Rennes.
-    All rights reserved.  
-    See copyright_insa.h for copyright notice and limitation 
+    All rights reserved.
+    See copyright_insa.h for copyright notice and limitation
     of liability and disclaimer of warranty provisions.
 */
 //-----------------------------------------------------------------
@@ -27,9 +27,9 @@ class PhysicalMemManager;
 
    This class manages the physical pages of the programs which run on the
    top of the Nachos kernel. It keeps track of which physical pages are used
-   and which are free. 
-   
-   It processes a new page demand by applying the clock algorithm when 
+   and which are free.
+
+   It processes a new page demand by applying the clock algorithm when
    there is no page available. It requires an access to the thread list
    in order to choose which page will be swapped using the SwapManager
    class.
@@ -46,7 +46,7 @@ public:
   void ChangeOwner(long numPage, Thread* owner);   //!< Change the page owner
   void UnlockPage(long numPage); //!< Unlock physical page
   void Print(void); //!< Print the contents of a page
- 
+
 private:
   int FindFreePage();            //!< Return a free page if there is one
   int EvictPage();               //!< Return a free page when there is none
@@ -58,7 +58,7 @@ private:
     bool locked;              //!< true if page is locked in memory (system page or page under sap in/out)
     int virtualPage;		//!< Number of the virtualPage which references this real page
     AddrSpace* owner;	//!< Address space of the owner process
-  }; 
+  };
 
   struct tpr_c *tpr;	//!< RealPage Array to know the state of each real page
 

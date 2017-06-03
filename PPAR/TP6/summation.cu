@@ -69,7 +69,7 @@ int main(int argc, char ** argv) {
 	// Get results back
 	cudaMemcpy(data_out_cpu, data_out_gpu, results_size*sizeof(float), cudaMemcpyDeviceToHost);
 
-	
+
 	// Finish reduction
 	float sum = 0.;
 	int i, units_per_thread = data_size / num_threads;
@@ -77,26 +77,26 @@ int main(int argc, char ** argv) {
 		if((i*units_per_thread)%2==0) res += data_out_cpu[i];
 		else res -= data_out_cpu[i];
 	}
-	
+
 	// Cleanup
 	cudaFree(data_out_gpu);
 
 
 	printf("GPU results:\n");
 	printf(" Sum: %f\n", sum);
-	
+
 	float elapsedTime;
 	CUDA_SAFE_CALL(cudaEventElapsedTime(&elapsedTime, start, stop));	// In ms
 
 	double total_time = elapsedTime / 1000.;	// s
 	double time_per_iter = total_time / (double)data_size;
 	double bandwidth = sizeof(float) / time_per_iter; // B/s
-	
+
 	printf(" Total time: %g s,\n Per iteration: %g ns\n Throughput: %g GB/s\n",
 		total_time,
 		time_per_iter * 1.e9,
 		bandwidth / 1.e9);
-  
+
 	CUDA_SAFE_CALL(cudaEventDestroy(start));
 	CUDA_SAFE_CALL(cudaEventDestroy(stop));
 	return 0;

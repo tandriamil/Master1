@@ -34,5 +34,5 @@ public class PressePapier implements PressePapierInterface {
 	public void setContenu(String s) {
 		this.contenu = s;
 	}
-	
+
 }

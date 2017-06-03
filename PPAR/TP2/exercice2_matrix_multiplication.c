@@ -85,7 +85,7 @@ int random_int() {
  * Simply display a matrix
  */
 void display_matrice(int size, int m[size][size]) {
-	
+
 	// Variables used here
 	int i, j;
 
@@ -101,7 +101,7 @@ void display_matrice(int size, int m[size][size]) {
 
 /**
  * Main function to estimate the mean of exponential random variable
- * 
+ *
  * \param argc The number of aguments
  * \param argv The arguments provided to the program
  */

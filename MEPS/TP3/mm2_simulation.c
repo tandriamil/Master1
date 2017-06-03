@@ -83,7 +83,7 @@ double exponential(double lambda) {
 
 /**
  * Main function to estimate the mean of exponential random variable
- * 
+ *
  * \param argc The number of aguments
  * \param argv The arguments provided to the program
  */

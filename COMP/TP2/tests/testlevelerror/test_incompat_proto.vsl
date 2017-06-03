@@ -9,4 +9,3 @@ FUNC VOID fact(i) {
   INT j
   j := i
 }
-

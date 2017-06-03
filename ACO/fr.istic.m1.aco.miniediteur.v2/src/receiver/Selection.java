@@ -5,7 +5,7 @@ package receiver;
  * Selection concrete class
  */
 public class Selection implements SelectionInterface {
-	
+
 	// Attributes
 	private int debut;
 	private int longueur;
@@ -54,5 +54,5 @@ public class Selection implements SelectionInterface {
 	public void setLongueur(int l) {
 		this.longueur = l;
 	}
-	
+
 }

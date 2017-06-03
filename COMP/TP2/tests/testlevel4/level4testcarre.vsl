@@ -1,14 +1,14 @@
 FUNC VOID main()
 { INT n,i,s
- 
+
   n := 5
   s := 0
   i := n
 
   WHILE i
   DO
-    { s := s + i*i 
-      i := i - 1 
+    { s := s + i*i
+      i := i - 1
     }
   DONE
 
@@ -19,10 +19,9 @@ FUNC VOID main()
   DO
     { PRINT i, "^2 + "
       i := i - 1
-    } 
+    }
   DONE
 
   PRINT "1^2 = ", s, "\n"
 
 }
-

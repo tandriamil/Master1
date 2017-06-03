@@ -18,7 +18,7 @@
 void main(void)
 {
   n_printf("   New process launched normally, trying to exit\n");
-  
-  Exit(7);	
+
+  Exit(7);
 
 }

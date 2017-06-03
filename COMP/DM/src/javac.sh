@@ -14,4 +14,3 @@ fi
 
 export CLASSPATH=/share/m1info/COMP/antlr/antlr-3.5.jar:.:$CLASSPATH
 javac *.java
-

@@ -19,4 +19,3 @@ life.o: life_kernel.cu
 
 clean:
 	rm -f $(EXECUTABLE) $(OBJECTS)
-

@@ -33,7 +33,7 @@ int main() {
 		// Wait the son to terminate
 		int status;
 		wait(&status);
-		
+
 		// Bad implementation, just wait() is enough
 		//while ((result_wait = wait(&status)) > 0) { }
 

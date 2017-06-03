@@ -9,7 +9,7 @@
 
 /**
  * Check if the character is a number
- * 
+ *
  * \param ascii_code The integer representation of the character
  */
 int is_number(int ascii_code) {
@@ -19,7 +19,7 @@ int is_number(int ascii_code) {
 
 /**
  * Check if the character is an alphabetic letter
- * 
+ *
  * \param ascii_code The integer representation of the character
  */
 int is_alphabetic_letter(int ascii_code) {
@@ -29,7 +29,7 @@ int is_alphabetic_letter(int ascii_code) {
 
 /**
  * Check if the character is a counted special char
- * 
+ *
  * \param ascii_code The integer representation of the character
  */
 int is_counted_special_char(int ascii_code) {
@@ -39,7 +39,7 @@ int is_counted_special_char(int ascii_code) {
 
 /**
  * Print the number of letters of a word
- * 
+ *
  * \param count A pointer to the counter of words
  */
 void print_word_counter(int *count) {
@@ -65,7 +65,7 @@ void print_word_counter(int *count) {
 
 /**
  * Main function to change a text into a digit
- * 
+ *
  * \param argc The number of aguments
  * \param argv The arguments provided to the program
  */

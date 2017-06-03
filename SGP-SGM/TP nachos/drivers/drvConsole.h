@@ -1,9 +1,9 @@
-/*! \file drvConsole.h 
+/*! \file drvConsole.h
     \brief Data structures to export a synchronous interface to the console
   	   device.
-  
+
     Copyright (c) 1992-1993 The Regents of the University of California.
-    All rights reserved.  See copyright.h for copyright notice and limitation 
+    All rights reserved.  See copyright.h for copyright notice and limitation
     of liability and disclaimer of warranty provisions.
 */
 
@@ -24,14 +24,14 @@ class DriverConsole;
 // This class provides methods in order to preserve mutual exclusion
 // on the console device. Two operations can be called : the first one
 // writes a string to the console and the second one reads a string from
-// the console. They return only when the read or write operation is 
+// the console. They return only when the read or write operation is
 // completed.
 */
 class DriverConsole {
  public:
   DriverConsole();            // Constructor. Initialize the console driver
   ~DriverConsole();           // Destructor. Data de-allocation
-  void PutString(char *buffer,int nbcar); 
+  void PutString(char *buffer,int nbcar);
                              // Write a buffer on the console
   void GetString(char *buffer,int nbcar);
                              // Read characters from the console
@@ -44,7 +44,7 @@ private:
   Lock *mutexput;            //!< Lock on write operations
   Semaphore *get, *put;      //!< Semaphores to wait for interrupts
 };
-    
+
 void ConsoleGet();
 void ConsolePut();
 

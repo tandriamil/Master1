@@ -8,7 +8,7 @@ int main() {
 
 	n_printf("Beginning of the test of mapped file managment\n");
 
-	
+
 
 	return 0;
 }

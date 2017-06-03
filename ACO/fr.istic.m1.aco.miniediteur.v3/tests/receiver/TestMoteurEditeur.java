@@ -103,7 +103,7 @@ public class TestMoteurEditeur {
 
 		// Select a range
 		this.moteur.selectionner(x, y);
-		
+
 		// Assert that the selection values of the buffer are correct
 		assertEquals("Beginning of selection not set when calling selectionner()", x, this.moteur.getBuffer().getSelection().getDebut());
 		assertEquals("Length of selection not set when calling selectionner()", y, this.moteur.getBuffer().getSelection().getLongueur());
@@ -183,7 +183,7 @@ public class TestMoteurEditeur {
 		// Select a range and then cut
 		this.moteur.selectionner(x, y);
 		this.moteur.couper();
-		
+
 		// Assert that the Buffer is correct
 		assertEquals("Buffer not correct after cut operation", new StringBuilder("Hello ").toString(), this.moteur.getBuffer().getContenu().toString());
 
@@ -209,7 +209,7 @@ public class TestMoteurEditeur {
 		// Select a range and then cut
 		this.moteur.selectionner(x, y);
 		this.moteur.couper();
-		
+
 		// Assert that the Buffer is correct
 		assertEquals("Buffer not correct after cut operation", new StringBuilder("Hello world").toString(), this.moteur.getBuffer().getContenu().toString());
 
@@ -235,10 +235,10 @@ public class TestMoteurEditeur {
 		// Select a range and then copy
 		this.moteur.selectionner(x, y);
 		this.moteur.copier();
-		
+
 		// Assert that the Buffer is correct
 		assertEquals("Buffer not correct after copy operation", new StringBuilder("Hello world").toString(), this.moteur.getBuffer().getContenu().toString());
-		
+
 		// Assert that the Presse-papier is correct
 		assertEquals("Pastebin not correct after copy operation", "Hello" , this.moteur.getPressePapier().getContenu());
 
@@ -261,10 +261,10 @@ public class TestMoteurEditeur {
 		// Select a range and then copy
 		this.moteur.selectionner(x, y);
 		this.moteur.copier();
-		
+
 		// Assert that the Buffer is correct
 		assertEquals("Buffer not correct after copy operation", new StringBuilder("Hello world").toString(), this.moteur.getBuffer().getContenu().toString());
-		
+
 		// Assert that the Presse-papier is correct
 		assertEquals("Pastebin not correct after copy operation", "" , this.moteur.getPressePapier().getContenu());
 
@@ -324,7 +324,7 @@ public class TestMoteurEditeur {
 
 		// Assert that the Buffer is correct
 		assertEquals("Buffer not correct after paste operation", new StringBuilder("Hello !!!ld").toString(), this.moteur.getBuffer().getContenu().toString());
-		
+
 		// Assert that the Presse-papier is correct
 		assertEquals("Pastebin not correct after paste operation", " !!!" , this.moteur.getPressePapier().getContenu());
 
@@ -348,7 +348,7 @@ public class TestMoteurEditeur {
 		// Select a range and then write text
 		this.moteur.selectionner(x, y);
 		this.moteur.saisir(toInsert);
-	   
+
 		// Assert that the Buffer is correct
 		assertEquals("Buffer not correct after writting", new StringBuilder("Hello !!! world").toString(), this.moteur.getBuffer().getContenu().toString());
 

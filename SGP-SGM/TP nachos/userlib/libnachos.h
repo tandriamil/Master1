@@ -1,6 +1,6 @@
 /*! \file libnachos.h
-    \brief Function structures for programs 
-   
+    \brief Function structures for programs
+
   	Libnachos proposes several 'libc-like' functions
 	for:
   		Input-Output operations,
@@ -10,16 +10,16 @@
 
 	Nachos-libc functions are prefixed by 'n' to avoid
 	any confusion with standard libc functions.
-  
+
     Copyright (c) 1999-2000 INSA de Rennes.
-    All rights reserved.  
-    See copyright_insa.h for copyright notice and limitation 
+    All rights reserved.
+    See copyright_insa.h for copyright notice and limitation
     of liability and disclaimer of warranty provisions.
 */
 
 #include "userlib/syscall.h"
 
-typedef void (*VoidNoArgFunctionPtr)(); 
+typedef void (*VoidNoArgFunctionPtr)();
 typedef unsigned int size_t;
 
 // Thread management
@@ -53,12 +53,12 @@ size_t n_strlen(const char *s);
 // appends a copy of a string, to the end of another string.
 char* n_strcat(char *dst, const char *src);
 
-// Return a upper-case letter, 
-// equivalent to the lower-case letter given. 
+// Return a upper-case letter,
+// equivalent to the lower-case letter given.
 int n_toupper(int c);
 
-// Return a lower-case letter, 
-// equivalent to the upper-case letter given. 
+// Return a lower-case letter,
+// equivalent to the upper-case letter given.
 int n_tolower(int c);
 
 // Convert a string in integer.

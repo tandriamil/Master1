@@ -1,4 +1,4 @@
-/*! \file directory.cc 
+/*! \file directory.cc
 //  \brief Routines to manage a directory of file names.
 //
 //	The directory is a table of fixed length entries; each
@@ -17,7 +17,7 @@
 //	Fixing this is one of the parts to the assignment.
 //
 //  Copyright (c) 1992-1993 The Regents of the University of California.
-//  All rights reserved.  See copyright.h for copyright notice and limitation 
+//  All rights reserved.  See copyright.h for copyright notice and limitation
 //  of liability and disclaimer of warranty provisions.
 */
 
@@ -57,9 +57,9 @@ Directory::Directory(int size)
 //----------------------------------------------------------------------
 
 Directory::~Directory()
-{ 
+{
     delete [] table;
-} 
+}
 
 //----------------------------------------------------------------------
 // Directory::FetchFrom
@@ -92,7 +92,7 @@ Directory::WriteBack(OpenFile *file)
 //----------------------------------------------------------------------
 // Directory::FindIndex
 /*! 	Look up file name in directory.
-//      
+//
 //      \return   its location in the table of directory entries,
 //                -1 if the name isn't in the directory.
 //
@@ -112,12 +112,12 @@ Directory::FindIndex(char *name)
 //----------------------------------------------------------------------
 // Directory::Find
 /*! 	Look up file name in directory, and return the disk sector number
-//	where the file's header is stored. Return -1 if the name isn't 
+//	where the file's header is stored. Return -1 if the name isn't
 //	in the directory.
 //
-//      \return the disk sector number where the file's header is stored 
-//              or -1 if the name isn't in the directory. 
-// 
+//      \return the disk sector number where the file's header is stored
+//              or -1 if the name isn't in the directory.
+//
 //	\param name the file name to look up
 */
 //----------------------------------------------------------------------
@@ -134,7 +134,7 @@ Directory::Find(char *name)
 
 //----------------------------------------------------------------------
 // Directory::Add
-/*! 	Add a file into the directory. 
+/*! 	Add a file into the directory.
 //
 //	\param name the name of the file being added
 //	\param newSector the disk sector containing the added file's header
@@ -144,14 +144,14 @@ Directory::Find(char *name)
 
 int
 Directory::Add(char *name, int newSector)
-{ 
+{
     if (FindIndex(name) != -1)
 	return AlreadyInDirectory;
 
     for (int i = 0; i < tableSize; i++)
         if (!table[i].inUse) {
             table[i].inUse = true;
-            strncpy(table[i].name, name, FILENAMEMAXLEN); 
+            strncpy(table[i].name, name, FILENAMEMAXLEN);
             table[i].sector = newSector;
         return NoError;
 	}
@@ -162,7 +162,7 @@ Directory::Add(char *name, int newSector)
 
 //----------------------------------------------------------------------
 // Directory::Remove
-/*! 	Remove a file name from the directory. 
+/*! 	Remove a file name from the directory.
 //
 //	\param name the file name to be removed
 //      \return NoError, or InexistDirectoryError
@@ -170,13 +170,13 @@ Directory::Add(char *name, int newSector)
 //----------------------------------------------------------------------
 int
 Directory::Remove(char *name)
-{ 
+{
     int i = FindIndex(name);
 
     if (i == -1)
 	return InexistDirectoryError; // name not in directory
     table[i].inUse = false;
-    return NoError;	
+    return NoError;
 }
 
 //----------------------------------------------------------------------
@@ -235,7 +235,7 @@ Directory::List(char *name,int depth)
 
 void
 Directory::Print()
-{ 
+{
   FileHeader hdr;
 
   printf("Directory contents:\n");
@@ -259,7 +259,7 @@ Directory::empty()
 {
   bool empti = true;
   for (int i = 0; i < tableSize; i++)
-    if (table[i].inUse) 
+    if (table[i].inUse)
       return false;
   return empti;
 }

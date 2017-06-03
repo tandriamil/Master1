@@ -2,7 +2,7 @@ PROTO INT plusgrand(o,m)
 PROTO INT fact(k)
 PROTO INT pgcd(a,b)
 
-// Ce programme le max des pgcd pour chaque itération factorielle 
+// Ce programme le max des pgcd pour chaque itération factorielle
 //===============================================================
 FUNC VOID main()
 {
@@ -29,9 +29,9 @@ FUNC VOID main()
 //======================================
 FUNC INT plusgrand(l,p)
 {
-  IF l-p THEN 
+  IF l-p THEN
     RETURN l
-  ELSE 
+  ELSE
     RETURN p
   FI
 }

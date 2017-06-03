@@ -13,8 +13,8 @@ Gestion de threads et processus:
 	3) g_alive contient la liste des threads existants et actifs. Le champ readyList quand à lui est la liste des threads prêts mais non actifs.
 	4) Non elles ne se chargent pas d'allouer ou désallouer la mémoire car (CF scheduler.cc ligne 121) lors du changement de contexte, l'on est toujours dans l'ancienne liste.
 	5) ???
-	6) 
+	6)
 
 
 Environnement de développement:
-	1) 
+	1)

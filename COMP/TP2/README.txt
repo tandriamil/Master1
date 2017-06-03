@@ -12,9 +12,9 @@
 
 	Nous avons suivi le protocole sur le fait de faire des tests unitaires lors de la programmation de chaque instruction afin de toujours savoir où notre programme ne fonctionne pas et ne pas avoir une erreur sur laquelle nous avons aucune information (ce qui nous ferait perdre beaucoup de temps).
 
-- État d'avancement : 
+- État d'avancement :
 
 	à l'état d'avancement, nous n'avons pas pu finir le codage des tableaux ainsi que les instructions ayant une relation avec les tableaux. Sinon, le reste des instructions a été programmé.
 
-- Test : 
+- Test :
   Pour les testes nous n'avons pas réussi à faire les testes.

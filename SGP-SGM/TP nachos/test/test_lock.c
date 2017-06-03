@@ -49,7 +49,7 @@ void whoAmI(int l) {
  * Main function
  */
 int main() {
-	
+
 	// Create a lock
 	LockId lock = LockCreate("Lock");
 

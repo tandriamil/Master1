@@ -78,14 +78,14 @@ void producteur(int sem_id) {
 			// Say to the consumer that he can consume
 			if (semop(sem_id, &cons_V, 1) == -1) fprintf(stderr, "Error during prod call to cons_V\n");
 
-			// Increment the counter 
+			// Increment the counter
 			++count;
 		}
 
 		// Detach the shared memory segment
 		if (shmdt(shared_int)) fprintf(stderr, "Error during the detachment of the shared memory\n");
 	}
-} 
+}
 
 
 void consommateur(int sem_id) {
@@ -150,7 +150,7 @@ void consommateur(int sem_id) {
  *     - int  => The result of the execution
  */
 int main() {
-	
+
 	// Here, we create the semaphore
 	int sem_id = semget(IPC_PRIVATE, 3, 0660);
 	if (sem_id == -1) fprintf(stderr, "Error during the creation of the semaphore\n");
@@ -166,7 +166,7 @@ int main() {
 
 			// Call to fork
 			int id_pro = fork();
-			
+
 			// If the father
 			if (id_pro == 0) {
 				producteur(sem_id);

@@ -20,7 +20,7 @@ FUNC VOID division(x,y)
 		i := i+1
 	}
 	DONE
-	
+
 	IF i-10 THEN
 	PRINT "La disivion de ", x, " par ", y, " est superieur a 10 "
 	ELSE

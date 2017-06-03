@@ -2,9 +2,9 @@ import java.io.PrintStream;
 
 /**
  * Register descriptor for assembler code generation.
- * 
+ *
  * @author Bennet, MLB and others
- * 
+ *
  */
 public class MIPSRegDesc implements MIPSCGConstants {
 	private Operand3a memory;

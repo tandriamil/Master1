@@ -66,7 +66,7 @@ int main() {
 
 	// Deblock the ctrl_c_received blocked signal
 	if (set_jmp_counter > 0) {
-		
+
 		// Add the SIGINT to the sigset to deblock
 		sigset_t sigtomask;
 		if (sigaddset(&sigtomask, SIGINT) == 0) fprintf(stderr, "%s\n", "SUCCESS: Creating the sigset");
@@ -83,7 +83,7 @@ int main() {
 	// Infinite
 	fprintf(stdout, "%s\n", "The program will automatically stop when i reach 42.");
 	while (i <= MAX_I_VALUE);
-	
+
 	// End
 	return 0;
 

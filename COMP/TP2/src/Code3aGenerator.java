@@ -4,9 +4,9 @@ import java.util.*;
  * This class implements all the methods for 3a code generation (NOTE: this
  * class must be coded by the student; the methods indicated here can be seen as
  * a suggestion, but are not actually necessary).
- * 
+ *
  * @author MLB
- * 
+ *
  */
 public class Code3aGenerator {
 
@@ -25,7 +25,7 @@ public class Code3aGenerator {
 
 	/**
 	 * Generate code for a binary operation
-	 * 
+	 *
 	 * @param op
 	 *			must be a code op: Inst3a.TAC.XXX
 	 */
@@ -39,7 +39,7 @@ public class Code3aGenerator {
 
 	/**
 	 * Generate code for a binary operation
-	 * 
+	 *
 	 * @param op
 	 *			must be a code op: Inst3a.TAC.XXX
 	 */
@@ -52,7 +52,7 @@ public class Code3aGenerator {
 	}
 
 
-	/** 
+	/**
 	 * Generate code for affectation
 	 */
 	public static Code3a genAff(Operand3a var, ExpAttribute exp) {
@@ -63,7 +63,7 @@ public class Code3aGenerator {
 	}
 
 
-	/** 
+	/**
 	 * Generate code for return
 	 */
 	public static Code3a genReturn(ExpAttribute exp) {
@@ -77,7 +77,7 @@ public class Code3aGenerator {
 	}
 
 
-	/** 
+	/**
 	 * Generate code for IF ..... THEN
 	 */
 	public static Code3a genIF(ExpAttribute exp, Code3a code1) {
@@ -90,7 +90,7 @@ public class Code3aGenerator {
 	}
 
 
-	/** 
+	/**
 	 * Generate code for IF ..... THEN ...... ELSE
 	 */
 	public static Code3a genIFELSE(ExpAttribute exp, Code3a code1, Code3a code2) {
@@ -107,7 +107,7 @@ public class Code3aGenerator {
 	}
 
 
-	/** 
+	/**
 	 * Generate code for WHILE ..... DO ...... DONE
 	 */
 	public static Code3a genWHILE(ExpAttribute exp, Code3a code1) {
@@ -123,7 +123,7 @@ public class Code3aGenerator {
 	}
 
 
-	/** 
+	/**
 	 * Generate code for PrintSting
 	 */
 	public static Code3a genPrintString(String msg) {
@@ -136,7 +136,7 @@ public class Code3aGenerator {
 	}
 
 
-	/** 
+	/**
 	 * Generate code for PrintInteger
 	 */
 	public static Code3a genPrintInteger(ExpAttribute exp) {
@@ -148,7 +148,7 @@ public class Code3aGenerator {
 	}
 
 
-	/** 
+	/**
 	 * Generate code for Read Integer
 	 */
 	public static Code3a genReadInteger(VarSymbol var) {
@@ -158,7 +158,7 @@ public class Code3aGenerator {
 	}
 
 
-	/** 
+	/**
 	 * Generate code for a variable declaration
 	 */
 	public static Code3a genVarDeclaration(VarSymbol var) {
@@ -168,7 +168,7 @@ public class Code3aGenerator {
 	}
 
 
-	/** 
+	/**
 	 * Generate code for a function declaration
 	 */
 	public static Code3a genFunction(FunctionSymbol functionSymbol, Code3a paramsCode, Code3a statementCode) {
@@ -194,7 +194,7 @@ public class Code3aGenerator {
 	}
 
 
-	/** 
+	/**
 	 * Generate code for everytime we have to append two codes
 	 */
 	public static Code3a concatenateCodes(Code3a c1, Code3a c2) {
@@ -205,7 +205,7 @@ public class Code3aGenerator {
 	}
 
 
-	/** 
+	/**
 	 * Generate code for Instruction
 	 */
 	public static Code3a genInstruction(Code3a c) {

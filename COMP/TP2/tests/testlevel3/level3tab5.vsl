@@ -10,7 +10,7 @@ FUNC VOID main() {
 		IF i THEN PRINT "," FI
 		PRINT t[i]
 		i:= i+1
-	} 
+	}
 	DONE
 	PRINT "]\n"
 	PRINT "Fini"
@@ -23,7 +23,7 @@ FUNC VOID readprinttab(size,t[]) {
 	        PRINT "entrezno :",i,"  "
 		READ t[i]
 		i:= i+1
-	} 
+	}
 	DONE
 	PRINT "Tableau de taille ",size," = ["
 	i := 0
@@ -31,7 +31,7 @@ FUNC VOID readprinttab(size,t[]) {
 		IF i THEN PRINT "," FI
 		PRINT t[i]
 		i:= i+1
-	} 
+	}
 	DONE
 	PRINT "]\n"
 }

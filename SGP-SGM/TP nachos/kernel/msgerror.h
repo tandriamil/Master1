@@ -1,10 +1,10 @@
 /*! \file msgerror.h
     \brief Defines the data structure to store error messages during
            a syscall process
-  
+
     Copyright (c) 1999-2000 INSA de Rennes.
-    All rights reserved.  
-    See copyright_insa.h for copyright notice and limitation 
+    All rights reserved.
+    See copyright_insa.h for copyright notice and limitation
     of liability and disclaimer of warranty provisions.
 */
 
@@ -61,8 +61,8 @@ class SyscallError {
  public:
   SyscallError();     // Initialize the structure
   ~SyscallError();    // De-allocate the structure
-  
-  void SetMsg(char *about,int num);   
+
+  void SetMsg(char *about,int num);
                       //!< Set the current error message
 
   void PrintLastMsg(DriverConsole *cons,char *ch);
@@ -71,7 +71,7 @@ class SyscallError {
 
   //! Get the error format string (with a %s) associated with error num
   const char * GetFormat(int num);
-  
+
  private:
   int lastError;           //!< last error's ident
   char *errorAbout;        //!< context string

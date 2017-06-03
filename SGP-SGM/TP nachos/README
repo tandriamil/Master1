@@ -12,7 +12,7 @@ Enhancements compared to the Berkeley Nachos (reverse chronological order):
 - addition of an ACIA device and ACIA device driver
 - addition of a MMU (linear page tables)
 - modification of the Nachos statistics module (finer decomposition of
-  the execution time of instructions, management of stats on a 
+  the execution time of instructions, management of stats on a
   per-program basis)
 - addition of a simplified libc for Nachos (string routines essentially)
 - addition of a configuration file so that the hardware and software

@@ -28,10 +28,10 @@ public class TestPressePapier {
 
 		// Put some value to the string
 		s = "Hello";
-				
+
 		// Put the content
 		p.setContenu(s);
-				
+
 		// Then assert that we got the same value
 		assertEquals("Content of Pastebin not correct when calling getContenu()", s, p.getContenu());
 	}
@@ -43,10 +43,10 @@ public class TestPressePapier {
 
 		// Put some value into the string
 		s = "World";
-		
+
 		// Put the content
 		p.setContenu(s);
-		
+
 		// Then assert that we got the same value
 		assertEquals("Content of Pastebin not correct when calling setContenu()", s, p.getContenu());
 	}

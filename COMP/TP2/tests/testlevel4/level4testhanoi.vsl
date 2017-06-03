@@ -27,4 +27,3 @@ FUNC INT hanoi(n,delatour,alatour,parlatour)
   FI
   RETURN 1
 }
-

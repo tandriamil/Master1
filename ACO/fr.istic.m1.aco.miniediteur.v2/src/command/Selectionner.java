@@ -88,7 +88,7 @@ public class Selectionner implements CommandeInterface {
 
 	/**
 	 * Execute the command
-	 * @throws InputMismatchException If we're trying to select 
+	 * @throws InputMismatchException If we're trying to select
 	 */
 	public void execute() throws InputMismatchException {
 

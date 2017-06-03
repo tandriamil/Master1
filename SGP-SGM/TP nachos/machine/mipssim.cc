@@ -1,4 +1,4 @@
-/*! \file mipssim.cc 
+/*! \file mipssim.cc
 // \brief simulate a MIPS R2/3000 processor
 //
 //   This code has been adapted from Ousterhout's MIPSSIM package.
@@ -8,7 +8,7 @@
 //   DO NOT CHANGE -- part of the machine emulation
 //
 // Copyright (c) 1992-1993 The Regents of the University of California.
-// All rights reserved.  See copyright.h for copyright notice and limitation 
+// All rights reserved.  See copyright.h for copyright notice and limitation
 // of liability and disclaimer of warranty provisions.
 
 #include <math.h>   /* For emulating floating point MIPS instructions */
@@ -33,7 +33,7 @@ void
 Machine::Run()
 {
   Instruction instr;
-  
+
   // Execution time of every executed instruction (for statistics)
   int tps;
 
@@ -48,8 +48,8 @@ Machine::Run()
       // triggered by the instruction... Have to fix that
       this->status =  USER_MODE;
 
-      // Advance simulated time and check if there are any pending 
-      // interrupts to be called. 
+      // Advance simulated time and check if there are any pending
+      // interrupts to be called.
       interrupt->OneTick(tps);
 
       // Call the debugger is required
@@ -60,13 +60,13 @@ Machine::Run()
 
 //----------------------------------------------------------------------
 // TypeToReg
-//! 	Retrieve the register number referred to in an instruction. 
+//! 	Retrieve the register number referred to in an instruction.
 //      \param reg Register type according to the types defined in machine.h
 //      \param instr Instruction
 //      \return Register number found in the instruction, -1 in case of
 //              invalid register type
 //----------------------------------------------------------------------
-static int 
+static int
 TypeToReg(RegType reg, Instruction *instr)
 {
     switch (reg) {
@@ -128,13 +128,13 @@ static void set_double(int reg,double val)
 // int Machine::OneInstruction
 /*!	Execute one instruction from a user-level program
 //
-// 	If there is any kind of exception or interrupt, we invoke the 
+// 	If there is any kind of exception or interrupt, we invoke the
 //	exception handler, and when it returns, we return to Run(), which
 //	will re-invoke us in a loop.  This allows us to
 //	re-start the instruction execution from the beginning, in
 //	case any of our state has changed.  On a syscall,
 // 	the OS software must increment the PC so execution begins
-// 	at the instruction immediately after the syscall. 
+// 	at the instruction immediately after the syscall.
 //
 //	This routine is re-entrant, in that it can be called multiple
 //	times concurrently -- one for each thread executing user code.
@@ -154,7 +154,7 @@ int
 Machine::OneInstruction(Instruction *instr)
 {
   int32_t raw;                  // binary representation of the instruction
-  int nextLoadReg = 0; 	
+  int nextLoadReg = 0;
   int nextLoadValue = 0; 	// record delayed load operation, to apply
 				// in the future
   int execution_time;           // execution time of the instruction
@@ -176,7 +176,7 @@ Machine::OneInstruction(Instruction *instr)
 
   // Update statistics
   g_current_thread->GetProcessOwner()->stat->incrNumInstruction();
-    
+
   // Decode instruction
   instr->value = raw;
   instr->Decode();
@@ -204,22 +204,22 @@ Machine::OneInstruction(Instruction *instr)
 	instr->opCode==OP_BC1T
 	) {
       // In case of a branch, extra is not directly the offset
-      printf(stri->string, 
-	     IndexToAddr(instr->extra), 
-	     TypeToReg(stri->args[1], instr), 
+      printf(stri->string,
+	     IndexToAddr(instr->extra),
+	     TypeToReg(stri->args[1], instr),
 	     TypeToReg(stri->args[2], instr));
     }
     else {
       // Normal instruction
-      printf(stri->string, 
-	     TypeToReg(stri->args[0], instr), 
-	     TypeToReg(stri->args[1], instr), 
+      printf(stri->string,
+	     TypeToReg(stri->args[0], instr),
+	     TypeToReg(stri->args[1], instr),
 	     TypeToReg(stri->args[2], instr));
     }
     printf(" Time total %llu\n",g_stats->getTotalTicks());
   }
 
-  // Compute next Program Counter (PC), but don't install in 
+  // Compute next Program Counter (PC), but don't install in
   // case there's an error or branch.
   int pcAfter = int_registers[NEXTPC_REG] + 4;
   int sum, diff, value;
@@ -228,7 +228,7 @@ Machine::OneInstruction(Instruction *instr)
   // Execute the instruction
   // Look at the opCode field to perform the right action
   switch (instr->opCode) {
-	
+
       case OP_ADD:
 	sum = int_registers[(int)instr->rs] + int_registers[(int)instr->rt];
 	if (!((int_registers[(int)instr->rs] ^ int_registers[(int)instr->rt])
@@ -239,7 +239,7 @@ Machine::OneInstruction(Instruction *instr)
 	}
 	int_registers[(int)instr->rd] = sum;
 	break;
-	
+
       case OP_ADDI:
 	sum = int_registers[(int)instr->rs] + instr->extra;
 	if (!((int_registers[(int)instr->rs] ^ instr->extra) & SIGN_BIT) &&
@@ -249,60 +249,60 @@ Machine::OneInstruction(Instruction *instr)
 	}
 	int_registers[(int)instr->rt] = sum;
 	break;
-	
+
       case OP_ADDIU:
 	int_registers[(int)instr->rt] = int_registers[(int)instr->rs] + instr->extra;
 	break;
-	
+
       case OP_ADDU:
 	int_registers[(int)instr->rd] = int_registers[(int)instr->rs]
 	  + int_registers[(int)instr->rt];
 	break;
-	
+
       case OP_AND:
 	int_registers[(int)instr->rd] = int_registers[(int)instr->rs]
 	  & int_registers[(int)instr->rt];
 	break;
-	
+
       case OP_ANDI:
 	int_registers[(int)instr->rt] = int_registers[(int)instr->rs]
 	  & (instr->extra & 0xffff);
 	break;
-	
+
       case OP_BEQ:
 	if (int_registers[(int)instr->rs] == int_registers[(int)instr->rt])
 	    pcAfter = int_registers[NEXTPC_REG] + IndexToAddr(instr->extra);
 	break;
-	
+
       case OP_BGEZAL:
 	int_registers[R31] = int_registers[NEXTPC_REG] + 4;
       case OP_BGEZ:
 	if (!(int_registers[(int)instr->rs] & SIGN_BIT))
 	    pcAfter = int_registers[NEXTPC_REG] + IndexToAddr(instr->extra);
 	break;
-	
+
       case OP_BGTZ:
 	if (int_registers[(int)instr->rs] > 0)
 	    pcAfter = int_registers[NEXTPC_REG] + IndexToAddr(instr->extra);
 	break;
-	
+
       case OP_BLEZ:
 	if (int_registers[(int)instr->rs] <= 0)
 	    pcAfter = int_registers[NEXTPC_REG] + IndexToAddr(instr->extra);
 	break;
-	
+
       case OP_BLTZAL:
 	int_registers[R31] = int_registers[NEXTPC_REG] + 4;
       case OP_BLTZ:
 	if (int_registers[(int)instr->rs] & SIGN_BIT)
 	    pcAfter = int_registers[NEXTPC_REG] + IndexToAddr(instr->extra);
 	break;
-	
+
       case OP_BNE:
 	if (int_registers[(int)instr->rs] != int_registers[(int)instr->rt])
 	    pcAfter = int_registers[NEXTPC_REG] + IndexToAddr(instr->extra);
 	break;
-	
+
       case OP_DIV:
 	if (int_registers[(int)instr->rt] == 0) {
 	    int_registers[LO_REG] = 0;
@@ -314,8 +314,8 @@ Machine::OneInstruction(Instruction *instr)
 	      % int_registers[(int)instr->rt];
 	}
 	break;
-	
-      case OP_DIVU:	  
+
+      case OP_DIVU:
 	  rs = (unsigned int) int_registers[(int)instr->rs];
 	  rt = (unsigned int) int_registers[(int)instr->rt];
 	  if (rt == 0) {
@@ -328,19 +328,19 @@ Machine::OneInstruction(Instruction *instr)
 	      int_registers[HI_REG] = (int) tmp;
 	  }
 	  break;
-	
+
       case OP_JAL:
 	int_registers[R31] = int_registers[NEXTPC_REG] + 4;
       case OP_J:
 	pcAfter = (pcAfter & 0xf0000000) | IndexToAddr(instr->extra);
 	break;
-	
+
       case OP_JALR:
 	int_registers[(int)instr->rd] = int_registers[NEXTPC_REG] + 4;
       case OP_JR:
 	pcAfter = int_registers[(int)instr->rs];
 	break;
-	
+
       case OP_LB:
       case OP_LBU:
 	tmp = int_registers[(int)instr->rs] + instr->extra;
@@ -353,9 +353,9 @@ Machine::OneInstruction(Instruction *instr)
 	nextLoadReg = instr->rt;
 	nextLoadValue = value;
 	break;
-	
+
       case OP_LH:
-      case OP_LHU:	  
+      case OP_LHU:
 	tmp = int_registers[(int)instr->rs] + instr->extra;
 	if (tmp & 0x1) {
 	  RaiseException(ADDRESSERROR_EXCEPTION, tmp);
@@ -371,11 +371,11 @@ Machine::OneInstruction(Instruction *instr)
 	nextLoadReg = instr->rt;
 	nextLoadValue = value;
 	break;
-      	
+
       case OP_LUI:
 	int_registers[(int)instr->rt] = instr->extra << 16;
 	break;
-	
+
       case OP_LW:
 	tmp = int_registers[(int)instr->rs] + instr->extra;
 	if (tmp & 0x3) {
@@ -387,14 +387,14 @@ Machine::OneInstruction(Instruction *instr)
 	nextLoadReg = instr->rt;
 	nextLoadValue = value;
 	break;
-    	
-      case OP_LWL:	  
+
+      case OP_LWL:
 	tmp = int_registers[(int)instr->rs] + instr->extra;
 
-	// ReadMem assumes all 4 byte requests are aligned on an even 
+	// ReadMem assumes all 4 byte requests are aligned on an even
 	// word boundary.  Also, the little endian/big endian swap code would
         // fail (I think) if the other cases are ever exercised.
-	//ASSERT((tmp & 0x3) == 0);  
+	//ASSERT((tmp & 0x3) == 0);
 
 	if (!mmu->ReadMem(tmp, 4, &value,false))
 	  return 0;
@@ -418,14 +418,14 @@ Machine::OneInstruction(Instruction *instr)
 	}
 	nextLoadReg = instr->rt;
 	break;
-      	
+
       case OP_LWR:
 	tmp = int_registers[(int)instr->rs] + instr->extra;
 
-	// ReadMem assumes all 4 byte requests are aligned on an even 
+	// ReadMem assumes all 4 byte requests are aligned on an even
 	// word boundary.  Also, the little endian/big endian swap code would
         // fail (I think) if the other cases are ever exercised.
-	//ASSERT((tmp & 0x3) == 0);  
+	//ASSERT((tmp & 0x3) == 0);
 
 	if (!mmu->ReadMem(tmp, 4, &value,false))
 	  return 0;
@@ -452,86 +452,86 @@ Machine::OneInstruction(Instruction *instr)
 	}
 	nextLoadReg = instr->rt;
 	break;
-    	
+
       case OP_MFHI:
 	int_registers[(int)instr->rd] = int_registers[HI_REG];
 	break;
-	
+
       case OP_MFLO:
 	int_registers[(int)instr->rd] = int_registers[LO_REG];
 	break;
-	
+
       case OP_MTHI:
 	int_registers[HI_REG] = int_registers[(int)instr->rs];
 	break;
-	
+
       case OP_MTLO:
 	int_registers[LO_REG] = int_registers[(int)instr->rs];
 	break;
-	
+
       case OP_MULT:
 	Mult(int_registers[(int)instr->rs], int_registers[(int)instr->rt], true,
 	     &int_registers[HI_REG], &int_registers[LO_REG]);
 	break;
-	
+
       case OP_MULTU:
 	Mult(int_registers[(int)instr->rs], int_registers[(int)instr->rt], false,
 	     &int_registers[HI_REG], &int_registers[LO_REG]);
 	break;
-	
+
       case OP_NOR:
 	int_registers[(int)instr->rd] = ~(int_registers[(int)instr->rs]
 				     | int_registers[(int)instr->rt]);
 	break;
-	
+
       case OP_OR:
 	int_registers[(int)instr->rd] = int_registers[(int)instr->rs]
 	  | int_registers[(int)instr->rs];
 	break;
-	
+
       case OP_ORI:
 	int_registers[(int)instr->rt] = int_registers[(int)instr->rs]
 	  | (instr->extra & 0xffff);
 	break;
-	
+
       case OP_SB:
-	if (!mmu->WriteMem((unsigned) 
+	if (!mmu->WriteMem((unsigned)
 		(int_registers[(int)instr->rs] + instr->extra), 1,
 			       int_registers[(int)instr->rt]))
 	    return 0;
 	break;
-	
+
       case OP_SH:
-	if (!mmu->WriteMem((unsigned) 
+	if (!mmu->WriteMem((unsigned)
 		(int_registers[(int)instr->rs] + instr->extra), 2,
 			       int_registers[(int)instr->rt]))
 	    return 0;
 	break;
-	
+
       case OP_SLL:
 	int_registers[(int)instr->rd] = int_registers[(int)instr->rt] << instr->extra;
 	break;
-	
+
       case OP_SLLV:
 	int_registers[(int)instr->rd] = int_registers[(int)instr->rt] <<
 	    (int_registers[(int)instr->rs] & 0x1f);
 	break;
-	
+
       case OP_SLT:
 	if (int_registers[(int)instr->rs] < int_registers[(int)instr->rt])
 	    int_registers[(int)instr->rd] = 1;
 	else
 	    int_registers[(int)instr->rd] = 0;
 	break;
-	
+
       case OP_SLTI:
 	if (int_registers[(int)instr->rs] < instr->extra)
 	    int_registers[(int)instr->rt] = 1;
 	else
 	    int_registers[(int)instr->rt] = 0;
 	break;
-	
-      case OP_SLTIU:	  
+
+      case OP_SLTIU:
 	rs = int_registers[(int)instr->rs];
 	imm = instr->extra;
 	if (rs < imm)
@@ -539,8 +539,8 @@ Machine::OneInstruction(Instruction *instr)
 	else
 	    int_registers[(int)instr->rt] = 0;
 	break;
-      	
-      case OP_SLTU:	  
+
+      case OP_SLTU:
 	rs = int_registers[(int)instr->rs];
 	rt = int_registers[(int)instr->rt];
 	if (rs < rt)
@@ -548,29 +548,29 @@ Machine::OneInstruction(Instruction *instr)
 	else
 	    int_registers[(int)instr->rd] = 0;
 	break;
-      	
+
       case OP_SRA:
 	int_registers[(int)instr->rd] = int_registers[(int)instr->rt] >> instr->extra;
 	break;
-	
+
       case OP_SRAV:
 	int_registers[(int)instr->rd] = int_registers[(int)instr->rt] >>
 	    (int_registers[(int)instr->rs] & 0x1f);
 	break;
-	
+
       case OP_SRL:
 	tmp = int_registers[(int)instr->rt];
 	tmp >>= instr->extra;
 	int_registers[(int)instr->rd] = tmp;
 	break;
-	
+
       case OP_SRLV:
 	tmp = int_registers[(int)instr->rt];
 	tmp >>= (int_registers[(int)instr->rs] & 0x1f);
 	int_registers[(int)instr->rd] = tmp;
 	break;
-	
-      case OP_SUB:	  
+
+      case OP_SUB:
 	diff = int_registers[(int)instr->rs] - int_registers[(int)instr->rt];
 	if (((int_registers[(int)instr->rs] ^ int_registers[(int)instr->rt])
 	     & SIGN_BIT) &&
@@ -580,25 +580,25 @@ Machine::OneInstruction(Instruction *instr)
 	}
 	int_registers[(int)instr->rd] = diff;
 	break;
-      	
+
       case OP_SUBU:
 	int_registers[(int)instr->rd] = int_registers[(int)instr->rs]
 	  - int_registers[(int)instr->rt];
 	break;
-	
+
       case OP_SW:
-	if (!mmu->WriteMem((unsigned) 
+	if (!mmu->WriteMem((unsigned)
 		(int_registers[(int)instr->rs] + instr->extra), 4,
 			       int_registers[(int)instr->rt]))
 	    return 0;
 	break;
-	
-      case OP_SWL:	  
+
+      case OP_SWL:
 	tmp = int_registers[(int)instr->rs] + instr->extra;
 
 	// The little endian/big endian swap code would
         // fail (I think) if the other cases are ever exercised.
-	//ASSERT((tmp & 0x3) == 0);  
+	//ASSERT((tmp & 0x3) == 0);
 
 	if (!mmu->ReadMem(tmp & ~0x3, 4, &value,false))
 	  return 0;
@@ -622,13 +622,13 @@ Machine::OneInstruction(Instruction *instr)
 	if (!mmu->WriteMem((tmp & ~0x3), 4, value))
 	    return 0;
 	break;
-    	
-      case OP_SWR:	  
+
+      case OP_SWR:
 	tmp = int_registers[(int)instr->rs] + instr->extra;
 
 	// The little endian/big endian swap code would
         // fail (I think) if the other cases are ever exercised.
-	//ASSERT((tmp & 0x3) == 0);  
+	//ASSERT((tmp & 0x3) == 0);
 
 	if (!mmu->ReadMem(tmp & ~0x3, 4, &value,false))
 	  return 0;
@@ -649,21 +649,21 @@ Machine::OneInstruction(Instruction *instr)
 	if (!mmu->WriteMem((tmp & ~0x3), 4, value))
 	    return 0;
 	break;
-    	
+
       case OP_SYSCALL:
 	RaiseException(SYSCALL_EXCEPTION, 0);
-	return 0; 
-	
+	return 0;
+
       case OP_XOR:
 	int_registers[(int)instr->rd] = int_registers[(int)instr->rs]
 	  ^ int_registers[(int)instr->rt];
 	break;
-	
+
       case OP_XORI:
 	int_registers[(int)instr->rt] = int_registers[(int)instr->rs]
 	  ^ (instr->extra & 0xffff);
 	break;
-	
+
     /* Floating point instructions (at least some of them...) */
     /* No delay loads are implemented for FP operations */
     /* No exceptions are signalled on overflow. Fixed point operations */
@@ -681,7 +681,7 @@ Machine::OneInstruction(Instruction *instr)
       if (!mmu->ReadMem(tmp, 4, &value,false))
 	  return 0;
       float_registers[(int)instr->ft] = value;
-      break; 
+      break;
 
     case OP_LDC1:
       tmp = int_registers[(int)instr->rs] + instr->extra;
@@ -695,22 +695,22 @@ Machine::OneInstruction(Instruction *instr)
       if (!mmu->ReadMem(tmp+4, 4, &value,false))
 	  return 0;
       float_registers[(int)instr->ft+1] = value;
-      break; 
+      break;
 
     case OP_SWC1:
-      if (!mmu->WriteMem((unsigned) 
-		(int_registers[(int)instr->rs] + instr->extra), 4, 
+      if (!mmu->WriteMem((unsigned)
+		(int_registers[(int)instr->rs] + instr->extra), 4,
 		float_registers[(int)instr->ft]))
       return 0;
       break;
 
     case OP_SDC1:
-      if (!mmu->WriteMem((unsigned) 
-		(int_registers[(int)instr->rs] + instr->extra), 4, 
+      if (!mmu->WriteMem((unsigned)
+		(int_registers[(int)instr->rs] + instr->extra), 4,
 		float_registers[(int)instr->ft]))
       return 0;
-      if (!mmu->WriteMem((unsigned) 
-		(int_registers[(int)instr->rs] + instr->extra+4), 4, 
+      if (!mmu->WriteMem((unsigned)
+		(int_registers[(int)instr->rs] + instr->extra+4), 4,
 		float_registers[(int)instr->ft+1]))
       return 0;
       break;
@@ -721,7 +721,7 @@ Machine::OneInstruction(Instruction *instr)
 
     case OP_MOV_D:
       float_registers[(int)instr->fd] = float_registers[(int)instr->fs];
-      float_registers[(int)instr->fd+1] = float_registers[(int)instr->fs+1];  
+      float_registers[(int)instr->fd+1] = float_registers[(int)instr->fs+1];
       break;
 
     case OP_MFC1:
@@ -740,18 +740,18 @@ Machine::OneInstruction(Instruction *instr)
       float_registers[(int)instr->fs] = int_registers[(int)instr->rt];
       break;
 
-    /* Arithmetic operations on floats and doubles 
+    /* Arithmetic operations on floats and doubles
        (abs,add,sqrt,sub,mul,div,neg) */
-    case OP_ABS_S: 
+    case OP_ABS_S:
       fdptr = (float *) &(float_registers[(int)instr->fd]);
       fsptr = (float *) &(float_registers[(int)instr->fs]);
       (*fdptr) = (float) fabs((double)(*fsptr));
-      break; 
+      break;
 
     case OP_ABS_D:
       d1 = get_double(instr->fs);
       set_double(instr->fd,fabs(d1));
-      break; 
+      break;
 
     case OP_ADD_S:
       f1 = *((float*) &float_registers[(int)instr->fs]);
@@ -762,17 +762,17 @@ Machine::OneInstruction(Instruction *instr)
 
     case OP_ADD_D: {
       d1 = get_double(instr->fs);
-      d2 = get_double(instr->ft);     
+      d2 = get_double(instr->ft);
       set_double(instr->fd,d1+d2);
     }
-      break; 
+      break;
 
     case OP_DIV_S:
       f1 = *((float*) &float_registers[(int)instr->fs]);
       f2 = *((float*) &float_registers[(int)instr->ft]);
       fdptr = (float*) &float_registers[(int)instr->fd];
       (*fdptr) = f1 / f2;
-      break; 
+      break;
 
     case OP_DIV_D:
       d1 = get_double(instr->fs);
@@ -785,13 +785,13 @@ Machine::OneInstruction(Instruction *instr)
       f2 = *((float*) &float_registers[(int)instr->ft]);
       fdptr = (float*) &float_registers[(int)instr->fd];
       (*fdptr) = f1*f2;
-      break; 
+      break;
 
     case OP_MUL_D:
       d1 = get_double(instr->fs);
       d2 = get_double(instr->ft);
       set_double(instr->fd, d1*d2);
-      break; 
+      break;
 
     case OP_NEG_S:
       fdptr = (float *) &(float_registers[(int)instr->fd]);
@@ -802,20 +802,20 @@ Machine::OneInstruction(Instruction *instr)
     case OP_NEG_D:
       d1 = get_double(instr->fs);
       set_double(instr->fd,-1.0*d1);
-      break; 
+      break;
 
     case OP_SUB_S:
       f1 = *((float*) &float_registers[(int)instr->fs]);
       f2 = *((float*) &float_registers[(int)instr->ft]);
       fdptr = (float*) &float_registers[(int)instr->fd];
       (*fdptr) = f1 - f2;
-      break; 
+      break;
 
     case OP_SUB_D:
       d1 = get_double(instr->fs);
       d2 = get_double(instr->ft);
       set_double(instr->fd, d1-d2);
-      break; 
+      break;
 
     case OP_SQRT_S:
       fdptr = (float *) &(float_registers[(int)instr->fd]);
@@ -826,7 +826,7 @@ Machine::OneInstruction(Instruction *instr)
       /* Compute the square root*/
       /* (in double precision, op on floats does not exist) */
       (*fdptr) = (float) sqrt((double)(*fsptr));
-      break; 
+      break;
 
     case OP_SQRT_D:
       d1 = get_double(instr->fs);
@@ -848,14 +848,14 @@ Machine::OneInstruction(Instruction *instr)
       f1 = *((float*) &float_registers[(int)instr->fs]);
       d1 = (double) f1;
       set_double(instr->fd,d1);
-      break;  
+      break;
 
     case OP_CVT_S_W:
-      *((float*) &float_registers[(int)instr->fd]) = 
+      *((float*) &float_registers[(int)instr->fd]) =
 	(float) float_registers[(int)instr->fs];
       break;
     case OP_CVT_W_S:
-      float_registers[(int)instr->fd] = (int) 
+      float_registers[(int)instr->fd] = (int)
 	(*((float*) &float_registers[(int)instr->fs]));
       break;
     case OP_CVT_D_W:
@@ -864,22 +864,22 @@ Machine::OneInstruction(Instruction *instr)
     case OP_CVT_W_D:
       float_registers[(int)instr->fd] = (int) get_double(instr->fs);
       break;
-   
-    
+
+
     /* Floating point comparison instructions */
     /* NB : the implementation of these instructions is greatly simplified
             compared to the original MIPS processor. No attention is paid
 	    to exceptions except address errors, no support
 	    for NaN numbers and for the IEEE FP standard concerning
 	    the "unordered" relation */
-	    
+
     case OP_C_SF_S: /* Condition False. Always set CC to False */
     case OP_C_F_S:
     case OP_C_F_D:
     case OP_C_SF_D:
       cc = false;
       break;
-     
+
     case OP_C_EQ_S:  /* Test equality regarless of "unordered" floats  */
     case OP_C_UEQ_S: /* and exception requests*/
     case OP_C_SEQ_S:
@@ -906,7 +906,7 @@ Machine::OneInstruction(Instruction *instr)
       f2 = *((float*) &float_registers[(int)instr->ft]);
       if (f1<=f2) cc=true; else cc=false;
       break;
-      
+
     case OP_C_EQ_D:  /* Test equality regarless of "unordered" doubles  */
     case OP_C_UEQ_D: /* and exception requests */
     case OP_C_SEQ_D:
@@ -970,11 +970,11 @@ Machine::OneInstruction(Instruction *instr)
     case OP_UNIMP: {
        struct OpString *str = &opStrings[instr->opCode];
        printf("***** Fatal: not implemented yet MIPS instruction 0x%x\n",
-	      instr->value); 
+	      instr->value);
        ASSERT(instr->opCode <= MaxOpcode);
        printf("At PC = 0x%x: ", int_registers[PC_REG]);
-       printf(str->string, TypeToReg(str->args[0], instr), 
-	      TypeToReg(str->args[1], instr), 
+       printf(str->string, TypeToReg(str->args[0], instr),
+	      TypeToReg(str->args[1], instr),
 	      TypeToReg(str->args[2], instr));
        printf("\n");
        }
@@ -983,16 +983,16 @@ Machine::OneInstruction(Instruction *instr)
     case OP_RES:
 	RaiseException(ILLEGALINSTR_EXCEPTION, int_registers[PC_REG]);
 	return 0;
-	
+
     default:
 	ASSERT(false);
     }
 
     // Now we have successfully executed the instruction.
-    
+
     // Do any delayed load operation
     DelayedLoad(nextLoadReg, nextLoadValue);
-    
+
     // For debugging, in case we are jumping into lala-land
     int_registers[PREVPC_REG] = int_registers[PC_REG];
 
@@ -1022,13 +1022,13 @@ Machine::DelayedLoad(int nextReg, int nextValue)
 
 //----------------------------------------------------------------------
 // Instruction::Decode
-//! 	Decode a MIPS instruction 
+//! 	Decode a MIPS instruction
 //----------------------------------------------------------------------
 void
 Instruction::Decode()
 {
     OpInfo *opPtr;
-    
+
     // Fetch the rs,rt, ... fields from their location in the
     // instruction binary representation (see the MIPS manual for
     // more details)
@@ -1073,8 +1073,8 @@ Instruction::Decode()
     } else if (opCode == COP1) { /* Floating point instructions */
       if (rs == 0x10 ) { opCode = cop1STable[value & 0x3f];
       } else if (rs == 0x11 ) { opCode = cop1DTable[value & 0x3f];
-      } else if (rs == 0x08 && rt == 0x00) { opCode = OP_BC1F; 
-      } else if (rs == 0x08 && rt == 0x01) { opCode = OP_BC1T; 
+      } else if (rs == 0x08 && rt == 0x00) { opCode = OP_BC1F;
+      } else if (rs == 0x08 && rt == 0x01) { opCode = OP_BC1T;
       } else if (rs == 0x00 ) { opCode = OP_MFC1;
       } else if (rs == 0x02 ) { opCode = OP_CFC1;
       } else if (rs == 0x04 ) { opCode = OP_MTC1;
@@ -1135,7 +1135,7 @@ Mult(int a, int b, bool signedArith, int* hiPtr, int* loPtr)
 	bHi <<= 1;
 	if (bLo & 0x80000000)
 	    bHi |= 1;
-	
+
 	bLo <<= 1;
 	a >>= 1;
     }
@@ -1149,7 +1149,7 @@ Mult(int a, int b, bool signedArith, int* hiPtr, int* loPtr)
 	if (lo == 0)
 	    hi++;
     }
-    
+
     *hiPtr = (int) hi;
     *loPtr = (int) lo;
 }

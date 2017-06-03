@@ -64,7 +64,7 @@ int main() {
 		}
 
 	} while(first > 0);
-	
+
 	// End
 	return 0;
 

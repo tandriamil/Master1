@@ -84,7 +84,7 @@ int main() {
 		}
 
 	}
-	
+
 	// End
 	return 0;
 

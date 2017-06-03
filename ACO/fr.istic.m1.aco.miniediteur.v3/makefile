@@ -42,7 +42,7 @@ enregistreur: $(SRCDIR)/$(CARETAKER)/EnregistreurInterface.java $(SRCDIR)/$(CARE
 	$(JAVAC_CMD) $(SRCDIR)/$(CARETAKER)/EnregistreurInterface.java $(SRCDIR)/$(CARETAKER)/Enregistreur.java
 
 moteur_interface: $(SRCDIR)/$(RECEIVER)/SelectionInterface.java $(SRCDIR)/$(RECEIVER)/BufferInterface.java $(SRCDIR)/$(RECEIVER)/PressePapierInterface.java $(SRCDIR)/$(RECEIVER)/MoteurEditeurInterface.java
-	$(JAVAC_CMD) $(SRCDIR)/$(RECEIVER)/SelectionInterface.java $(SRCDIR)/$(RECEIVER)/BufferInterface.java $(SRCDIR)/$(RECEIVER)/PressePapierInterface.java $(SRCDIR)/$(RECEIVER)/MoteurEditeurInterface.java 
+	$(JAVAC_CMD) $(SRCDIR)/$(RECEIVER)/SelectionInterface.java $(SRCDIR)/$(RECEIVER)/BufferInterface.java $(SRCDIR)/$(RECEIVER)/PressePapierInterface.java $(SRCDIR)/$(RECEIVER)/MoteurEditeurInterface.java
 
 $(CARETAKER): $(SRCDIR)/$(CARETAKER)/GestionDefaireRefaireInterface.java $(SRCDIR)/$(CARETAKER)/GestionDefaireRefaire.java
 	$(JAVAC_CMD) $(SRCDIR)/$(CARETAKER)/*.java

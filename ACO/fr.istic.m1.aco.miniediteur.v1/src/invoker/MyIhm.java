@@ -161,7 +161,7 @@ public class MyIhm implements IhmInterface {
 					// Default action
 					default:
 						System.out.println("Commande non reconnue '" + input + "'");
-				
+
 				}  // End of switch
 
 			}  // End of try

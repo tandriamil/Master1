@@ -11,7 +11,7 @@ HashMap memory = new HashMap();
 }
 
 prog:   stat+ ;
-                
+
 stat:   expr NEWLINE { if ($expr.value < 2147483647) System.out.println($expr.value); else System.out.println("Out of boundaries (> 2147483647)"); }
     |   ID '=' expr NEWLINE
         {memory.put($ID.text, new Integer($expr.value));}
@@ -28,13 +28,13 @@ expr returns [int value]
 multExpr returns [int value]
     :   e=puissance {$value = $e.value;}
         (   '*' e=puissance {$value *= $e.value;}
-        |   '/' e=puissance 
+        |   '/' e=puissance
             {
             if ($e.value > 0) $value = (int)($value / $e.value);
             else { System.err.println("Can't divide by 0"); System.exit(1); }
             }
         )*
-    ; 
+    ;
 
 puissance returns [int value]
     :   e=atom d=puissance_prime {$value = (int)Math.pow($e.value, $d.value);}

@@ -10,12 +10,12 @@
 
 /**
  * Main function to estimate the mean of exponential random variable
- * 
+ *
  * \param argc The number of aguments
  * \param argv The arguments provided to the program
  */
 int main(int argc, char** argv) {
-	
+
 	// The variables used here
 	int k, i, n = 1, res = 0;
 

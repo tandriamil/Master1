@@ -9,4 +9,3 @@ FUNC VOID expr(x,y) {
 	PRINT x,"* (",x,"+",y,") = ", x*(x+y) ,"\n"
 	PRINT x,"*  ",x,"+",y,"  = ", x * x + y  ,"\n"
 	}
-
